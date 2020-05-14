@@ -1,5 +1,6 @@
 package no.nav.klage.config
 
+import no.nav.klage.domain.Klage
 import org.apache.kafka.clients.CommonClientConfigs.SECURITY_PROTOCOL_CONFIG
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.common.config.SaslConfigs
@@ -28,14 +29,14 @@ class KafkaConfiguration {
     private lateinit var password: String
 
     @Bean
-    fun kafkaListenerContainerFactory(): ConcurrentKafkaListenerContainerFactory<String, String> {
-        val factory = ConcurrentKafkaListenerContainerFactory<String, String>()
+    fun kafkaListenerContainerFactory(): ConcurrentKafkaListenerContainerFactory<String, Klage> {
+        val factory = ConcurrentKafkaListenerContainerFactory<String, Klage>()
         factory.consumerFactory = consumerFactory();
         return factory;
     }
 
     @Bean
-    fun consumerFactory(): ConsumerFactory<String, String> {
+    fun consumerFactory(): ConsumerFactory<String, Klage> {
         return DefaultKafkaConsumerFactory(consumerProps());
     }
 

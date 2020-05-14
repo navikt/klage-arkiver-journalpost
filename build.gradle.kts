@@ -1,6 +1,8 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 val exposedVersion = "0.21.1"
+val gcpStorageVersion = "1.108.0"
+val pdfBoxVersion = "2.0.19"
 
 repositories {
     mavenCentral()
@@ -24,16 +26,18 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-webflux")
     implementation("org.projectreactor:reactor-spring:1.0.1.RELEASE")
 
-    implementation("com.zaxxer:HikariCP")
-    implementation("org.jetbrains.exposed:exposed-spring-boot-starter:$exposedVersion")
-    implementation("org.jetbrains.exposed:exposed-java-time:$exposedVersion")
-    implementation("org.postgresql:postgresql")
-
     implementation("io.micrometer:micrometer-registry-prometheus")
     implementation("ch.qos.logback:logback-classic")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
     implementation("org.springframework.kafka:spring-kafka")
+    implementation("com.google.cloud:google-cloud-storage:$gcpStorageVersion")
+
+    testImplementation("org.springframework.boot:spring-boot-starter-test") {
+        exclude(group = "org.junit.vintage", module = "org.junit.vintage")
+    }
+
+    testImplementation("org.junit.jupiter:junit-jupiter-engine")
 }
 
 idea {
@@ -48,6 +52,10 @@ tasks.withType<KotlinCompile> {
 
 tasks.getByName<org.springframework.boot.gradle.tasks.bundling.BootJar>("bootJar") {
     this.archiveFileName.set("app.jar")
+}
+
+tasks.test {
+    useJUnitPlatform()
 }
 
 kotlin.sourceSets["main"].kotlin.srcDirs("src/kotlin")

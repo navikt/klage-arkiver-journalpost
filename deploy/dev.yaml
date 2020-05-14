@@ -25,8 +25,6 @@ spec:
     requests:
       cpu: 50m
       memory: 128Mi
-  ingresses:
-    - https://klage-arkiver-journalpost.dev-gcp.nais.io
   replicas:
     min: 1
     max: 1
@@ -35,18 +33,20 @@ spec:
     enabled: true
     path: /internal/prometheus
   gcp:
-    sqlInstances:
-      - type: POSTGRES_11
-        databases:
-          - name: klage
-            envVarPrefix: DB
+    buckets:
+      - name: klage-dittnav
   secureLogs:
     enabled: true
   webproxy: true
+  secrets:
+    - name: gcp.accesskey
+    - name: gcp.secretkey
+    - name: storage.passphrase
+    - name: buckets
+      type: files
   envFrom:
     - secret: srvklage-dittnav
     - secret: sts-apikey
-    - secret: pdl-apikey
   env:
     - name: KAFKA_BOOTSTRAP_SERVERS
       value: b27apvl00045.preprod.local:8443,b27apvl00046.preprod.local:8443,b27apvl00047.preprod.local:8443
@@ -54,8 +54,6 @@ spec:
       value: klage-arkiver-journalpost
     - name: KAFKA_TOPIC
       value: aapen-klager-klageOpprettet
-    - name: PDL_BASE_URL
-      value: https://api-gw-q1.oera.no/pdl-api/graphql
     - name: SECURITY_TOKEN_SERVICE_REST_URL
       value: https://api-gw-q1.oera.no/security-token-service/
     - name: SERVICE_USER_USERNAME
