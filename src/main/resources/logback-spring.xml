@@ -9,7 +9,7 @@
         </encoder>
     </appender>
     ​
-    <logger name="org.apache" level="INFO"/>
+    <logger name="no.nav.klage" level="DEBUG"/>
 
     <root level="INFO">
         <appender-ref ref="console"/>
