@@ -1,4 +1,4 @@
-package klage.domain
+package no.nav.klage.domain
 
 data class Journalpost(
     val journalposttype: String = "INNGAAENDE",

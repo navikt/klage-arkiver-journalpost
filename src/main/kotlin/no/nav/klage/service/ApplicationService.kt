@@ -1,9 +1,9 @@
-package klage.service
+package no.nav.klage.service
 
-import klage.clients.GcsClient
-import klage.clients.JoarkClient
-import klage.clients.PDFGeneratorClient
-import klage.domain.Klage
+import no.nav.klage.clients.GcsClient
+import no.nav.klage.clients.JoarkClient
+import no.nav.klage.clients.PDFGeneratorClient
+import no.nav.klage.domain.Klage
 import org.springframework.stereotype.Service
 
 @Service

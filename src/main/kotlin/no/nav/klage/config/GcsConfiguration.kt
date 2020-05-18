@@ -1,4 +1,4 @@
-package klage.config
+package no.nav.klage.config
 
 import com.google.cloud.storage.Storage
 import com.google.cloud.storage.StorageOptions

@@ -1,9 +1,9 @@
-package klage.clients
+package no.nav.klage.clients
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import klage.domain.Klage
-import klage.getLogger
-import klage.service.ApplicationService
+import no.nav.klage.domain.Klage
+import no.nav.klage.getLogger
+import no.nav.klage.service.ApplicationService
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.springframework.kafka.annotation.KafkaListener
 import org.springframework.stereotype.Component

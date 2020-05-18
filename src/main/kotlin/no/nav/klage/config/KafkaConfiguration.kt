@@ -1,4 +1,4 @@
-package klage.config
+package no.nav.klage.config
 
 import org.apache.kafka.clients.CommonClientConfigs.SECURITY_PROTOCOL_CONFIG
 import org.apache.kafka.clients.consumer.ConsumerConfig

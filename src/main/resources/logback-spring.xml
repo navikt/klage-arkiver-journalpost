@@ -9,6 +9,8 @@
         </encoder>
     </appender>
     ​
+    <logger name="org.apache" level="INFO"/>
+
     <root level="INFO">
         <appender-ref ref="console"/>
     </root>

@@ -1,7 +1,8 @@
-package klage.clients
+package no.nav.klage.clients
 
 import klage.domain.*
-import klage.getLogger
+import no.nav.klage.domain.*
+import no.nav.klage.getLogger
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
@@ -26,20 +27,21 @@ class JoarkClient(private val joarkWebClient: WebClient) {
             .retrieve()
     }
 
-    private fun getJournalpost(klage: Klage): Journalpost = Journalpost(
-        tema = klage.tema,
-        avsenderMottaker = AvsenderMottaker(
-            id = klage.foedselsnummer,
-            idType = "FNR",
-            navn = klage.navn
-        ),
-        tittel = "TODO: en klage",
-        bruker = Bruker(
-            id = klage.foedselsnummer,
-            idType = "FNR"
-        ),
-        dokumenter = getDokumenter(klage)
-    )
+    private fun getJournalpost(klage: Klage): Journalpost =
+        Journalpost(
+            tema = klage.tema,
+            avsenderMottaker = AvsenderMottaker(
+                id = klage.foedselsnummer,
+                idType = "FNR",
+                navn = klage.navn
+            ),
+            tittel = "TODO: en klage",
+            bruker = Bruker(
+                id = klage.foedselsnummer,
+                idType = "FNR"
+            ),
+            dokumenter = getDokumenter(klage)
+        )
 
     private fun getDokumenter(klage: Klage): List<Dokument> {
         val hovedDokument = Dokument(

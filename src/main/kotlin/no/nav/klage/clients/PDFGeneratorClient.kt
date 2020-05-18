@@ -1,7 +1,7 @@
-package klage.clients
+package no.nav.klage.clients
 
-import klage.domain.Klage
-import klage.getLogger
+import no.nav.klage.domain.Klage
+import no.nav.klage.getLogger
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient

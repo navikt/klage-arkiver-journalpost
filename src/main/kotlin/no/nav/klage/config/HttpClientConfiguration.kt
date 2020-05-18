@@ -1,7 +1,7 @@
-package klage.config
+package no.nav.klage.config
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import klage.getLogger
+import no.nav.klage.getLogger
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration

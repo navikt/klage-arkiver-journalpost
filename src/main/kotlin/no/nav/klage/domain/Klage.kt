@@ -1,4 +1,4 @@
-package klage.domain
+package no.nav.klage.domain
 
 import java.time.LocalDate
 

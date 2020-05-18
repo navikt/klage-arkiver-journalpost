@@ -1,7 +1,7 @@
-package klage.clients
+package no.nav.klage.clients
 
 import com.google.cloud.storage.Storage
-import klage.getLogger
+import no.nav.klage.getLogger
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 
