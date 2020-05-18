@@ -36,7 +36,6 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
         exclude(group = "org.junit.vintage", module = "org.junit.vintage")
     }
-
     testImplementation("org.junit.jupiter:junit-jupiter-engine")
 }
 
@@ -58,8 +57,8 @@ tasks.test {
     useJUnitPlatform()
 }
 
-kotlin.sourceSets["main"].kotlin.srcDirs("src/kotlin")
-kotlin.sourceSets["test"].kotlin.srcDirs("test/kotlin")
+kotlin.sourceSets["main"].kotlin.srcDirs("src/main/kotlin")
+kotlin.sourceSets["test"].kotlin.srcDirs("src/test/kotlin")
 
-sourceSets["main"].resources.srcDirs("src/resources")
-sourceSets["test"].resources.srcDirs("test/resources")
+sourceSets["main"].resources.srcDirs("src/main/resources")
+sourceSets["test"].resources.srcDirs("src/test/resources")

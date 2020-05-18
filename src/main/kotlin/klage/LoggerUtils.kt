@@ -1,4 +1,4 @@
-package no.nav.klage
+package klage
 
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory

@@ -1,4 +1,4 @@
-package no.nav.klage
+package klage
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
