@@ -34,16 +34,10 @@ spec:
     path: /internal/prometheus
   gcp:
     buckets:
-      - name: klage-dittnav
+      - name: klagevedlegg
   secureLogs:
     enabled: true
   webproxy: true
-  secrets:
-    - name: gcp.accesskey
-    - name: gcp.secretkey
-    - name: storage.passphrase
-    - name: buckets
-      type: files
   envFrom:
     - secret: srvklage-dittnav
     - secret: sts-apikey
@@ -58,3 +52,9 @@ spec:
       value: https://api-gw-q1.oera.no/security-token-service/
     - name: SERVICE_USER_USERNAME
       value: srvklage-dittnav
+    - name: PDF_SERVICE_URL
+      value: https://klage-dittnav-pdfgen.dev-gcp.nais.io/api/v1/genpdf/klage-dittnav-pdfgen/klage
+    - name: JOARK_SERVICE_URL
+      value: http://dokarkiv-q2.nais.preprod.local
+    - name: GCS_BUCKET
+      value: klagevedlegg

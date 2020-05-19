@@ -21,7 +21,7 @@ management:
       prometheus:
         enabled: true
 
-# Local environment settings. Will be overridden in dev and prod.
+# Local environment settings. Can be overridden in dev and prod.
 
 KAFKA_BOOTSTRAP_SERVERS: localhost:9092
 KAFKA_GROUP_ID: klage-arkiver-journalpost
