@@ -17,7 +17,7 @@ class GcsClient(private val gcsStorage: Storage) {
     private lateinit var bucket: String
 
     fun getAttachment(path: String): ByteArray {
-        logger.debug("Fetching attachments from GCP. Bucket: {}, path: {}", bucket, path)
+        logger.debug("Fetching attachment from GCP. Bucket: {}, path: {}", bucket, path)
         return gcsStorage.get(bucket, path).getContent()
     }
 }
