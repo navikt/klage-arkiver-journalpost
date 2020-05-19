@@ -1,7 +1,6 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-val gcpStorageVersion = "1.108.0"
-val pdfBoxVersion = "2.0.19"
+val gcsVersion = "1.108.0"
 
 repositories {
     mavenCentral()
@@ -30,7 +29,7 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
     implementation("org.springframework.kafka:spring-kafka")
-    implementation("com.google.cloud:google-cloud-storage:$gcpStorageVersion")
+    implementation("com.google.cloud:google-cloud-storage:$gcsVersion")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
         exclude(group = "org.junit.vintage", module = "org.junit.vintage")
