@@ -1,0 +1,60 @@
+apiVersion: "nais.io/v1alpha1"
+kind: "Application"
+metadata:
+  name: klage-arkiver-journalpost
+  namespace: klage
+  labels:
+    team: klage
+spec:
+  image: {{ image }}
+  port: 7070
+  liveness:
+    path: /internal/health
+    initialDelay: 20
+    timeout: 1
+    periodSeconds: 5
+    failureThreshold: 10
+  readiness:
+    path: /internal/health
+    initialDelay: 20
+    timeout: 1
+  resources:
+    limits:
+      cpu: 2000m
+      memory: 512Mi
+    requests:
+      cpu: 50m
+      memory: 128Mi
+  replicas:
+    min: 1
+    max: 1
+    cpuThresholdPercentage: 90
+  prometheus:
+    enabled: true
+    path: /internal/prometheus
+  gcp:
+    buckets:
+      - name: klagevedlegg
+  secureLogs:
+    enabled: true
+  webproxy: true
+  envFrom:
+    - secret: srvklage-dittnav
+    - secret: sts-apikey
+  env:
+    - name: KAFKA_BOOTSTRAP_SERVERS
+      value: b27apvl00045.preprod.local:8443,b27apvl00046.preprod.local:8443,b27apvl00047.preprod.local:8443
+    - name: KAFKA_GROUP_ID
+      value: klage-arkiver-journalpost
+    - name: KAFKA_TOPIC
+      value: aapen-klager-klageOpprettet
+    - name: SECURITY_TOKEN_SERVICE_REST_URL
+      value: https://api-gw-q1.oera.no/security-token-service/
+    - name: SERVICE_USER_USERNAME
+      value: srvklage-dittnav
+    - name: PDF_SERVICE_URL
+      value: https://klage-dittnav-pdfgen.dev-gcp.nais.io/api/v1/genpdf/klage-dittnav-pdfgen/klage
+    - name: JOARK_SERVICE_URL
+      value: http://dokarkiv-q2.nais.preprod.local
+    - name: GCS_BUCKET
+      value: klagevedlegg
