@@ -1,6 +1,5 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-val exposedVersion = "0.21.1"
 val gcpStorageVersion = "1.108.0"
 val pdfBoxVersion = "2.0.19"
 
