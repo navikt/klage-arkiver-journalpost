@@ -1,6 +1,5 @@
 package no.nav.klage.clients
 
-import klage.domain.*
 import no.nav.klage.domain.*
 import no.nav.klage.getLogger
 import org.springframework.http.MediaType
@@ -15,6 +14,9 @@ class JoarkClient(private val joarkWebClient: WebClient) {
     companion object {
         @Suppress("JAVA_CLASS_ON_COMPANION")
         private val logger = getLogger(javaClass.enclosingClass)
+
+        private const val KLAGE_TITTEL = "Hoveddokument klage"
+        private const val BREVKODE_KLAGESKJEMA = "NAV 90-00.08"
     }
 
     fun createJournalpost(klage: Klage) {
@@ -45,8 +47,8 @@ class JoarkClient(private val joarkWebClient: WebClient) {
 
     private fun getDokumenter(klage: Klage): List<Dokument> {
         val hovedDokument = Dokument(
-            tittel = "Hoveddokument klage",
-            brevkode = "NAV 90-00.08", //brevkode for klageskjema
+            tittel = KLAGE_TITTEL,
+            brevkode = BREVKODE_KLAGESKJEMA,
             dokumentVarianter = getDokumentVariant(klage.fileContentAsBytes, "PDFA", "ARKIV")
         )
         val documents = mutableListOf(hovedDokument)
