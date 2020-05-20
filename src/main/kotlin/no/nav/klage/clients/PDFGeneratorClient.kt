@@ -31,21 +31,21 @@ class PDFGeneratorClient(private val pdfWebClient: WebClient) {
     }
 
     private fun Klage.toPDFModel() = KlagePDFModel(
-        foedselsnummer = this.foedselsnummer,
+        foedselsnummer = foedselsnummer,
         fornavn = "TODO fornavn",
-        etternavn = "TODO Kun etternavn ${this.navn}",
-        adresse = this.adresse,
+        etternavn = "TODO Kun etternavn $navn",
+        adresse = adresse,
         postnummer = "TODO postnummer",
         poststed = "TODO poststed",
-        telefonnummer = this.telefon,
-        NAVenhet = this.navenhet,
-        vedtaksdato = this.vedtaksdato.format(DateTimeFormatter.ISO_LOCAL_DATE),
-        shortWhyShouldChange = this.kortRedegjoerelse,
-        longWhyShouldChange = this.begrunnelse,
-        NAVReference = this.navReferanse,
-        attachments = this.oversiktVedlegg,
-        place = this.sted,
-        date = this.dato.format(DateTimeFormatter.ISO_LOCAL_DATE),
+        telefonnummer = telefon,
+        NAVenhet = navenhet,
+        vedtaksdato = vedtaksdato.format(DateTimeFormatter.ISO_LOCAL_DATE),
+        shortWhyShouldChange = kortRedegjoerelse,
+        longWhyShouldChange = begrunnelse,
+        NAVReference = navReferanse,
+        attachments = oversiktVedlegg,
+        place = sted,
+        date = dato.format(DateTimeFormatter.ISO_LOCAL_DATE),
         userSignature = USER_SIGNATURE,
         NAVSignature = "TODO"
     )
