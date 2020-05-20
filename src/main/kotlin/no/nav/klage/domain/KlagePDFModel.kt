@@ -2,20 +2,17 @@ package no.nav.klage.domain
 
 data class KlagePDFModel(
     val foedselsnummer: String,
-    val fornavn: String,
-    val etternavn: String,
+    val navn: String,
     val adresse: String,
-    val postnummer: String,
-    val poststed: String,
     val telefonnummer: String,
-    val NAVenhet: String,
+    val navenhet: String,
     val vedtaksdato: String,
-    val shortWhyShouldChange: String,
-    val longWhyShouldChange: String,
-    val NAVReference: String,
-    val attachments: String,
-    val place: String,
-    val date: String,
-    val userSignature: String,
-    val NAVSignature: String
+    val kortRedegjoerelse: String,
+    val begrunnelse: String,
+    val navReferanse: String,
+    val oversiktVedlegg: String,
+    val sted: String,
+    val dato: String,
+    val brukersignatur: String,
+    val navsignatur: String
 )
