@@ -37,7 +37,7 @@ class JoarkClient(private val joarkWebClient: WebClient) {
                 idType = "FNR",
                 navn = klage.navn
             ),
-            tittel = "TODO: en klage",
+            tittel = KLAGE_TITTEL,
             bruker = Bruker(
                 id = klage.foedselsnummer,
                 idType = "FNR"
