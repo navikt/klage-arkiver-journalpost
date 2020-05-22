@@ -15,7 +15,7 @@ class JoarkClient(private val joarkWebClient: WebClient) {
         @Suppress("JAVA_CLASS_ON_COMPANION")
         private val logger = getLogger(javaClass.enclosingClass)
 
-        private const val KLAGE_TITTEL = "Hoveddokument klage"
+        private const val KLAGE_TITTEL = "Klage/Anke"
         private const val BREVKODE_KLAGESKJEMA = "NAV 90-00.08"
     }
 
@@ -37,7 +37,7 @@ class JoarkClient(private val joarkWebClient: WebClient) {
                 idType = "FNR",
                 navn = klage.navn
             ),
-            tittel = "TODO: en klage",
+            tittel = KLAGE_TITTEL,
             bruker = Bruker(
                 id = klage.foedselsnummer,
                 idType = "FNR"

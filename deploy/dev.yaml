@@ -41,6 +41,7 @@ spec:
   envFrom:
     - secret: srvklage-dittnav
     - secret: sts-apikey
+    - secret: journalpost-apikey
   env:
     - name: KAFKA_BOOTSTRAP_SERVERS
       value: b27apvl00045.preprod.local:8443,b27apvl00046.preprod.local:8443,b27apvl00047.preprod.local:8443
@@ -49,12 +50,12 @@ spec:
     - name: KAFKA_TOPIC
       value: aapen-klager-klageOpprettet
     - name: SECURITY_TOKEN_SERVICE_REST_URL
-      value: https://api-gw-q1.oera.no/security-token-service/
+      value: https://api-gw-q1.oera.no/security-token-service
     - name: SERVICE_USER_USERNAME
       value: srvklage-dittnav
     - name: PDF_SERVICE_URL
       value: https://klage-dittnav-pdfgen.dev-gcp.nais.io/api/v1/genpdf/klage-dittnav-pdfgen/klage
     - name: JOARK_SERVICE_URL
-      value: http://dokarkiv-q2.nais.preprod.local
+      value: https://api-gw-q1.oera.no/dokarkiv/rest/journalpostapi/v1/journalpost
     - name: GCS_BUCKET
       value: klagevedlegg
