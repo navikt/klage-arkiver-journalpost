@@ -32,9 +32,6 @@ spec:
   prometheus:
     enabled: true
     path: /internal/prometheus
-  gcp:
-    buckets:
-      - name: klagevedlegg
   secureLogs:
     enabled: true
   webproxy: true
