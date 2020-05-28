@@ -17,7 +17,7 @@ class AttachmentClient(private val attachmentWebClient: WebClient) {
         logger.debug("Fetching attachment with id {}", id)
 
         return this.attachmentWebClient.get()
-            .uri { it.path("/$id").build(id) }
+            .uri { it.path("/{id}").build(id) }
             .retrieve()
             .bodyToMono<ByteArray>()
             .block() ?: throw RuntimeException("Attachment could not be fetched")
@@ -27,7 +27,7 @@ class AttachmentClient(private val attachmentWebClient: WebClient) {
         logger.debug("Deleting attachment with id {}", id)
 
         attachmentWebClient.delete()
-            .uri { it.path("/$id").build(id) }
+            .uri { it.path("/{id}").build(id) }
             .retrieve()
     }
 }
