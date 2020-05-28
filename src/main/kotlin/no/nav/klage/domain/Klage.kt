@@ -26,7 +26,8 @@ data class Klage(
 data class Vedlegg(
     val id: Int,
     val tittel: String,
-    val gcsRef: String,
+    val ref: String,
     val klageId: Int,
+    val type: String,
     var fileContentAsBytes: ByteArray? = null
 )

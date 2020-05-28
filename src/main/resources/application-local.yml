@@ -1,0 +1,9 @@
+KAFKA_BOOTSTRAP_SERVERS: localhost:9092
+SECURITY_TOKEN_SERVICE_REST_URL: http://localhost:8088
+SERVICE_USER_USERNAME: igroup
+SERVICE_USER_PASSWORD: itest
+PDF_SERVICE_URL: http://localhost:8080/api/v1/genpdf/klage-dittnav-pdfgen/klage
+JOARK_SERVICE_URL: http://localhost:1234
+VEDLEGG_SERVICE_URL: http://localhost:7080/attachment
+STS_APIKEY: none
+JOURNALPOST_APIKEY: none
