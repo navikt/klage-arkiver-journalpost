@@ -7,7 +7,7 @@ metadata:
     team: klage
 spec:
   image: {{ image }}
-  port: 7070
+  port: 7075
   liveness:
     path: /internal/health
     initialDelay: 20
