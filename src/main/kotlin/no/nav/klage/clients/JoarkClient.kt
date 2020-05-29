@@ -49,24 +49,24 @@ class JoarkClient(private val joarkWebClient: WebClient) {
         val hovedDokument = Dokument(
             tittel = KLAGE_TITTEL,
             brevkode = BREVKODE_KLAGESKJEMA,
-            dokumentVarianter = getDokumentVariant(klage.fileContentAsBytes, "PDFA", "ARKIV")
+            dokumentVarianter = getDokumentVariant(klage.fileContentAsBytes, "PDFA")
         )
         val documents = mutableListOf(hovedDokument)
 
         klage.vedlegg.forEach {
             val doc = Dokument(
                 tittel = it.tittel,
-                dokumentVarianter = getDokumentVariant(klage.fileContentAsBytes, "todo", "?")
+                dokumentVarianter = getDokumentVariant(klage.fileContentAsBytes, it.type)
             )
             documents.add(doc)
         }
         return documents
     }
 
-    private fun getDokumentVariant(bytes: ByteArray?, fileType: String, variantformat: String): List<DokumentVariant> {
+    private fun getDokumentVariant(bytes: ByteArray?, fileType: String): List<DokumentVariant> {
         val dokumentVariant = DokumentVariant(
             filtype = fileType,
-            variantformat = variantformat,
+            variantformat = "ARKIV",
             fysiskDokument = Base64.getEncoder().encodeToString(bytes)
         )
         return listOf(dokumentVariant)
