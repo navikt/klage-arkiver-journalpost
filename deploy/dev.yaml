@@ -35,6 +35,10 @@ spec:
   secureLogs:
     enabled: true
   webproxy: true
+  accessPolicy:
+    outbound:
+      external:
+        - host: api-gw-q1.oera.no
   envFrom:
     - secret: srvklage-dittnav
     - secret: sts-apikey
