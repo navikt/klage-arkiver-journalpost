@@ -39,6 +39,16 @@ spec:
     outbound:
       external:
         - host: api-gw-q1.oera.no
+  hostAliases:
+    - ip: "10.183.160.26"
+      hostnames:
+        - "b27apvl00045.preprod.local"
+    - ip: "10.183.32.47"
+      hostnames:
+        - "b27apvl00046.preprod.local"
+    - ip: "10.183.32.48"
+      hostnames:
+        - "b27apvl00047.preprod.local"
   envFrom:
     - secret: srvklage-dittnav
     - secret: sts-apikey
