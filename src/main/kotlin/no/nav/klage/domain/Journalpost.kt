@@ -25,8 +25,9 @@ data class DokumentVariant(
 
 data class Sak(
     val sakstype: String,
-    val fagsaksystem: String,
-    val fagsakid: String
+    val fagsaksystem: String? = null,
+    val fagsakid: String? = null,
+    val arkivsaksnummer: String? = null
 )
 
 data class Bruker(
