@@ -3,10 +3,7 @@
     <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
 
     <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder>
-            <pattern>${CONSOLE_LOG_PATTERN}</pattern>
-            <charset>UTF-8</charset>
-        </encoder>
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>
     </appender>
     ​
     <logger name="no.nav.klage" level="DEBUG"/>
