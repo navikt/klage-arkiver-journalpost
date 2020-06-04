@@ -10,7 +10,8 @@
     </appender>
     ​
     <logger name="no.nav.klage" level="DEBUG"/>
-
+    <logger name="kafka" level="DEBUG" />
+    <logger name="org.apache.kafka" level="DEBUG" />
     <root level="INFO">
         <appender-ref ref="console"/>
     </root>
