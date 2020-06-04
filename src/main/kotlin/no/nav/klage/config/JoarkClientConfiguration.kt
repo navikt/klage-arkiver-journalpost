@@ -1,15 +1,13 @@
 package no.nav.klage.config
 
-import no.nav.klage.clients.StsClient
 import no.nav.klage.getLogger
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.http.HttpHeaders
 import org.springframework.web.reactive.function.client.WebClient
 
 @Configuration
-class JoarkClientConfiguration(private val stsClient: StsClient) {
+class JoarkClientConfiguration() {
 
     companion object {
         @Suppress("JAVA_CLASS_ON_COMPANION")
@@ -26,7 +24,6 @@ class JoarkClientConfiguration(private val stsClient: StsClient) {
     fun joarkWebClient(): WebClient {
         return WebClient
             .builder()
-            .defaultHeader(HttpHeaders.AUTHORIZATION, "Bearer ${stsClient.oidcToken()}")
             .defaultHeader("x-nav-apiKey", apiKey)
             .baseUrl(joarkServiceURL)
             .build()
