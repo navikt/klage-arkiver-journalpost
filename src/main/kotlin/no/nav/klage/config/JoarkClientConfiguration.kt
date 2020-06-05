@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.web.reactive.function.client.WebClient
 
 @Configuration
-class JoarkClientConfiguration() {
+class JoarkClientConfiguration(private val webClientBuilder: WebClient.Builder) {
 
     companion object {
         @Suppress("JAVA_CLASS_ON_COMPANION")
@@ -22,8 +22,7 @@ class JoarkClientConfiguration() {
 
     @Bean
     fun joarkWebClient(): WebClient {
-        return WebClient
-            .builder()
+        return webClientBuilder
             .defaultHeader("x-nav-apiKey", apiKey)
             .baseUrl(joarkServiceURL)
             .build()
