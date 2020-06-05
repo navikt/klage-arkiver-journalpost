@@ -30,7 +30,7 @@ class JoarkClient(private val joarkWebClient: WebClient, private val stsClient: 
             .bodyValue(journalpost)
             .retrieve().bodyToMono(String::class.java)
 
-        logger.debug("Mono: {}", mono.toString())
+        logger.debug("Mono result: {}", mono.block())
 
         logger.debug("Journalpost successfully created in Joark.")
     }
