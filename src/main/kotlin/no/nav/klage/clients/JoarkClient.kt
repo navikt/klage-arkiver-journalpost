@@ -2,6 +2,7 @@ package no.nav.klage.clients
 
 import no.nav.klage.domain.*
 import no.nav.klage.getLogger
+import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
@@ -9,7 +10,7 @@ import java.util.*
 
 
 @Component
-class JoarkClient(private val joarkWebClient: WebClient) {
+class JoarkClient(private val joarkWebClient: WebClient, private val stsClient: StsClient) {
 
     companion object {
         @Suppress("JAVA_CLASS_ON_COMPANION")
@@ -24,6 +25,7 @@ class JoarkClient(private val joarkWebClient: WebClient) {
         val journalpost = getJournalpost(klage)
 
         joarkWebClient.post()
+            .header(HttpHeaders.AUTHORIZATION, "Bearer ${stsClient.oidcToken()}")
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue(journalpost)
             .retrieve()
