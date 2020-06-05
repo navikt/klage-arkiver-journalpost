@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.web.reactive.function.client.WebClient
 
 @Configuration
-class AttachmentConfiguration {
+class AttachmentConfiguration(private val webClientBuilder: WebClient.Builder) {
 
     companion object {
         @Suppress("JAVA_CLASS_ON_COMPANION")
@@ -19,8 +19,7 @@ class AttachmentConfiguration {
 
     @Bean
     fun attachmentWebClient(): WebClient {
-        return WebClient
-            .builder()
+        return webClientBuilder
             .baseUrl(attachmentServiceURL)
             .build()
     }

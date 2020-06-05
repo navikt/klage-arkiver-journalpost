@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.web.reactive.function.client.WebClient
 
 @Configuration
-class PDFClientConfiguration() {
+class PDFClientConfiguration(private val webClientBuilder: WebClient.Builder) {
 
     companion object {
         @Suppress("JAVA_CLASS_ON_COMPANION")
@@ -19,8 +19,7 @@ class PDFClientConfiguration() {
 
     @Bean
     fun pdfWebClient(): WebClient {
-        return WebClient
-            .builder()
+        return webClientBuilder
             .baseUrl(pdfServiceURL)
             .build()
     }

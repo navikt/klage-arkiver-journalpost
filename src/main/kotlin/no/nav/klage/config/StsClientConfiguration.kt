@@ -9,7 +9,7 @@ import org.springframework.web.reactive.function.client.WebClient
 import java.util.*
 
 @Configuration
-class StsClientConfiguration {
+class StsClientConfiguration(private val webClientBuilder: WebClient.Builder) {
 
     companion object {
         @Suppress("JAVA_CLASS_ON_COMPANION")
@@ -30,8 +30,7 @@ class StsClientConfiguration {
 
     @Bean
     fun stsWebClient(): WebClient {
-        return WebClient
-            .builder()
+        return webClientBuilder
             .baseUrl("$stsUrl/rest/v1/sts/token")
             .defaultHeader(HttpHeaders.AUTHORIZATION, "Basic ${credentials()}")
             .defaultHeader("x-nav-apiKey", apiKey)
