@@ -29,6 +29,8 @@ class JoarkClient(private val joarkWebClient: WebClient, private val stsClient: 
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue(journalpost)
             .retrieve()
+
+        logger.debug("Journalpost successfully created in Joark.")
     }
 
     private fun getJournalpost(klage: Klage): Journalpost =
