@@ -24,11 +24,13 @@ class JoarkClient(private val joarkWebClient: WebClient, private val stsClient: 
         logger.debug("Creating journalpost.")
         val journalpost = getJournalpost(klage)
 
-        joarkWebClient.post()
+        val mono = joarkWebClient.post()
             .header(HttpHeaders.AUTHORIZATION, "Bearer ${stsClient.oidcToken()}")
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue(journalpost)
-            .retrieve()
+            .retrieve().bodyToMono(String::class.java)
+
+        logger.debug("Mono: {}", mono.toString())
 
         logger.debug("Journalpost successfully created in Joark.")
     }
