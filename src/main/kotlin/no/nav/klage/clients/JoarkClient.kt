@@ -22,17 +22,17 @@ class JoarkClient(private val joarkWebClient: WebClient, private val stsClient: 
 
     fun createJournalpost(klage: Klage) {
         logger.debug("Creating journalpost.")
-        val journalpost = getJournalpost(klage)
 
-        val mono = joarkWebClient.post()
+        val journalpost = getJournalpost(klage)
+        val journalpostResponse = joarkWebClient.post()
             .header(HttpHeaders.AUTHORIZATION, "Bearer ${stsClient.oidcToken()}")
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue(journalpost)
-            .retrieve().bodyToMono(String::class.java)
+            .retrieve()
+            .bodyToMono(JournalpostResponse::class.java)
+            .block() ?: throw RuntimeException("Journalpost could not be created for klage with id ${klage.id}.")
 
-        logger.debug("Mono result: {}", mono.block())
-
-        logger.debug("Journalpost successfully created in Joark.")
+        logger.debug("Journalpost successfully created in Joark with id {}.", journalpostResponse.journalpostId)
     }
 
     private fun getJournalpost(klage: Klage): Journalpost =
