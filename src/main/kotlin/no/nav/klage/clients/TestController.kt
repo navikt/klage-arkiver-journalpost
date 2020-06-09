@@ -18,7 +18,7 @@ class TestController(private val applicationService: ApplicationService) {
             navn = "Anka, Kalle",
             adresse = "En adresse 1",
             telefon = "12345678",
-            navenhet = "enNavenhet",
+            navenhet = "123",
             vedtaksdato = LocalDate.now(),
             navReferanse = "navRef",
             kortRedegjoerelse = "kort tekst",
@@ -26,7 +26,7 @@ class TestController(private val applicationService: ApplicationService) {
             dato = LocalDate.now(),
             oversiktVedlegg = "ingen vedlegg",
             begrunnelse = "lang begrunnelse",
-            foedselsnummer = "12345678910",
+            foedselsnummer = "10108000398",
             tema = "SYK"
         )
         applicationService.createJournalpost(klage)
