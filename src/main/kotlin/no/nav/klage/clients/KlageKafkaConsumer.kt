@@ -1,5 +1,6 @@
 package no.nav.klage.clients
 
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import no.nav.klage.domain.Klage
 import no.nav.klage.getLogger
@@ -14,16 +15,16 @@ class KlageKafkaConsumer(private val applicationService: ApplicationService) {
     companion object {
         @Suppress("JAVA_CLASS_ON_COMPANION")
         private val logger = getLogger(javaClass.enclosingClass)
-        private val mapper = jacksonObjectMapper()
+        private val mapper = jacksonObjectMapper().registerModule(JavaTimeModule())
     }
 
     @KafkaListener(topics = ["\${KAFKA_TOPIC}"])
     fun listen(klageRecord: ConsumerRecord<String, String>) {
         logger.debug("Klage received: {}", klageRecord)
-        applicationService.createJournalpost(klageRecord.value().toJson())
+        applicationService.createJournalpost(klageRecord.value().toKlage())
     }
 
-    private fun String.toJson(): Klage {
+    private fun String.toKlage(): Klage {
         return mapper.readValue(this, Klage::class.java)
     }
 }
