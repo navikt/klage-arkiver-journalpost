@@ -4,6 +4,8 @@ import java.time.LocalDate
 
 data class Klage(
     val id: Int,
+    val identifikasjonstype: String,
+    val identifikasjonsnummer: String,
     val klageInstans: Boolean,
     val trygderetten: Boolean,
     val navn: String,
@@ -13,11 +15,9 @@ data class Klage(
     val vedtaksdato: LocalDate,
     val navReferanse: String,
     val kortRedegjoerelse: String,
-    val sted: String,
     val dato: LocalDate,
     val oversiktVedlegg: String,
     val begrunnelse: String,
-    val foedselsnummer: String,
     val tema: String,
     val vedlegg: List<Vedlegg> = emptyList(),
     var fileContentAsBytes: ByteArray? = null

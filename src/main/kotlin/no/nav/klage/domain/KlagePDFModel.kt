@@ -11,7 +11,6 @@ data class KlagePDFModel(
     val begrunnelse: String,
     val navReferanse: String,
     val oversiktVedlegg: String,
-    val sted: String,
     val dato: String,
     val brukersignatur: String,
     val navsignatur: String
