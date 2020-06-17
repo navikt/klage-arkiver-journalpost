@@ -22,11 +22,11 @@ class TestController(private val applicationService: ApplicationService) {
             vedtaksdato = LocalDate.now(),
             navReferanse = "navRef",
             kortRedegjoerelse = "kort tekst",
-            sted = "Oslo",
             dato = LocalDate.now(),
             oversiktVedlegg = "ingen vedlegg",
             begrunnelse = "lang begrunnelse",
-            foedselsnummer = "10108000398",
+            identifikasjonsnummer = "10108000398",
+            identifikasjonstype = "FNR",
             tema = "SYK"
         )
         applicationService.createJournalpost(klage)

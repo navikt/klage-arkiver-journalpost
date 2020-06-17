@@ -31,7 +31,7 @@ class PDFGeneratorClient(private val pdfWebClient: WebClient) {
     }
 
     private fun Klage.toPDFModel() = KlagePDFModel(
-        foedselsnummer = foedselsnummer,
+        foedselsnummer = identifikasjonsnummer,
         navn = navn,
         adresse = adresse,
         telefonnummer = telefon,
@@ -41,7 +41,6 @@ class PDFGeneratorClient(private val pdfWebClient: WebClient) {
         begrunnelse = begrunnelse,
         navReferanse = navReferanse,
         oversiktVedlegg = oversiktVedlegg,
-        sted = sted,
         dato = dato.format(DateTimeFormatter.ISO_LOCAL_DATE),
         brukersignatur = USER_SIGNATURE,
         navsignatur = "TODO"

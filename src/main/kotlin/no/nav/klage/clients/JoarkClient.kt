@@ -39,14 +39,14 @@ class JoarkClient(private val joarkWebClient: WebClient, private val stsClient: 
         Journalpost(
             tema = klage.tema,
             avsenderMottaker = AvsenderMottaker(
-                id = klage.foedselsnummer,
-                idType = "FNR",
+                id = klage.identifikasjonsnummer,
+                idType = klage.identifikasjonstype,
                 navn = klage.navn
             ),
             tittel = KLAGE_TITTEL,
             bruker = Bruker(
-                id = klage.foedselsnummer,
-                idType = "FNR"
+                id = klage.identifikasjonsnummer,
+                idType = klage.identifikasjonstype
             ),
             dokumenter = getDokumenter(klage)
         )
