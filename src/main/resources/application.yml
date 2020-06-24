@@ -3,6 +3,15 @@ spring:
     banner-mode: OFF
   codec:
     max-in-memory-size: 2MB
+  sleuth:
+    propagation-keys:
+      - Nav-Callid
+      - Nav-Consumer-Id
+    log:
+      slf4j:
+        whitelisted-mdc-keys:
+          - Nav-Callid
+          - Nav-Consumer-Id
 
 server:
   port: 7075
@@ -25,3 +34,6 @@ management:
 
 KAFKA_GROUP_ID: klage-arkiver-journalpost
 KAFKA_TOPIC: aapen-klager-klageOpprettet
+
+navCallId: Nav-Callid
+navConsumerId: Nav-Consumer-Id
