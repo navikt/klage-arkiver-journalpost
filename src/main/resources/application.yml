@@ -37,3 +37,6 @@ KAFKA_TOPIC: aapen-klager-klageOpprettet
 
 navCallId: Nav-Callid
 navConsumerId: Nav-Consumer-Id
+
+# Set to true (if for example testing in production) to ignore/stop posting journalpost to Joark.
+DRY_RUN: false
