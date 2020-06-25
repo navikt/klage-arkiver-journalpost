@@ -2,6 +2,7 @@ package no.nav.klage.clients
 
 import no.nav.klage.domain.*
 import no.nav.klage.getLogger
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
@@ -20,19 +21,30 @@ class JoarkClient(private val joarkWebClient: WebClient, private val stsClient: 
         private const val BREVKODE_KLAGESKJEMA = "NAV 90-00.08"
     }
 
+    @Value("\${DRY_RUN}")
+    private lateinit var dryRun: String
+
     fun createJournalpost(klage: Klage) {
         logger.debug("Creating journalpost.")
 
         val journalpost = getJournalpost(klage)
-        val journalpostResponse = joarkWebClient.post()
-            .header(HttpHeaders.AUTHORIZATION, "Bearer ${stsClient.oidcToken()}")
-            .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(journalpost)
-            .retrieve()
-            .bodyToMono(JournalpostResponse::class.java)
-            .block() ?: throw RuntimeException("Journalpost could not be created for klage with id ${klage.id}.")
 
-        logger.debug("Journalpost successfully created in Joark with id {}.", journalpostResponse.journalpostId)
+        if (dryRun.toBoolean()) {
+            logger.debug("Dry run activated. Not sending journalpost to Joark.")
+            logger.debug("Journalpost: {}", journalpost)
+        }
+        else {
+            logger.debug("Posting journalpost to Joark.")
+            val journalpostResponse = joarkWebClient.post()
+                .header(HttpHeaders.AUTHORIZATION, "Bearer ${stsClient.oidcToken()}")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(journalpost)
+                .retrieve()
+                .bodyToMono(JournalpostResponse::class.java)
+                .block() ?: throw RuntimeException("Journalpost could not be created for klage with id ${klage.id}.")
+
+            logger.debug("Journalpost successfully created in Joark with id {}.", journalpostResponse.journalpostId)
+        }
     }
 
     private fun getJournalpost(klage: Klage): Journalpost =

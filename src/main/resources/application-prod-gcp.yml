@@ -4,3 +4,5 @@ SERVICE_USER_USERNAME: srvklage-dittnav
 PDF_SERVICE_URL: http://klage-dittnav-pdfgen/api/v1/genpdf/klage-dittnav-pdfgen/klage
 JOARK_SERVICE_URL: https://api-gw.oera.no/dokarkiv/rest/journalpostapi/v1/journalpost
 VEDLEGG_SERVICE_URL: http://klage-vedlegg-api/attachment
+
+DRY_RUN: true
