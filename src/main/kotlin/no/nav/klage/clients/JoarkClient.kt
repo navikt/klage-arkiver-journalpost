@@ -62,7 +62,7 @@ class JoarkClient(private val joarkWebClient: WebClient, private val stsClient: 
         klage.vedlegg.forEach {
             val doc = Dokument(
                 tittel = it.tittel,
-                dokumentVarianter = getDokumentVariant(klage.fileContentAsBytes, it.type)
+                dokumentVarianter = getDokumentVariant(klage.fileContentAsBytes, it.contentType)
             )
             documents.add(doc)
         }
