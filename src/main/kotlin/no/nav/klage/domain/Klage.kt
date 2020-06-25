@@ -28,6 +28,6 @@ data class Vedlegg(
     val tittel: String,
     val ref: String,
     val klageId: Int,
-    val type: String,
+    val contentType: String,
     var fileContentAsBytes: ByteArray? = null
 )
