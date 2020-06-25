@@ -29,5 +29,6 @@ data class Vedlegg(
     val ref: String,
     val klageId: Int,
     val contentType: String,
-    var fileContentAsBytes: ByteArray? = null
+    var fileContentAsBytes: ByteArray? = null,
+    val sizeInBytes: Int
 )
