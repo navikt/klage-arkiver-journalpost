@@ -78,7 +78,7 @@ class JoarkClient(private val joarkWebClient: WebClient, private val stsClient: 
             //Attachments will always be PDF as of now.
             val doc = Dokument(
                 tittel = it.tittel,
-                dokumentVarianter = getDokumentVariant(klage.fileContentAsBytes, "PDF")
+                dokumentVarianter = getDokumentVariant(it.fileContentAsBytes, "PDF")
             )
             documents.add(doc)
         }
