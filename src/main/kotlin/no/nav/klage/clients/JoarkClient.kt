@@ -34,6 +34,9 @@ class JoarkClient(private val joarkWebClient: WebClient, private val stsClient: 
             logger.debug("Journalpost: {}", journalpost)
         }
         else {
+            //TODO Remove debug of journalpost before we go in production?
+            logger.debug("Journalpost: {}", journalpost)
+
             logger.debug("Posting journalpost to Joark.")
             val journalpostResponse = joarkWebClient.post()
                 .header(HttpHeaders.AUTHORIZATION, "Bearer ${stsClient.oidcToken()}")
