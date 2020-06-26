@@ -75,9 +75,10 @@ class JoarkClient(private val joarkWebClient: WebClient, private val stsClient: 
         val documents = mutableListOf(hovedDokument)
 
         klage.vedlegg.forEach {
+            //Attachments will always be PDF as of now.
             val doc = Dokument(
                 tittel = it.tittel,
-                dokumentVarianter = getDokumentVariant(klage.fileContentAsBytes, it.contentType)
+                dokumentVarianter = getDokumentVariant(klage.fileContentAsBytes, "PDF")
             )
             documents.add(doc)
         }
