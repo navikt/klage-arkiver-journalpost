@@ -36,7 +36,7 @@ class PDFGeneratorClient(private val pdfWebClient: WebClient) {
         adresse = adresse,
         telefonnummer = telefon,
         navenhet = navenhet,
-        vedtaksdato = vedtaksdato.format(DateTimeFormatter.ISO_LOCAL_DATE),
+        vedtaksdato = vedtaksdato,
         kortRedegjoerelse = kortRedegjoerelse,
         begrunnelse = begrunnelse,
         navReferanse = navReferanse,

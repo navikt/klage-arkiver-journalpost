@@ -12,7 +12,7 @@ data class Klage(
     val adresse: String,
     val telefon: String,
     val navenhet: String,
-    val vedtaksdato: LocalDate,
+    val vedtaksdato: String,
     val navReferanse: String,
     val kortRedegjoerelse: String,
     val dato: LocalDate,
