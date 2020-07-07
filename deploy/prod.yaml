@@ -47,7 +47,6 @@ spec:
         - host: a01apvl00148.adeo.no
         - host: a01apvl00149.adeo.no
         - host: a01apvl00150.adeo.no
-
   envFrom:
     - secret: srvklage-dittnav
     - secret: sts-apikey
