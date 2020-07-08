@@ -1,5 +1,6 @@
 package no.nav.klage.clients
 
+import brave.Tracer
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import no.nav.klage.domain.*
@@ -13,7 +14,7 @@ import java.util.*
 
 
 @Component
-class JoarkClient(private val joarkWebClient: WebClient, private val stsClient: StsClient) {
+class JoarkClient(private val joarkWebClient: WebClient, private val stsClient: StsClient, private val tracer: Tracer) {
 
     companion object {
         @Suppress("JAVA_CLASS_ON_COMPANION")
@@ -67,6 +68,7 @@ class JoarkClient(private val joarkWebClient: WebClient, private val stsClient: 
                 id = klage.identifikasjonsnummer,
                 idType = klage.identifikasjonstype
             ),
+            eksternReferanseId = tracer.currentSpan().context().traceIdString(),
             dokumenter = getDokumenter(klage)
         )
 

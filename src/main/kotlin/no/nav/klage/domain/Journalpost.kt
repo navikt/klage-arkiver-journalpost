@@ -8,6 +8,7 @@ data class Journalpost(
     val avsenderMottaker: AvsenderMottaker,
     val bruker: Bruker,
     val sak: Sak? = null,
+    val eksternReferanseId: String,
     val dokumenter: List<Dokument> = mutableListOf()
 )
 
