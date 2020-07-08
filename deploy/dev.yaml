@@ -18,8 +18,6 @@ spec:
     path: /internal/health
     initialDelay: 20
     timeout: 1
-  ingresses:
-    - https://klage-arkiver-journalpost.dev-nav.no
   resources:
     limits:
       cpu: 2000m
