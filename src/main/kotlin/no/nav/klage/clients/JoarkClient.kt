@@ -1,5 +1,7 @@
 package no.nav.klage.clients
 
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import no.nav.klage.domain.*
 import no.nav.klage.getLogger
 import org.springframework.beans.factory.annotation.Value
@@ -29,13 +31,15 @@ class JoarkClient(private val joarkWebClient: WebClient, private val stsClient: 
 
         val journalpost = getJournalpost(klage)
 
+        val journalpostAsJson = jacksonObjectMapper().registerModule(JavaTimeModule()).writeValueAsString(journalpost)
+
         if (dryRun.toBoolean()) {
             logger.debug("Dry run activated. Not sending journalpost to Joark.")
-            logger.debug("Journalpost: {}", journalpost)
+            logger.debug("Journalpost as JSON: {}", journalpostAsJson)
         }
         else {
             //TODO Remove debug of journalpost before we go in production?
-            logger.debug("Journalpost: {}", journalpost)
+            logger.debug("Journalpost as JSON: {}", journalpostAsJson)
 
             logger.debug("Posting journalpost to Joark.")
             val journalpostResponse = joarkWebClient.post()
