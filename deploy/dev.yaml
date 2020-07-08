@@ -37,6 +37,9 @@ spec:
   webproxy: true
   accessPolicy:
     outbound:
+      rules:
+        - application: klage-dittnav-pdfgen
+        - application: klage-vedlegg-api
       external:
         - host: api-gw-q1.oera.no
         - host: b27apvl00045.preprod.local
