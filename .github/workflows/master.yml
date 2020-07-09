@@ -54,7 +54,8 @@ jobs:
         env:
           APIKEY: ${{ secrets.NAIS_DEPLOY_API_KEY }}
           CLUSTER: dev-gcp
-          RESOURCE: deploy/dev.yaml
+          RESOURCE: deploy/nais.yaml
+          VARS: deploy/dev.json
       - name: Post failures to Slack
         if: failure()
         run: |
@@ -76,7 +77,8 @@ jobs:
         env:
           APIKEY: ${{ secrets.NAIS_DEPLOY_API_KEY }}
           CLUSTER: prod-gcp
-          RESOURCE: deploy/prod.yaml
+          RESOURCE: deploy/nais.yaml
+          VARS: deploy/prod.json
       - name: Post failures to Slack
         if: failure()
         run: |

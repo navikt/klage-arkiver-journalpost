@@ -41,15 +41,13 @@ spec:
         - application: klage-dittnav-pdfgen
         - application: klage-vedlegg-api
       external:
-        - host: api-gw-q1.oera.no
-        - host: b27apvl00045.preprod.local
-        - host: b27apvl00046.preprod.local
-        - host: b27apvl00047.preprod.local
-
+      {{#each externalHost as |host|}}
+        - host: {{host}}
+      {{/each}}
   envFrom:
     - secret: srvklage-dittnav
     - secret: sts-apikey
     - secret: journalpost-apikey
   env:
     - name: SPRING_PROFILES_ACTIVE
-      value: dev-gcp
+      value: {{springProfile}}
