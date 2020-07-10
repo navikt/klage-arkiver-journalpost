@@ -41,7 +41,7 @@ spec:
         - application: klage-dittnav-pdfgen
         - application: klage-vedlegg-api
       external:
-      {{#each externalHost as |host|}}
+      {{#each externalHosts as |host|}}
         - host: {{host}}
       {{/each}}
   envFrom:

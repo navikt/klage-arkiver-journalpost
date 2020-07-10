@@ -1,0 +1,7 @@
+externalHosts:
+  - api-gw-q1.oera.no
+  - b27apvl00045.preprod.local
+  - b27apvl00046.preprod.local
+  - b27apvl00047.preprod.local
+springProfile: dev-gcp
+
