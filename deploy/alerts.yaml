@@ -9,7 +9,7 @@ metadata:
 spec:
   receivers:
     slack:
-      channel: {{slackChannel}}
+      channel: '#{{slackChannel}}'
   alerts:
     - alert: applikasjon nede
       expr: up{app="klage-arkiver-journalpost", job="kubernetes-pods"} == 0
