@@ -43,9 +43,6 @@ class ApplicationService(
         }
 
         //Record metrics
-        klageMetrics.incrementKlager()
-        if (klage.vedlegg.isNotEmpty()) {
-            klageMetrics.incrementVedlegg(klage.vedlegg.size)
-        }
+        klageMetrics.incrementKlagerArkivert()
     }
 }

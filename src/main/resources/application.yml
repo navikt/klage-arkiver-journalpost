@@ -31,6 +31,8 @@ management:
     export:
       prometheus:
         enabled: true
+    tags:
+      application: ${spring.application.name}
 
 KAFKA_GROUP_ID: klage-arkiver-journalpost
 KAFKA_TOPIC: aapen-klager-klageOpprettet
