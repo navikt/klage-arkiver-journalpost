@@ -30,7 +30,7 @@ class PDFGeneratorClient(private val pdfWebClient: WebClient) {
     }
 
     private fun Klage.toPDFModel() = KlagePDFModel(
-        foedselsnummer = identifikasjonsnummer,
+        foedselsnummer = StringBuilder(identifikasjonsnummer).insert(6, " ").toString(),
         fornavn = fornavn,
         mellomnavn = mellomnavn,
         etternavn = etternavn,
