@@ -2,6 +2,7 @@ package no.nav.klage.clients
 
 import no.nav.klage.domain.Klage
 import no.nav.klage.domain.KlagePDFModel
+import no.nav.klage.domain.Vedlegg
 import no.nav.klage.getLogger
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
@@ -16,8 +17,6 @@ class PDFGeneratorClient(private val pdfWebClient: WebClient) {
     companion object {
         @Suppress("JAVA_CLASS_ON_COMPANION")
         private val logger = getLogger(javaClass.enclosingClass)
-
-        private const val USER_SIGNATURE = "Sendt inn digitalt via nav.no"
     }
 
     fun getFilledOutPDF(klage: Klage): ByteArray {
@@ -32,18 +31,26 @@ class PDFGeneratorClient(private val pdfWebClient: WebClient) {
 
     private fun Klage.toPDFModel() = KlagePDFModel(
         foedselsnummer = identifikasjonsnummer,
-        navn = navn,
+        fornavn = fornavn,
+        mellomnavn = mellomnavn,
+        etternavn = etternavn,
         adresse = adresse,
         telefonnummer = telefon,
-        navenhet = navenhet,
+        navEnhet = navenhet,
         vedtaksdato = vedtaksdato,
-        kortRedegjoerelse = kortRedegjoerelse,
         begrunnelse = begrunnelse,
         navReferanse = navReferanse,
-        oversiktVedlegg = oversiktVedlegg,
-        dato = dato.format(DateTimeFormatter.ISO_LOCAL_DATE),
-        brukersignatur = USER_SIGNATURE,
-        navsignatur = "TODO"
+        oversiktVedlegg = getOversiktVedlegg(vedlegg),
+        dato = dato.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")),
+        ytelse = ytelse
     )
+
+    private fun getOversiktVedlegg(vedlegg: List<Vedlegg>): String {
+        return if (vedlegg.isEmpty()) {
+            "Ingen vedlegg."
+        } else {
+            vedlegg.joinToString { it.tittel }
+        }
+    }
 }
 

@@ -61,7 +61,7 @@ class JoarkClient(private val joarkWebClient: WebClient, private val stsClient: 
             avsenderMottaker = AvsenderMottaker(
                 id = klage.identifikasjonsnummer,
                 idType = klage.identifikasjonstype,
-                navn = klage.navn
+                navn = "${klage.fornavn} ${klage.mellomnavn} ${klage.etternavn}"
             ),
             tittel = KLAGE_TITTEL,
             bruker = Bruker(
