@@ -39,7 +39,7 @@ class PDFGeneratorClient(private val pdfWebClient: WebClient) {
         navEnhet = navenhet,
         vedtaksdato = vedtaksdato,
         begrunnelse = begrunnelse,
-        navReferanse = navReferanse,
+        navReferanse = navReferanse ?: "Ikke angitt",
         oversiktVedlegg = getOversiktVedlegg(vedlegg),
         dato = dato.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")),
         ytelse = ytelse

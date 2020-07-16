@@ -32,16 +32,11 @@ class JoarkClient(private val joarkWebClient: WebClient, private val stsClient: 
 
         val journalpost = getJournalpost(klage)
 
-        val journalpostAsJson = jacksonObjectMapper().registerModule(JavaTimeModule()).writeValueAsString(journalpost)
-
         if (dryRun.toBoolean()) {
             logger.debug("Dry run activated. Not sending journalpost to Joark.")
-            logger.debug("Journalpost as JSON: {}", journalpostAsJson)
+            logger.debug("Journalpost as JSON: {}", jacksonObjectMapper().registerModule(JavaTimeModule()).writeValueAsString(journalpost))
         }
         else {
-            //TODO Remove debug of journalpost before we go in production?
-            logger.debug("Journalpost as JSON: {}", journalpostAsJson)
-
             logger.debug("Posting journalpost to Joark.")
             val journalpostResponse = joarkWebClient.post()
                 .header(HttpHeaders.AUTHORIZATION, "Bearer ${stsClient.oidcToken()}")
@@ -63,6 +58,7 @@ class JoarkClient(private val joarkWebClient: WebClient, private val stsClient: 
                 idType = klage.identifikasjonstype,
                 navn = "${klage.fornavn} ${klage.mellomnavn} ${klage.etternavn}"
             ),
+            sak = getSak(klage),
             tittel = KLAGE_TITTEL,
             bruker = Bruker(
                 id = klage.identifikasjonsnummer,
@@ -71,6 +67,13 @@ class JoarkClient(private val joarkWebClient: WebClient, private val stsClient: 
             eksternReferanseId = tracer.currentSpan().context().traceIdString(),
             dokumenter = getDokumenter(klage)
         )
+
+    private fun getSak(klage: Klage): Sak? =
+        if (klage.tema == "FOR") {
+            Sak(sakstype = "ARKIVSAK", arkivsaksystem = "GSAK", arkivsaksnummer = klage.navReferanse)
+        } else {
+            null
+        }
 
     private fun getDokumenter(klage: Klage): List<Dokument> {
         val hovedDokument = Dokument(

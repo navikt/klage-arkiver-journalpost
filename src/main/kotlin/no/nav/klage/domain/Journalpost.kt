@@ -28,6 +28,7 @@ data class Sak(
     val sakstype: String,
     val fagsaksystem: String? = null,
     val fagsakid: String? = null,
+    val arkivsaksystem: String? = null,
     val arkivsaksnummer: String? = null
 )
 
