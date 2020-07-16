@@ -15,7 +15,7 @@ data class Klage(
     val telefon: String,
     val navenhet: String,
     val vedtaksdato: String,
-    val navReferanse: String,
+    val navReferanse: String?,
     val dato: LocalDate,
     val begrunnelse: String,
     val tema: String,
