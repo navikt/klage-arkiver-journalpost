@@ -1,10 +1,10 @@
 package no.nav.klage.clients
 
 import brave.Tracer
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import no.nav.klage.domain.*
 import no.nav.klage.getLogger
+import no.nav.klage.getSecureLogger
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
@@ -19,6 +19,7 @@ class JoarkClient(private val joarkWebClient: WebClient, private val stsClient: 
     companion object {
         @Suppress("JAVA_CLASS_ON_COMPANION")
         private val logger = getLogger(javaClass.enclosingClass)
+        private val secureLogger = getSecureLogger()
 
         private const val KLAGE_TITTEL = "Klage/Anke"
         private const val BREVKODE_KLAGESKJEMA = "NAV 90-00.08"
@@ -32,9 +33,11 @@ class JoarkClient(private val joarkWebClient: WebClient, private val stsClient: 
 
         val journalpost = getJournalpost(klage)
 
+        val journalpostAsJSONForLogging = getJournalpostAsJSONForLogging(journalpost)
+        secureLogger.debug("Journalpost as JSON (what we post to dokarkiv/Joark): {}", journalpostAsJSONForLogging)
+
         if (dryRun.toBoolean()) {
             logger.debug("Dry run activated. Not sending journalpost to Joark.")
-            logger.debug("Journalpost as JSON: {}", jacksonObjectMapper().registerModule(JavaTimeModule()).writeValueAsString(journalpost))
         }
         else {
             logger.debug("Posting journalpost to Joark.")
@@ -101,5 +104,15 @@ class JoarkClient(private val joarkWebClient: WebClient, private val stsClient: 
             fysiskDokument = Base64.getEncoder().encodeToString(bytes)
         )
         return listOf(dokumentVariant)
+    }
+
+    private fun getJournalpostAsJSONForLogging(journalpost: Journalpost): String {
+        val dokumenterWithoutFileData = journalpost.dokumenter.map { dokument ->
+            dokument.copy(dokumentVarianter = dokument.dokumentVarianter.map { variant ->
+                variant.copy(fysiskDokument = "base64 data removed for logging purposes")
+            })
+        }
+        val journalpostCopyWithoutFileData = journalpost.copy(dokumenter = dokumenterWithoutFileData)
+        return jacksonObjectMapper().writeValueAsString(journalpostCopyWithoutFileData)
     }
 }

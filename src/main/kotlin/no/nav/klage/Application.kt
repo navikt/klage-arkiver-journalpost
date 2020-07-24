@@ -8,7 +8,7 @@ import javax.annotation.PostConstruct
 
 @SpringBootApplication
 @EnableKafka
-class KlageArkiverJournalpostApplication {
+class Application {
 
     companion object {
         @Suppress("JAVA_CLASS_ON_COMPANION")
@@ -31,5 +31,5 @@ class KlageArkiverJournalpostApplication {
 
 
 fun main() {
-    runApplication<KlageArkiverJournalpostApplication>()
+    runApplication<Application>()
 }
