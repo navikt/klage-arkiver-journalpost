@@ -40,5 +40,10 @@ KAFKA_TOPIC: aapen-klager-klageOpprettet
 navCallId: Nav-Callid
 navConsumerId: Nav-Consumer-Id
 
+PDF_SERVICE_URL: http://klage-dittnav-pdfgen/api/v1/genpdf/klage-dittnav-pdfgen/klage
+SERVICE_USER_USERNAME: srvklage-dittnav
+VEDLEGG_SERVICE_URL: http://klage-vedlegg-api/attachment
+KLAGE-DITTNAV-API_SERVICE_URL: http://klage-dittnav-api
+
 # Set to true (if for example testing in production) to ignore/stop posting journalpost to Joark.
 DRY_RUN: false

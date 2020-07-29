@@ -40,6 +40,7 @@ spec:
       rules:
         - application: klage-dittnav-pdfgen
         - application: klage-vedlegg-api
+        - application: klage-dittnav-api
       external:
       {{#each externalHosts as |host|}}
         - host: {{host}}

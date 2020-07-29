@@ -2,6 +2,7 @@ package no.nav.klage.service
 
 import no.nav.klage.clients.AttachmentClient
 import no.nav.klage.clients.JoarkClient
+import no.nav.klage.clients.KlageDittnavAPIClient
 import no.nav.klage.clients.PDFGeneratorClient
 import no.nav.klage.common.KlageMetrics
 import no.nav.klage.domain.Klage
@@ -13,6 +14,7 @@ class ApplicationService(
     private val pdfGenerator: PDFGeneratorClient,
     private val attachmentClient: AttachmentClient,
     private val joarkClient: JoarkClient,
+    private val klageDittnavAPIClient: KlageDittnavAPIClient,
     private val klageMetrics: KlageMetrics
 ) {
 
@@ -31,7 +33,9 @@ class ApplicationService(
         }
 
         //Create journalpost and archive it
-        joarkClient.createJournalpost(klage)
+        val journalpostId = joarkClient.createJournalpost(klage)
+
+        klageDittnavAPIClient.setJournalpostIdToKlage(klage.id, journalpostId)
 
         //Remove all attachments from the temporary storage
         klage.vedlegg.forEach {
