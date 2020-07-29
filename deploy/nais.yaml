@@ -7,6 +7,9 @@ metadata:
     team: klage
 spec:
   image: {{ image }}
+  azure:
+    application:
+      enabled: true
   port: 7075
   liveness:
     path: /internal/health
