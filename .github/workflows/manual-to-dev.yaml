@@ -43,11 +43,9 @@ jobs:
           MESSAGE: "Bygg feilet"
           CHANNEL: "#klage-notifications"
           WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
-
-
   deploytodev:
     name: Deploy to dev
-
+    needs: build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
