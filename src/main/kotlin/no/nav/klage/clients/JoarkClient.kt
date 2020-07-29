@@ -28,7 +28,7 @@ class JoarkClient(private val joarkWebClient: WebClient, private val stsClient: 
     @Value("\${DRY_RUN}")
     private lateinit var dryRun: String
 
-    fun createJournalpost(klage: Klage) {
+    fun createJournalpost(klage: Klage): String {
         logger.debug("Creating journalpost.")
 
         val journalpost = getJournalpost(klage)
@@ -36,8 +36,9 @@ class JoarkClient(private val joarkWebClient: WebClient, private val stsClient: 
         val journalpostAsJSONForLogging = getJournalpostAsJSONForLogging(journalpost)
         secureLogger.debug("Journalpost as JSON (what we post to dokarkiv/Joark): {}", journalpostAsJSONForLogging)
 
-        if (dryRun.toBoolean()) {
+        return if (dryRun.toBoolean()) {
             logger.debug("Dry run activated. Not sending journalpost to Joark.")
+            "dryRun, no journalpostId"
         }
         else {
             logger.debug("Posting journalpost to Joark.")
@@ -50,6 +51,7 @@ class JoarkClient(private val joarkWebClient: WebClient, private val stsClient: 
                 .block() ?: throw RuntimeException("Journalpost could not be created for klage with id ${klage.id}.")
 
             logger.debug("Journalpost successfully created in Joark with id {}.", journalpostResponse.journalpostId)
+            journalpostResponse.journalpostId
         }
     }
 
