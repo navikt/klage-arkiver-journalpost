@@ -21,6 +21,7 @@ class JoarkClient(private val joarkWebClient: WebClient, private val stsClient: 
         private val logger = getLogger(javaClass.enclosingClass)
         private val secureLogger = getSecureLogger()
 
+        private const val KLAGE_ID_KEY = "klage_id"
         private const val KLAGE_TITTEL = "Klage/Anke"
         private const val BREVKODE_KLAGESKJEMA = "NAV 90-00.08"
     }
@@ -70,7 +71,8 @@ class JoarkClient(private val joarkWebClient: WebClient, private val stsClient: 
                 idType = klage.identifikasjonstype
             ),
             eksternReferanseId = tracer.currentSpan().context().traceIdString(),
-            dokumenter = getDokumenter(klage)
+            dokumenter = getDokumenter(klage),
+            tilleggsopplysninger = listOf(Tilleggsopplysning(nokkel = KLAGE_ID_KEY, verdi = klage.id.toString()))
         )
 
     private fun getSak(klage: Klage): Sak? =
