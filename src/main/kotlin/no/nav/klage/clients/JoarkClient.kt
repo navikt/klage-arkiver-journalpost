@@ -76,7 +76,7 @@ class JoarkClient(private val joarkWebClient: WebClient, private val stsClient: 
         )
 
     private fun getSak(klage: Klage): Sak? =
-        if (klage.tema == "FOR" && klage.navReferanse != null && klage.navReferanse.isNotEmpty()) {
+        if (klage.tema == "FOR" && !klage.navReferanse.isNullOrBlank()) {
             Sak(sakstype = "ARKIVSAK", arkivsaksystem = "GSAK", arkivsaksnummer = klage.navReferanse)
         } else {
             null
