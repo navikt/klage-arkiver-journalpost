@@ -2,7 +2,7 @@ spring:
   main:
     banner-mode: OFF
   codec:
-    max-in-memory-size: 2MB
+    max-in-memory-size: 10MB
   sleuth:
     propagation-keys:
       - Nav-Callid
