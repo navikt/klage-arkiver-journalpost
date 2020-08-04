@@ -45,3 +45,7 @@ data class AvsenderMottaker(
     val idType: String,
     val navn: String
 )
+
+data class KlageApiJournalpost (
+        val id: String
+)

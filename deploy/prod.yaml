@@ -6,6 +6,7 @@ externalHosts:
   - a01apvl00148.adeo.no
   - a01apvl00149.adeo.no
   - a01apvl00150.adeo.no
+  - login.microsoftonline.com
 springProfile: prod-gcp
 
 

@@ -7,20 +7,20 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.web.reactive.function.client.WebClient
 
 @Configuration
-class KlageDittnavAPIClientConfiguration(private val webClientBuilder: WebClient.Builder) {
+class OidcDiscoveryClientConfiguration(private val webClientBuilder: WebClient.Builder) {
 
     companion object {
         @Suppress("JAVA_CLASS_ON_COMPANION")
         private val logger = getLogger(javaClass.enclosingClass)
     }
 
-    @Value("\${KLAGE-DITTNAV-API_SERVICE_URL}")
-    private lateinit var klageDittnavAPIServiceURL: String
+    @Value("\${AZURE_APP_WELL_KNOWN_URL}")
+    private lateinit var discoveryUrl: String
 
     @Bean
-    fun klageDittnavAPIWebClient(): WebClient {
+    fun oidcDiscoveryWebClient(): WebClient {
         return webClientBuilder
-            .baseUrl(klageDittnavAPIServiceURL + "/klager/")
-            .build()
+                .baseUrl(discoveryUrl)
+                .build()
     }
 }
