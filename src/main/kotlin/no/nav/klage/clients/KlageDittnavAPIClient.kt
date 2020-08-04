@@ -18,10 +18,13 @@ class KlageDittnavAPIClient(
     }
 
     fun setJournalpostIdToKlage(klageId: Int, journalpostId: String) {
-        logger.debug("Registering journalpostid in klage-dittnav-api. KlageId: {}, journalpostId: {}", klageId, journalpostId)
+        logger.debug("Registering journalpost ID in klage-dittnav-api. KlageId: {}, journalpostId: {}", klageId, journalpostId)
         klageDittnavAPIWebClient.post()
                 .uri("$klageId/journalpostid")
                 .header(HttpHeaders.AUTHORIZATION, "Bearer ${azureADClient.oidcToken()}")
                 .bodyValue(KlageApiJournalpost(journalpostId))
+                .retrieve()
+                .toBodilessEntity()
+                .block() ?: throw RuntimeException("Unable to register journalpost ID in klage-dittnav-api.")
     }
 }
