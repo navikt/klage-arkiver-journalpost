@@ -1,5 +1,5 @@
 KAFKA_BOOTSTRAP_SERVERS: a01apvl00145.adeo.no:8443,a01apvl00146.adeo.no:8443,a01apvl00147.adeo.no:8443,a01apvl00148.adeo.no:8443,a01apvl00149.adeo.no:8443,a01apvl00150.adeo.no:8443
 SECURITY_TOKEN_SERVICE_REST_URL: https://api-gw.oera.no/security-token-service
 JOARK_SERVICE_URL: https://api-gw.oera.no/dokarkiv/rest/journalpostapi/v1/journalpost
-KLAGE_DITTNAV_API_CLIENT_ID: none
+KLAGE_DITTNAV_API_CLIENT_ID: c83f5123-aed5-4278-b94c-fac251a36de6
 DRY_RUN: true
