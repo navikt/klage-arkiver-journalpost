@@ -1,6 +1,5 @@
 package no.nav.klage.config
 
-import no.nav.klage.clients.OidcDiscoveryClient
 import no.nav.klage.getLogger
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -8,8 +7,7 @@ import org.springframework.web.reactive.function.client.WebClient
 
 @Configuration
 class AzureADClientConfiguration(
-        private val webClientBuilder: WebClient.Builder,
-        private val oidcDiscoveryClient: OidcDiscoveryClient
+        private val webClientBuilder: WebClient.Builder
 ) {
 
     companion object {
@@ -20,7 +18,6 @@ class AzureADClientConfiguration(
     @Bean
     fun azureADWebClient(): WebClient {
         return webClientBuilder
-                .baseUrl(oidcDiscoveryClient.oidcDiscovery().token_endpoint)
                 .build()
     }
 }
