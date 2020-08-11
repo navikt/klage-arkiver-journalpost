@@ -20,7 +20,6 @@ class AzureADClientConfiguration(
     @Bean
     fun azureADWebClient(): WebClient {
         return webClientBuilder
-                .baseUrl(oidcDiscoveryClient.oidcDiscovery().token_endpoint)
                 .build()
     }
 }
