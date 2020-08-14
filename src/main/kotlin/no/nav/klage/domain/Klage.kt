@@ -18,6 +18,7 @@ data class Klage(
         val dato: LocalDate,
         val begrunnelse: String,
         val tema: String,
+        val ytelse: String,
         val vedlegg: List<Vedlegg> = emptyList(),
         var fileContentAsBytes: ByteArray? = null
 )
