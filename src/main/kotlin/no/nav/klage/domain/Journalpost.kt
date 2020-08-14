@@ -3,6 +3,7 @@ package no.nav.klage.domain
 data class Journalpost(
     val journalposttype: String = "INNGAAENDE",
     val tema: String,
+    val behandlingstema: String,
     val kanal: String = "NAV_NO",
     val tittel: String,
     val avsenderMottaker: AvsenderMottaker,

@@ -24,6 +24,7 @@ class JoarkClient(private val joarkWebClient: WebClient, private val stsClient: 
         private const val KLAGE_ID_KEY = "klage_id"
         private const val KLAGE_TITTEL = "Klage/Anke"
         private const val BREVKODE_KLAGESKJEMA = "NAV 90-00.08"
+        private const val BEHANDLINGSTEMA_KLAGE_UNDERINSTANS = "ab0019"
     }
 
     @Value("\${DRY_RUN}")
@@ -59,6 +60,7 @@ class JoarkClient(private val joarkWebClient: WebClient, private val stsClient: 
     private fun getJournalpost(klage: Klage): Journalpost =
         Journalpost(
             tema = klage.tema,
+            behandlingstema = BEHANDLINGSTEMA_KLAGE_UNDERINSTANS,
             avsenderMottaker = AvsenderMottaker(
                 id = klage.identifikasjonsnummer,
                 idType = klage.identifikasjonstype,
