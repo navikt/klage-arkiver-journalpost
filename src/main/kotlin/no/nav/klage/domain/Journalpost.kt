@@ -47,6 +47,6 @@ data class AvsenderMottaker(
     val navn: String
 )
 
-data class KlageApiJournalpost (
-        val id: String
+data class KlageApiJournalpost(
+    val id: String
 )

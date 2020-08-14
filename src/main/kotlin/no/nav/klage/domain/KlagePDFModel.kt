@@ -7,10 +7,9 @@ data class KlagePDFModel(
     val etternavn: String,
     val adresse: String,
     val telefonnummer: String,
-    val navEnhet: String,
-    val vedtaksdato: String,
+    val vedtak: String,
     val begrunnelse: String,
-    val navReferanse: String,
+    val saksnummer: String,
     val oversiktVedlegg: String,
     val dato: String,
     val ytelse: String
