@@ -17,8 +17,7 @@ import java.util.*
 class JoarkClient(
     private val joarkWebClient: WebClient,
     private val stsClient: StsClient,
-    private val tracer: Tracer,
-    private val fileClient: FileClient
+    private val tracer: Tracer
 ) {
 
     companion object {
@@ -58,8 +57,6 @@ class JoarkClient(
                 .block() ?: throw RuntimeException("Journalpost could not be created for klage with id ${klage.id}.")
 
             logger.debug("Journalpost successfully created in Joark with id {}.", journalpostResponse.journalpostId)
-
-            klage.fileContentAsBytes?.let { fileClient.saveKlage(journalpostResponse.journalpostId, it) }
 
             journalpostResponse.journalpostId
         }

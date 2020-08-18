@@ -37,6 +37,9 @@ class ApplicationService(
 
         klageDittnavAPIClient.setJournalpostIdToKlage(klage.id, journalpostId)
 
+        //Save klage in storage
+        klage.fileContentAsBytes?.let { fileClient.saveKlage(journalpostId, it) }
+
         //Remove all attachments from the temporary storage
         klage.vedlegg.forEach {
             try {
