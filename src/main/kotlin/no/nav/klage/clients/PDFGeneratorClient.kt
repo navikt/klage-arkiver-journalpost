@@ -1,5 +1,6 @@
 package no.nav.klage.clients
 
+import io.github.resilience4j.kotlin.retry.executeFunction
 import io.github.resilience4j.retry.Retry
 import no.nav.klage.domain.Klage
 import no.nav.klage.domain.KlagePDFModel
@@ -25,8 +26,7 @@ class PDFGeneratorClient(
 
     fun getFilledOutPDF(klage: Klage): ByteArray {
         logger.debug("Creating PDF from klage.")
-        retryPdf.run {
-            return pdfWebClient.post()
+        return retryPdf.executeFunction { pdfWebClient.post()
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(klage.toPDFModel())
                 .retrieve()
