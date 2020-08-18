@@ -4,7 +4,7 @@ SERVICE_USER_USERNAME: igroup
 SERVICE_USER_PASSWORD: itest
 PDF_SERVICE_URL: http://localhost:8080/api/v1/genpdf/klage-dittnav-pdfgen/klage
 JOARK_SERVICE_URL: http://localhost:1234
-VEDLEGG_SERVICE_URL: http://localhost:7080/attachment
+FILE_SERVICE_URL: http://localhost:7080/attachment
 KLAGE-DITTNAV-API_SERVICE_URL: http://localhost:7070
 STS_APIKEY: none
 JOURNALPOST_APIKEY: none
