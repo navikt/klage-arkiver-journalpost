@@ -46,7 +46,7 @@ class FileClient(private val fileWebClient: WebClient) {
         logger.debug("Uploading klage to storage, with journalpost id {} ", journalpostId)
 
         val bodyBuilder = MultipartBodyBuilder()
-        bodyBuilder.part("file", bytes)
+        bodyBuilder.part("file", bytes).filename(journalpostId)
         val uploadSuccessful = fileWebClient
             .post()
             .uri("/klage/$journalpostId")
