@@ -14,7 +14,7 @@ class AttachmentConfiguration(private val webClientBuilder: WebClient.Builder) {
         private val logger = getLogger(javaClass.enclosingClass)
     }
 
-    @Value("\${VEDLEGG_SERVICE_URL}")
+    @Value("\${FILE_SERVICE_URL}")
     private lateinit var attachmentServiceURL: String
 
     @Bean

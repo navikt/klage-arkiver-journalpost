@@ -42,7 +42,7 @@ spec:
     outbound:
       rules:
         - application: klage-dittnav-pdfgen
-        - application: klage-vedlegg-api
+        - application: klage-file-api
         - application: klage-dittnav-api
       external:
       {{#each externalHosts as |host|}}
