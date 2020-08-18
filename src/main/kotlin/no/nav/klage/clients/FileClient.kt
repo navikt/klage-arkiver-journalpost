@@ -47,18 +47,20 @@ class FileClient(private val fileWebClient: WebClient) {
 
         val bodyBuilder = MultipartBodyBuilder()
         bodyBuilder.part("file", bytes).filename(journalpostId)
-        val uploadSuccessful = fileWebClient
+        val klageCreatedResponse = fileWebClient
             .post()
             .uri("/klage/$journalpostId")
             .body(BodyInserters.fromMultipartData(bodyBuilder.build()))
             .retrieve()
-            .bodyToMono<Boolean>()
+            .bodyToMono<KlageCreatedResponse>()
             .block()
 
-        if (uploadSuccessful == true) {
+        if (klageCreatedResponse.created) {
             logger.debug("Klage was successfully uploaded in file store.")
         } else {
             logger.warn("Could not successfully upload klage to file store.")
         }
     }
 }
+
+data class KlageCreatedResponse(val created: Boolean)
