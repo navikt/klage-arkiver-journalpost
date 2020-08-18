@@ -26,8 +26,17 @@ class AttachmentClient(private val attachmentWebClient: WebClient) {
     fun deleteAttachment(id: String) {
         logger.debug("Deleting attachment with id {}", id)
 
-        attachmentWebClient.delete()
-            .uri { it.path("/{id}").build(id) }
-            .retrieve()
+        val deletedInGCS = attachmentWebClient
+                .delete()
+                .uri("/$id")
+                .retrieve()
+                .bodyToMono<Boolean>()
+                .block()
+
+        if (deletedInGCS == true) {
+            logger.debug("Attachment successfully deleted in file store.")
+        } else {
+            logger.warn("Could not successfully delete attachment in file store.")
+        }
     }
 }
