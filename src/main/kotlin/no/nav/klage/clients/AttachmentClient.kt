@@ -35,6 +35,8 @@ class AttachmentClient(private val attachmentWebClient: WebClient) {
 
         if (deletedInGCS == true) {
             logger.debug("Attachment successfully deleted in file store.")
+        } else {
+            logger.debug("Could not successfully delete attachment in file store.")
         }
     }
 }
