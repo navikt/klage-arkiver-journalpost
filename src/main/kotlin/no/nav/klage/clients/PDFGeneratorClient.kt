@@ -1,5 +1,6 @@
 package no.nav.klage.clients
 
+import io.github.resilience4j.retry.Retry
 import no.nav.klage.domain.Klage
 import no.nav.klage.domain.KlagePDFModel
 import no.nav.klage.domain.Vedlegg
@@ -12,7 +13,10 @@ import java.time.format.DateTimeFormatter
 
 
 @Component
-class PDFGeneratorClient(private val pdfWebClient: WebClient) {
+class PDFGeneratorClient(
+    private val pdfWebClient: WebClient,
+    private val retryPdf: Retry
+) {
 
     companion object {
         @Suppress("JAVA_CLASS_ON_COMPANION")
@@ -21,12 +25,14 @@ class PDFGeneratorClient(private val pdfWebClient: WebClient) {
 
     fun getFilledOutPDF(klage: Klage): ByteArray {
         logger.debug("Creating PDF from klage.")
-        return pdfWebClient.post()
-            .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(klage.toPDFModel())
-            .retrieve()
-            .bodyToMono<ByteArray>()
-            .block() ?: throw RuntimeException("PDF could not be generated")
+        retryPdf.run {
+            return pdfWebClient.post()
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(klage.toPDFModel())
+                .retrieve()
+                .bodyToMono<ByteArray>()
+                .block() ?: throw RuntimeException("PDF could not be generated")
+        }
     }
 
     private fun Klage.toPDFModel() = KlagePDFModel(
