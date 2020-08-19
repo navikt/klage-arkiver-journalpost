@@ -12,8 +12,8 @@ class RetryConfiguration {
 
     private val retryConfig: RetryConfig = RetryConfig
         .custom<RetryConfig>()
-        .maxAttempts(2)
-        .waitDuration(Duration.ofSeconds(1))
+        .maxAttempts(5)
+        .waitDuration(Duration.ofSeconds(3))
         .retryExceptions(RuntimeException::class.java)
         .build()
 
