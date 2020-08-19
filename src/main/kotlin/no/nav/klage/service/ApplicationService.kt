@@ -1,6 +1,6 @@
 package no.nav.klage.service
 
-import no.nav.klage.clients.AttachmentClient
+import no.nav.klage.clients.FileClient
 import no.nav.klage.clients.JoarkClient
 import no.nav.klage.clients.KlageDittnavAPIClient
 import no.nav.klage.clients.PDFGeneratorClient
@@ -11,11 +11,11 @@ import org.springframework.stereotype.Service
 
 @Service
 class ApplicationService(
-    private val pdfGenerator: PDFGeneratorClient,
-    private val attachmentClient: AttachmentClient,
-    private val joarkClient: JoarkClient,
-    private val klageDittnavAPIClient: KlageDittnavAPIClient,
-    private val klageMetrics: KlageMetrics
+        private val pdfGenerator: PDFGeneratorClient,
+        private val fileClient: FileClient,
+        private val joarkClient: JoarkClient,
+        private val klageDittnavAPIClient: KlageDittnavAPIClient,
+        private val klageMetrics: KlageMetrics
 ) {
 
     companion object {
@@ -29,7 +29,7 @@ class ApplicationService(
 
         //Download attachments from temporary storage
         klage.vedlegg.forEach {
-            it.fileContentAsBytes = attachmentClient.getAttachment(it.ref)
+            it.fileContentAsBytes = fileClient.getAttachment(it.ref)
         }
 
         //Create journalpost and archive it
@@ -37,10 +37,13 @@ class ApplicationService(
 
         klageDittnavAPIClient.setJournalpostIdToKlage(klage.id, journalpostId)
 
+        //Save klage in storage
+        klage.fileContentAsBytes?.let { fileClient.saveKlage(journalpostId, it) }
+
         //Remove all attachments from the temporary storage
         klage.vedlegg.forEach {
             try {
-                attachmentClient.deleteAttachment(it.ref)
+                fileClient.deleteAttachment(it.ref)
             } catch (e: Exception) {
                 logger.error("Could not delete attachment with id ${it.ref}", e)
             }

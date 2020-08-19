@@ -14,7 +14,11 @@ import java.util.*
 
 
 @Component
-class JoarkClient(private val joarkWebClient: WebClient, private val stsClient: StsClient, private val tracer: Tracer) {
+class JoarkClient(
+    private val joarkWebClient: WebClient,
+    private val stsClient: StsClient,
+    private val tracer: Tracer
+) {
 
     companion object {
         @Suppress("JAVA_CLASS_ON_COMPANION")
@@ -53,6 +57,7 @@ class JoarkClient(private val joarkWebClient: WebClient, private val stsClient: 
                 .block() ?: throw RuntimeException("Journalpost could not be created for klage with id ${klage.id}.")
 
             logger.debug("Journalpost successfully created in Joark with id {}.", journalpostResponse.journalpostId)
+
             journalpostResponse.journalpostId
         }
     }
