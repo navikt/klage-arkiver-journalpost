@@ -50,7 +50,7 @@ class KlageKafkaConsumer(
         secureLogger.debug("Received klage has id: {} and fnr: {}", this.id, this.identifikasjonsnummer)
     }
 
-    private fun rootCause(t: Throwable): Throwable = if (t.cause != null) t.cause!! else t
+    private fun rootCause(t: Throwable): Throwable = if (t.cause != null) rootCause(t.cause!!) else t
 
     private fun causeClass(t: Throwable) = t.stackTrace[0].className
 }
