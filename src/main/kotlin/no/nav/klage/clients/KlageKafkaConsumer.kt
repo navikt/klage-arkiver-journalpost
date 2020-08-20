@@ -36,7 +36,7 @@ class KlageKafkaConsumer(
             klage.logIt()
             applicationService.createJournalpost(klage)
         }.onFailure {
-            slackClient.postMessage("Nylig mottatt klage feilet! (${it.message})", Severity.ERROR)
+            slackClient.postMessage("Nylig mottatt klage feilet! (${causeClass(rootCause(it))})", Severity.ERROR)
             secureLogger.error("Failed to process klage", it)
         }
     }
@@ -50,4 +50,7 @@ class KlageKafkaConsumer(
         secureLogger.debug("Received klage has id: {} and fnr: {}", this.id, this.identifikasjonsnummer)
     }
 
+    private fun rootCause(t: Throwable): Throwable = if (t.cause != null) t.cause!! else t
+
+    private fun causeClass(t: Throwable) = t.stackTrace[0].className
 }
