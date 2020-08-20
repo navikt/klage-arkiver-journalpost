@@ -1,6 +1,6 @@
 package no.nav.klage.config
 
-import no.nav.klage.clients.SlackClient
+import no.nav.slackposter.SlackClient
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -17,5 +17,5 @@ class SlackConfiguration {
     lateinit var cluster: String
 
     @Bean
-    fun slackClient(): SlackClient = SlackClient(url, channelId, cluster)
+    fun slackClient(): SlackClient = SlackClient(url, channelId, "klage-arkiver-journalpost", cluster)
 }

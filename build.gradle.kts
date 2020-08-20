@@ -4,9 +4,19 @@ val logstashVersion = "5.1"
 val springSleuthVersion = "2.2.3.RELEASE"
 val resilience4jVersion = "1.5.0"
 
+val githubUser: String by project
+val githubPassword: String by project
+
 repositories {
     mavenCentral()
     jcenter()
+    maven {
+        url = uri("https://maven.pkg.github.com/navikt/simple-slack-poster")
+        credentials {
+            username = githubUser
+            password = githubPassword
+        }
+    }
 }
 
 plugins {
@@ -38,6 +48,8 @@ dependencies {
     implementation("io.github.resilience4j:resilience4j-kotlin:$resilience4jVersion")
 
     implementation("com.bazaarvoice.jackson:rison:2.9.10.2")
+
+    implementation("no.nav.slackposter:simple-slack-poster:5")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
         exclude(group = "org.junit.vintage", module = "org.junit.vintage")
