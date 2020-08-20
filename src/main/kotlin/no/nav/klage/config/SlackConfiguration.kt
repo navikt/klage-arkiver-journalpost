@@ -7,12 +7,15 @@ import org.springframework.context.annotation.Configuration
 
 @Configuration
 class SlackConfiguration {
-    @Value("\${SLACK_ACCESS_TOKEN}")
-    lateinit var accessToken: String
+    @Value("\${SLACK_URL}")
+    lateinit var url: String
 
     @Value("\${SLACK_CHANNEL_ID}")
     lateinit var channelId: String
 
+    @Value("\${NAIS_CLUSTER_NAME}")
+    lateinit var cluster: String
+
     @Bean
-    fun slackClient(): SlackClient = SlackClient(accessToken, channelId)
+    fun slackClient(): SlackClient = SlackClient(url, channelId, cluster)
 }

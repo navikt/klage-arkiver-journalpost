@@ -32,8 +32,9 @@ fun SlackClient.post(klageId: Int, message: String, severity: Severity = Severit
 }
 
 class SlackClient(
-        private val accessToken: String,
-        private val channel: String
+        private val url: String,
+        private val channel: String,
+        private val clusterName: String
 ) {
     companion object {
         @Suppress("JAVA_CLASS_ON_COMPANION")
@@ -44,8 +45,9 @@ class SlackClient(
     }
 
     fun postMessage(text: String, severity: Severity) {
-        "https://slack.com/api/chat.postMessage".post(objectMapper.writeValueAsString(mutableMapOf<String, Any>(
+        url.post(objectMapper.writeValueAsString(mutableMapOf<String, Any>(
                 "channel" to channel,
+                "username" to "klage-arkiver-journalpost ($clusterName)",
                 "text" to text,
                 "icon_emoji" to severity.emoji
         )))
@@ -59,9 +61,7 @@ class SlackClient(
                 connectTimeout = 5000
                 readTimeout = 5000
                 doOutput = true
-                setRequestProperty("Authorization", "Bearer $accessToken")
                 setRequestProperty("Content-Type", "application/json; charset=utf-8")
-                setRequestProperty("User-Agent", "navikt/spammer")
 
                 outputStream.use { it.bufferedWriter(Charsets.UTF_8).apply { write(jsonPayload); flush() } }
             }
