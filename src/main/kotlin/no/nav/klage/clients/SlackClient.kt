@@ -7,6 +7,7 @@ import no.nav.klage.getLogger
 import no.nav.klage.utils.Kibana
 import java.io.IOException
 import java.io.InputStream
+import java.net.HttpURLConnection
 import java.net.SocketTimeoutException
 import java.net.URL
 import javax.net.ssl.HttpsURLConnection
@@ -54,9 +55,9 @@ class SlackClient(
     }
 
     private fun String.post(jsonPayload: String): String? {
-        var connection: HttpsURLConnection? = null
+        var connection: HttpURLConnection? = null
         try {
-            connection = (URL(this).openConnection() as HttpsURLConnection).apply {
+            connection = (URL(this).openConnection() as HttpURLConnection).apply {
                 requestMethod = "POST"
                 connectTimeout = 5000
                 readTimeout = 5000

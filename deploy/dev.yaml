@@ -4,5 +4,6 @@ externalHosts:
   - b27apvl00046.preprod.local
   - b27apvl00047.preprod.local
   - login.microsoftonline.com
+  - hooks.slack.com
 springProfile: dev-gcp
 
