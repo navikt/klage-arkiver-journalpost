@@ -1,9 +1,6 @@
 package no.nav.klage.service
 
-import no.nav.klage.clients.FileClient
-import no.nav.klage.clients.JoarkClient
-import no.nav.klage.clients.KlageDittnavAPIClient
-import no.nav.klage.clients.PDFGeneratorClient
+import no.nav.klage.clients.*
 import no.nav.klage.common.KlageMetrics
 import no.nav.klage.domain.Klage
 import no.nav.klage.getLogger

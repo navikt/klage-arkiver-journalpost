@@ -11,7 +11,10 @@ import org.springframework.kafka.annotation.KafkaListener
 import org.springframework.stereotype.Component
 
 @Component
-class KlageKafkaConsumer(private val applicationService: ApplicationService) {
+class KlageKafkaConsumer(
+    private val applicationService: ApplicationService,
+    private val slackClient: SlackClient
+) {
 
     companion object {
         @Suppress("JAVA_CLASS_ON_COMPANION")
@@ -27,10 +30,12 @@ class KlageKafkaConsumer(private val applicationService: ApplicationService) {
 
         runCatching {
             val klage = klageRecord.value().toKlage()
+            slackClient.post(klage.id, "Ny klage mottatt.")
             logger.debug("Received klage has id: {}", klage.id)
             secureLogger.debug("Received klage has id: {} and fnr: {}", klage.id, klage.identifikasjonsnummer)
             applicationService.createJournalpost(klage)
         }.onFailure {
+            slackClient.post("Nylig mottatt klage feilet!", Severity.ERROR)
             secureLogger.error("Failed to process klage", it)
         }
     }
