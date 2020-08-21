@@ -46,7 +46,7 @@ dependencies {
 
     implementation("io.github.resilience4j:resilience4j-retry:$resilience4jVersion")
     implementation("io.github.resilience4j:resilience4j-kotlin:$resilience4jVersion")
-    
+
     implementation("no.nav.slackposter:simple-slack-poster:5")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
