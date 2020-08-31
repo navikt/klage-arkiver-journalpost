@@ -17,7 +17,8 @@ class AzureADClient(
     companion object {
         @Suppress("JAVA_CLASS_ON_COMPANION")
         private val logger = getLogger(javaClass.enclosingClass)
-        private var cachedOidcToken: OidcToken? = null
+        private var cachedKlageDittnavApiOidcToken: OidcToken? = null
+        private var cachedKlageFileApiOidcToken: OidcToken? = null
         private var cachedOidcDiscovery: OidcDiscovery? = null
     }
 
@@ -32,6 +33,9 @@ class AzureADClient(
 
     @Value("\${KLAGE_DITTNAV_API_CLIENT_ID}")
     private lateinit var klageDittnavApiClientId: String
+
+    @Value("\${KLAGE_FILE_API_CLIENT_ID}")
+    private lateinit var klageFileApiClientId: String
 
     private fun oidcDiscovery(): OidcDiscovery {
         if (cachedOidcDiscovery == null) {
@@ -48,26 +52,38 @@ class AzureADClient(
         return cachedOidcDiscovery!!
     }
 
-    fun oidcToken(): String {
-        if (cachedOidcToken.shouldBeRenewed()) {
-            val map = LinkedMultiValueMap<String, String>()
-
-            map.add("client_id", clientId)
-            map.add("client_secret", clientSecret)
-            map.add("grant_type", "client_credentials")
-            map.add("scope", "api://${klageDittnavApiClientId}/.default")
-
-            logger.debug("Getting access token from OIDC")
-
-            cachedOidcToken = azureADWebClient.post()
-                    .uri(oidcDiscovery().token_endpoint)
-                    .bodyValue(map)
-                    .retrieve()
-                    .bodyToMono<OidcToken>()
-                    .block()
+    fun klageDittnavApiOidcToken(): String {
+        if (cachedKlageDittnavApiOidcToken.shouldBeRenewed()) {
+            cachedKlageDittnavApiOidcToken = returnUpdatedToken(klageDittnavApiClientId)
         }
 
-        return cachedOidcToken!!.token
+        return cachedKlageDittnavApiOidcToken!!.token
+    }
+
+    fun klageFileApiOidcToken(): String {
+        if (cachedKlageFileApiOidcToken.shouldBeRenewed()) {
+            cachedKlageFileApiOidcToken = returnUpdatedToken(klageFileApiClientId)
+        }
+
+        return cachedKlageFileApiOidcToken!!.token
+    }
+
+    private fun returnUpdatedToken(targetClientId: String): OidcToken {
+        val map = LinkedMultiValueMap<String, String>()
+
+        map.add("client_id", clientId)
+        map.add("client_secret", clientSecret)
+        map.add("grant_type", "client_credentials")
+        map.add("scope", "api://${targetClientId}/.default")
+
+        logger.debug("Getting access token from OIDC for target client {}", targetClientId)
+
+        return azureADWebClient.post()
+                .uri(oidcDiscovery().token_endpoint)
+                .bodyValue(map)
+                .retrieve()
+                .bodyToMono<OidcToken>()
+                .block()
     }
 
     private fun OidcToken?.shouldBeRenewed(): Boolean = this?.hasExpired() ?: true

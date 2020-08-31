@@ -7,7 +7,9 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.web.reactive.function.client.WebClient
 
 @Configuration
-class FileClientConfiguration(private val webClientBuilder: WebClient.Builder) {
+class FileClientConfiguration(
+    private val webClientBuilder: WebClient.Builder
+) {
 
     companion object {
         @Suppress("JAVA_CLASS_ON_COMPANION")

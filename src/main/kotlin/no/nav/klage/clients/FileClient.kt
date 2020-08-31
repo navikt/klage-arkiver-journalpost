@@ -1,6 +1,7 @@
 package no.nav.klage.clients
 
 import no.nav.klage.getLogger
+import org.springframework.http.HttpHeaders
 import org.springframework.http.client.MultipartBodyBuilder
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.BodyInserters
@@ -8,7 +9,10 @@ import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.bodyToMono
 
 @Component
-class FileClient(private val fileWebClient: WebClient) {
+class FileClient(
+    private val fileWebClient: WebClient,
+    private val azureADClient: AzureADClient
+) {
 
     companion object {
         @Suppress("JAVA_CLASS_ON_COMPANION")
@@ -20,6 +24,7 @@ class FileClient(private val fileWebClient: WebClient) {
 
         return this.fileWebClient.get()
             .uri { it.path("/attachment/{id}").build(id) }
+            .header(HttpHeaders.AUTHORIZATION, "Bearer ${azureADClient.klageFileApiOidcToken()}")
             .retrieve()
             .bodyToMono<ByteArray>()
             .block() ?: throw RuntimeException("Attachment could not be fetched")
@@ -29,11 +34,12 @@ class FileClient(private val fileWebClient: WebClient) {
         logger.debug("Deleting attachment with id {}", id)
 
         val deletedInGCS = fileWebClient
-                .delete()
-                .uri("/attachment/$id")
-                .retrieve()
-                .bodyToMono<Boolean>()
-                .block()
+            .delete()
+            .uri("/attachment/$id")
+            .header(HttpHeaders.AUTHORIZATION, "Bearer ${azureADClient.klageFileApiOidcToken()}")
+            .retrieve()
+            .bodyToMono<Boolean>()
+            .block()
 
         if (deletedInGCS == true) {
             logger.debug("Attachment successfully deleted in file store.")
@@ -50,6 +56,7 @@ class FileClient(private val fileWebClient: WebClient) {
         val klageCreatedResponse = fileWebClient
             .post()
             .uri("/klage/$journalpostId")
+            .header(HttpHeaders.AUTHORIZATION, "Bearer ${azureADClient.klageFileApiOidcToken()}")
             .body(BodyInserters.fromMultipartData(bodyBuilder.build()))
             .retrieve()
             .bodyToMono<KlageCreatedResponse>()
