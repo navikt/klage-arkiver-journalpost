@@ -2,3 +2,4 @@ KAFKA_BOOTSTRAP_SERVERS: b27apvl00045.preprod.local:8443,b27apvl00046.preprod.lo
 SECURITY_TOKEN_SERVICE_REST_URL: https://api-gw-q1.oera.no/security-token-service
 JOARK_SERVICE_URL: https://api-gw-q1.oera.no/dokarkiv/rest/journalpostapi/v1/journalpost
 KLAGE_DITTNAV_API_CLIENT_ID: 9ba0e760-d28c-44d2-8cae-8a1dc9b4584f
+KLAGE_FILE_API_CLIENT_ID: 1ba4ebe8-39b7-48ea-9842-f648c07c1fe5
