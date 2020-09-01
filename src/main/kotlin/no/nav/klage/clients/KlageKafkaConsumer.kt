@@ -38,6 +38,7 @@ class KlageKafkaConsumer(
         }.onFailure {
             slackClient.postMessage("Nylig mottatt klage feilet! (${causeClass(rootCause(it))})", Severity.ERROR)
             secureLogger.error("Failed to process klage", it)
+            throw it
         }
     }
 
