@@ -62,7 +62,7 @@ class FileClient(
             .bodyToMono<KlageCreatedResponse>()
             .block()
 
-        if (klageCreatedResponse.created) {
+        if (klageCreatedResponse?.created == true) {
             logger.debug("Klage was successfully uploaded in file store.")
         } else {
             logger.warn("Could not successfully upload klage to file store.")

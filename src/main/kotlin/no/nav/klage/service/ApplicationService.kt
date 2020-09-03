@@ -1,6 +1,9 @@
 package no.nav.klage.service
 
-import no.nav.klage.clients.*
+import no.nav.klage.clients.FileClient
+import no.nav.klage.clients.JoarkClient
+import no.nav.klage.clients.KlageDittnavAPIClient
+import no.nav.klage.clients.PDFGeneratorClient
 import no.nav.klage.common.KlageMetrics
 import no.nav.klage.domain.Klage
 import no.nav.klage.getLogger
@@ -32,10 +35,15 @@ class ApplicationService(
         //Create journalpost and archive it
         val journalpostId = joarkClient.createJournalpost(klage)
 
-        klageDittnavAPIClient.setJournalpostIdToKlage(klage.id, journalpostId)
+        //Record metrics
+        klageMetrics.incrementKlagerArkivert()
 
-        //Save klage in storage
-        klage.fileContentAsBytes?.let { fileClient.saveKlage(journalpostId, it) }
+        //Callback with journalpostId
+        runCatching {
+            klageDittnavAPIClient.setJournalpostIdToKlage(klage.id, journalpostId)
+        }.onFailure {
+            logger.error("Could not call back to klage-api with journalpostId", it)
+        }
 
         //Remove all attachments from the temporary storage
         klage.vedlegg.forEach {
@@ -46,7 +54,11 @@ class ApplicationService(
             }
         }
 
-        //Record metrics
-        klageMetrics.incrementKlagerArkivert()
+        //Save klage-pdf in storage
+        runCatching {
+            klage.fileContentAsBytes?.let { fileClient.saveKlage(journalpostId, it) }
+        }.onFailure {
+            logger.error("Could not upload klage-pdf to file store.", it)
+        }
     }
 }
