@@ -1,5 +1,8 @@
 package no.nav.klage.config
 
+import no.nav.klage.getLogger
+import no.nav.slackposter.Severity
+import no.nav.slackposter.SlackClient
 import org.apache.kafka.clients.CommonClientConfigs.SECURITY_PROTOCOL_CONFIG
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.clients.producer.ProducerConfig
@@ -21,7 +24,12 @@ import java.util.*
 
 
 @Configuration
-class KafkaConfiguration {
+class KafkaConfiguration(private val slackClient: SlackClient) {
+
+    companion object {
+        @Suppress("JAVA_CLASS_ON_COMPANION")
+        private val logger = getLogger(javaClass.enclosingClass)
+    }
 
     @Value("\${KAFKA_BOOTSTRAP_SERVERS}")
     private lateinit var bootstrapServers: String
@@ -43,11 +51,14 @@ class KafkaConfiguration {
         val factory = ConcurrentKafkaListenerContainerFactory<String, String>()
         factory.consumerFactory = consumerFactory()
 
-        //Setup sending to dead-letter topic after three tries
+        //Setup sending to dead-letter topic after two retries
         val recoverer = DeadLetterPublishingRecoverer(kafkaTemplate()) f@
         { r, _ ->
+            val dltTopic = r.topic().toString() + "-DLT"
+            logger.debug("Message could not be processed and will be sent to DLT: {}", dltTopic)
+            slackClient.postMessage("Innsending av klage feilet og vil nå bli lagt på DLT", Severity.ERROR)
             return@f TopicPartition(
-                r.topic().toString() + "-DLT",
+                dltTopic,
                 r.partition()
             )
         }

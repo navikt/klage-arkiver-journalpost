@@ -53,5 +53,5 @@ class KlageKafkaConsumer(
 
     private fun rootCause(t: Throwable): Throwable = t.cause?.run { rootCause(this) } ?: t
 
-    private fun causeClass(t: Throwable) = t.stackTrace[0].className
+    private fun causeClass(t: Throwable) = t.stackTrace?.firstOrNull()?.className ?: ""
 }
