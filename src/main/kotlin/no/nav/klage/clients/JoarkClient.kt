@@ -68,14 +68,12 @@ class JoarkClient(
             behandlingstema = BEHANDLINGSTEMA_KLAGE_UNDERINSTANS,
             avsenderMottaker = AvsenderMottaker(
                 id = klage.identifikasjonsnummer,
-                idType = klage.identifikasjonstype,
                 navn = "${klage.fornavn} ${klage.mellomnavn} ${klage.etternavn}"
             ),
             sak = getSak(klage),
             tittel = KLAGE_TITTEL,
             bruker = Bruker(
                 id = klage.identifikasjonsnummer,
-                idType = klage.identifikasjonstype
             ),
             eksternReferanseId = tracer.currentSpan().context().traceIdString(),
             dokumenter = getDokumenter(klage),
