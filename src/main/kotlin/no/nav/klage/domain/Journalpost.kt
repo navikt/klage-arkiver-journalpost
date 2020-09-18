@@ -36,14 +36,17 @@ data class Sak(
     val arkivsaksnummer: String? = null
 )
 
+//Always use FNR according to #team_dokumentløsninger
+private const val ID_TYPE = "FNR"
+
 data class Bruker(
     val id: String,
-    val idType: String
+    val idType: String = ID_TYPE
 )
 
 data class AvsenderMottaker(
     val id: String,
-    val idType: String,
+    val idType: String = ID_TYPE,
     val navn: String
 )
 
