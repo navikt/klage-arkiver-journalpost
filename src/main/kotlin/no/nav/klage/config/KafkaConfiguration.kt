@@ -20,6 +20,7 @@ import org.springframework.kafka.listener.DeadLetterPublishingRecoverer
 import org.springframework.kafka.listener.SeekToCurrentErrorHandler
 import org.springframework.util.backoff.FixedBackOff
 import java.io.File
+import java.time.Duration
 import java.util.*
 
 
@@ -62,10 +63,15 @@ class KafkaConfiguration(private val slackClient: SlackClient) {
                 r.partition()
             )
         }
-
         factory.setErrorHandler(
             SeekToCurrentErrorHandler(recoverer, FixedBackOff(0L, 2L))
         )
+
+        //Retry consumer/listener even if authorization fails at first
+        factory.setContainerCustomizer { container ->
+            container.containerProperties.authorizationExceptionRetryInterval = Duration.ofSeconds(10L)
+        }
+
         return factory
     }
 
@@ -101,6 +107,7 @@ class KafkaConfiguration(private val slackClient: SlackClient) {
         props[ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG] = bootstrapServers
         props[ConsumerConfig.GROUP_ID_CONFIG] = groupId
         props[ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG] = true
+        props[ConsumerConfig.MAX_POLL_INTERVAL_MS_CONFIG] = Duration.ofDays(3).toMillis().toInt()
         props[ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG] = StringDeserializer::class.java
         props[ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG] = StringDeserializer::class.java
         props.putAll(commonSecurityProps())
