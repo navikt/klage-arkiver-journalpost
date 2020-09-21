@@ -20,6 +20,7 @@ import org.springframework.kafka.listener.DeadLetterPublishingRecoverer
 import org.springframework.kafka.listener.SeekToCurrentErrorHandler
 import org.springframework.util.backoff.FixedBackOff
 import java.io.File
+import java.time.Duration
 import java.util.*
 
 
@@ -62,10 +63,15 @@ class KafkaConfiguration(private val slackClient: SlackClient) {
                 r.partition()
             )
         }
-
         factory.setErrorHandler(
             SeekToCurrentErrorHandler(recoverer, FixedBackOff(0L, 2L))
         )
+
+        //Retry consumer/listener even if authorization fails at first
+        factory.setContainerCustomizer { container ->
+            container.containerProperties.authorizationExceptionRetryInterval = Duration.ofSeconds(10L)
+        }
+
         return factory
     }
 
