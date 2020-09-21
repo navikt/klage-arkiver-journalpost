@@ -107,6 +107,7 @@ class KafkaConfiguration(private val slackClient: SlackClient) {
         props[ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG] = bootstrapServers
         props[ConsumerConfig.GROUP_ID_CONFIG] = groupId
         props[ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG] = true
+        props[ConsumerConfig.MAX_POLL_INTERVAL_MS_CONFIG] = Duration.ofDays(3).toMillis()
         props[ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG] = StringDeserializer::class.java
         props[ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG] = StringDeserializer::class.java
         props.putAll(commonSecurityProps())
