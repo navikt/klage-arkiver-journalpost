@@ -24,7 +24,7 @@ jobs:
           TIME=$(TZ="Europe/Oslo" date +%Y.%m.%d-%H.%M)
           COMMIT=$(git rev-parse --short=7 HEAD)
           VERSION=$TIME-$COMMIT
-          echo "::set-env name=VERSION::"$VERSION""
+          echo "VERSION=${VERSION}" >> $GITHUB_ENV
       - uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
