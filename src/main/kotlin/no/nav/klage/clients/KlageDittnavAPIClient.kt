@@ -5,6 +5,7 @@ import no.nav.klage.getLogger
 import org.springframework.http.HttpHeaders
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
+import org.springframework.web.reactive.function.client.bodyToMono
 
 @Component
 class KlageDittnavAPIClient(
@@ -27,4 +28,16 @@ class KlageDittnavAPIClient(
                 .toBodilessEntity()
                 .block() ?: throw RuntimeException("Unable to register journalpost ID in klage-dittnav-api.")
     }
+
+    fun getJournalpostForKlageId(klageId: Int): JournalpostIdResponse {
+        logger.debug("Getting journalpostId from klage-dittnav-api. KlageId: {}", klageId)
+        return klageDittnavAPIWebClient.get()
+            .uri("$klageId/journalpostid")
+            .header(HttpHeaders.AUTHORIZATION, "Bearer ${azureADClient.klageDittnavApiOidcToken()}")
+            .retrieve()
+            .bodyToMono<JournalpostIdResponse>()
+            .block() ?: throw RuntimeException("Unable to get journalpost ID from klage-dittnav-api.")
+    }
 }
+
+data class JournalpostIdResponse(val journalpostId: String?)
