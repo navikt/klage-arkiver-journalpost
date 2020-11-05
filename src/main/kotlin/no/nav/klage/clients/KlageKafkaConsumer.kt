@@ -16,7 +16,8 @@ import org.springframework.stereotype.Component
 @Component
 class KlageKafkaConsumer(
     private val applicationService: ApplicationService,
-    private val slackClient: SlackClient
+    private val slackClient: SlackClient,
+    private val klageDittnavAPIClient: KlageDittnavAPIClient
 ) {
 
     companion object {
@@ -34,6 +35,13 @@ class KlageKafkaConsumer(
         runCatching {
             val klage = klageRecord.value().toKlage()
             klage.logIt()
+            val journalpostIdResponse = klageDittnavAPIClient.getJournalpostForKlageId(klage.id)
+
+            if (journalpostIdResponse.journalpostId != null) {
+                logger.info("Klage with ID {} is already registered in Joark with journalpost ID {}. Ignoring.", klage.id, journalpostIdResponse.journalpostId)
+                return
+            }
+
             applicationService.createJournalpost(klage)
         }.onFailure {
             slackClient.postMessage("Nylig mottatt klage feilet! (${causeClass(rootCause(it))})", Severity.ERROR)
