@@ -12,5 +12,6 @@ data class KlagePDFModel(
     val saksnummer: String,
     val oversiktVedlegg: String,
     val dato: String,
-    val ytelse: String
+    val ytelse: String,
+    val userChoices: List<String>
 )

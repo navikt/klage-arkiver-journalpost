@@ -47,7 +47,8 @@ class PDFGeneratorClient(
         saksnummer = saksnummer ?: "Ikke angitt",
         oversiktVedlegg = getOversiktVedlegg(vedlegg),
         dato = dato.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")),
-        ytelse = ytelse
+        ytelse = ytelse,
+        userChoices = userChoices
     )
 
     private fun getOversiktVedlegg(vedlegg: List<Vedlegg>): String {
