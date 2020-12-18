@@ -21,7 +21,10 @@ data class Klage(
     val ytelse: String,
     val vedlegg: List<Vedlegg> = emptyList(),
     var fileContentAsBytes: ByteArray? = null,
-    val userChoices: List<String> = emptyList()
+    val userChoices: List<String> = emptyList(),
+    val userSaksnummer: String?,
+    val internalSaksnummer: String?
+
 )
 
 data class Vedlegg(

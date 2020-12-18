@@ -44,7 +44,7 @@ class PDFGeneratorClient(
         telefonnummer = telefon,
         vedtak = vedtak,
         begrunnelse = begrunnelse,
-        saksnummer = saksnummer ?: "Ikke angitt",
+        saksnummer = userSaksnummer ?: internalSaksnummer ?: saksnummer ?: "Ikke angitt",
         oversiktVedlegg = getOversiktVedlegg(vedlegg),
         dato = dato.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")),
         ytelse = ytelse,
