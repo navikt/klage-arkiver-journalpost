@@ -44,7 +44,7 @@ class PDFGeneratorClient(
         telefonnummer = telefon,
         vedtak = vedtak,
         begrunnelse = begrunnelse,
-        saksnummer = userSaksnummer ?: internalSaksnummer ?: saksnummer ?: "Ikke angitt",
+        saksnummer = getSaksnummerString(userSaksnummer, internalSaksnummer, saksnummer),
         oversiktVedlegg = getOversiktVedlegg(vedlegg),
         dato = dato.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")),
         ytelse = ytelse,
@@ -56,6 +56,18 @@ class PDFGeneratorClient(
             "Ingen vedlegg."
         } else {
             vedlegg.joinToString { it.tittel }
+        }
+    }
+
+    private fun getSaksnummerString(userSaksnummer: String? = null, internalSaksnummer: String? = null, saksnummer: String? = null): String {
+        return when {
+            userSaksnummer != null -> {
+                "$userSaksnummer - Oppgitt av bruker"
+            }
+            internalSaksnummer != null -> {
+                "$internalSaksnummer - Hentet fra internt system"
+            }
+            else -> saksnummer ?: "Ikke angitt"
         }
     }
 }
