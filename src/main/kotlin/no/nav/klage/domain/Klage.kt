@@ -14,7 +14,6 @@ data class Klage(
     val adresse: String,
     val telefon: String,
     val vedtak: String,
-    val saksnummer: String?,
     val dato: LocalDate,
     val begrunnelse: String,
     val tema: String,
