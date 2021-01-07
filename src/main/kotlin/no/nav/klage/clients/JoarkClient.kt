@@ -67,8 +67,8 @@ class JoarkClient(
             tema = klage.tema,
             behandlingstema = BEHANDLINGSTEMA_KLAGE_UNDERINSTANS,
             avsenderMottaker = AvsenderMottaker(
-                id = klage.identifikasjonsnummer,
-                navn = "${klage.fornavn} ${klage.mellomnavn} ${klage.etternavn}"
+                id = klage.fullmektigFnr ?: klage.identifikasjonsnummer,
+                navn = klage.fullmektigNavn ?: "${klage.fornavn} ${klage.mellomnavn} ${klage.etternavn}"
             ),
             sak = getSak(klage),
             tittel = KLAGE_TITTEL,
