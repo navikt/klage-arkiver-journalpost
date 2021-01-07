@@ -22,7 +22,9 @@ data class Klage(
     var fileContentAsBytes: ByteArray? = null,
     val userChoices: List<String> = emptyList(),
     val userSaksnummer: String?,
-    val internalSaksnummer: String?
+    val internalSaksnummer: String?,
+    val fullmektigNavn: String?,
+    val fullmektigFnr: String?
 
 )
 

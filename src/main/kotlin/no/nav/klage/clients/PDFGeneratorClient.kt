@@ -48,7 +48,9 @@ class PDFGeneratorClient(
         oversiktVedlegg = getOversiktVedlegg(vedlegg),
         dato = dato.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")),
         ytelse = ytelse,
-        userChoices = userChoices
+        userChoices = userChoices,
+        fullmektigNavn = fullmektigNavn ?: "",
+        fullmektigFnr = fullmektigFnr ?: ""
     )
 
     private fun getOversiktVedlegg(vedlegg: List<Vedlegg>): String {
