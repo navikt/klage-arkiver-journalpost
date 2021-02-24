@@ -29,6 +29,7 @@ class JoarkClient(
         private const val KLAGE_TITTEL = "Klage/Anke"
         private const val BREVKODE_KLAGESKJEMA = "NAV 90-00.08"
         private const val BEHANDLINGSTEMA_KLAGE_UNDERINSTANS = "ab0019"
+        private const val BEHANDLINGSTEMA_LONNSKOMPENSASJON = "ab0438"
     }
 
     @Value("\${DRY_RUN}")
@@ -45,8 +46,7 @@ class JoarkClient(
         return if (dryRun.toBoolean()) {
             logger.debug("Dry run activated. Not sending journalpost to Joark.")
             "dryRun, no journalpostId"
-        }
-        else {
+        } else {
             logger.debug("Posting journalpost to Joark.")
             val journalpostResponse = joarkWebClient.post()
                 .header(HttpHeaders.AUTHORIZATION, "Bearer ${stsClient.oidcToken()}")
@@ -65,7 +65,7 @@ class JoarkClient(
     private fun getJournalpost(klage: Klage): Journalpost =
         Journalpost(
             tema = klage.tema,
-            behandlingstema = BEHANDLINGSTEMA_KLAGE_UNDERINSTANS,
+            behandlingstema = getBehandlingstema(klage),
             avsenderMottaker = AvsenderMottaker(
                 id = klage.fullmektigFnr ?: klage.identifikasjonsnummer,
                 navn = klage.fullmektigNavn ?: "${klage.fornavn} ${klage.mellomnavn} ${klage.etternavn}"
@@ -122,5 +122,16 @@ class JoarkClient(
         }
         val journalpostCopyWithoutFileData = journalpost.copy(dokumenter = dokumenterWithoutFileData)
         return jacksonObjectMapper().writeValueAsString(journalpostCopyWithoutFileData)
+    }
+
+    private fun getBehandlingstema(klage: Klage): String {
+        return if (klage.isLonnskompensasjon())
+            BEHANDLINGSTEMA_LONNSKOMPENSASJON
+        else
+            BEHANDLINGSTEMA_KLAGE_UNDERINSTANS
+    }
+
+    private fun Klage.isLonnskompensasjon(): Boolean {
+        return tema == "DAG" && ytelse == "LONNSKOMPENSASJON"
     }
 }
