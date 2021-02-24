@@ -132,6 +132,6 @@ class JoarkClient(
     }
 
     private fun Klage.isLonnskompensasjon(): Boolean {
-        return tema == "DAG" && ytelse == "LONNSKOMPENSASJON"
+        return tema == "DAG" && ytelse == "Lønnskompensasjon for permitterte"
     }
 }
