@@ -74,8 +74,7 @@ class JoarkClient(
             tittel = KLAGE_TITTEL,
             bruker = Bruker(
                 id = klage.identifikasjonsnummer,
-            ),
-            eksternReferanseId = tracer.currentSpan().context().traceIdString(),
+            ),            
             dokumenter = getDokumenter(klage),
             tilleggsopplysninger = listOf(Tilleggsopplysning(nokkel = KLAGE_ID_KEY, verdi = klage.id.toString()))
         )
