@@ -17,7 +17,10 @@ class JoarkClientConfiguration(private val webClientBuilder: WebClient.Builder) 
     @Value("\${JOARK_SERVICE_URL}")
     private lateinit var joarkServiceURL: String
 
-    @Value("\${JOURNALPOST_APIKEY}")
+//    @Value("\${JOURNALPOST_APIKEY}")
+//    private lateinit var apiKey: String
+
+    @Value("\${JOURNALPOST_APIKEY_Q2}")
     private lateinit var apiKey: String
 
     @Bean
