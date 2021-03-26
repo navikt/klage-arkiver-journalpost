@@ -55,7 +55,9 @@ spec:
   envFrom:
     - secret: srvklage-dittnav
     - secret: sts-apikey
+    - secret: sts-apikey-q2
     - secret: journalpost-apikey
+    - secret: journalpost-apikey-q2
     - secret: slack-url
     - secret: slack-channel-id
   env:

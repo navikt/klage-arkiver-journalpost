@@ -25,7 +25,10 @@ class StsClientConfiguration(private val webClientBuilder: WebClient.Builder) {
     @Value("\${SERVICE_USER_PASSWORD}")
     private lateinit var password: String
 
-    @Value("\${STS_APIKEY}")
+//    @Value("\${STS_APIKEY}")
+//    private lateinit var apiKey: String
+
+    @Value("\${STS_APIKEY_Q2}")
     private lateinit var apiKey: String
 
     @Bean
