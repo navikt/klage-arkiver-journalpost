@@ -80,7 +80,7 @@ class JoarkClient(
 
     private fun getSak(klage: Klage): Sak? =
         if (klage.tema == "FOR" && klage.internalSaksnummer?.toIntOrNull() != null) {
-            Sak(sakstype = Sakstype.ARKIVSAK, fagsaksystem = FagsaksSystem.FS36, fagsakid = klage.internalSaksnummer)
+            Sak(sakstype = Sakstype.FAGSAK, fagsaksystem = FagsaksSystem.FS36, fagsakid = klage.internalSaksnummer)
         } else {
             null
         }
