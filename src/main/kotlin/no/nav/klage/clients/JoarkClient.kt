@@ -28,7 +28,6 @@ class JoarkClient(
         private const val KLAGE_ID_KEY = "klage_id"
         private const val KLAGE_TITTEL = "Klage/Anke"
         private const val BREVKODE_KLAGESKJEMA = "NAV 90-00.08"
-        private const val BEHANDLINGSTEMA_KLAGE_UNDERINSTANS = "ab0019"
         private const val BEHANDLINGSTEMA_LONNSKOMPENSASJON = "ab0438"
     }
 
@@ -81,7 +80,7 @@ class JoarkClient(
 
     private fun getSak(klage: Klage): Sak? =
         if (klage.tema == "FOR" && klage.internalSaksnummer?.toIntOrNull() != null) {
-            Sak(sakstype = "ARKIVSAK", arkivsaksystem = "GSAK", arkivsaksnummer = klage.internalSaksnummer)
+            Sak(sakstype = Sakstype.ARKIVSAK, fagsaksystem = FagsaksSystem.FS36, fagsakid = klage.internalSaksnummer)
         } else {
             null
         }
@@ -124,11 +123,11 @@ class JoarkClient(
         return jacksonObjectMapper().writeValueAsString(journalpostCopyWithoutFileData)
     }
 
-    private fun getBehandlingstema(klage: Klage): String {
+    private fun getBehandlingstema(klage: Klage): String? {
         return if (klage.isLonnskompensasjon())
             BEHANDLINGSTEMA_LONNSKOMPENSASJON
         else
-            BEHANDLINGSTEMA_KLAGE_UNDERINSTANS
+            null
     }
 
     private fun Klage.isLonnskompensasjon(): Boolean {
