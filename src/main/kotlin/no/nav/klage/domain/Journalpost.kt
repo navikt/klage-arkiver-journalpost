@@ -3,7 +3,7 @@ package no.nav.klage.domain
 data class Journalpost(
     val journalposttype: String = "INNGAAENDE",
     val tema: String,
-    val behandlingstema: String,
+    val behandlingstema: String? = null,
     val kanal: String = "NAV_NO",
     val tittel: String,
     val avsenderMottaker: AvsenderMottaker,
@@ -28,12 +28,37 @@ data class DokumentVariant(
 )
 
 data class Sak(
-    val sakstype: String,
-    val fagsaksystem: String? = null,
+    val sakstype: Sakstype,
+    val fagsaksystem: FagsaksSystem? = null,
     val fagsakid: String? = null,
     val arkivsaksystem: String? = null,
     val arkivsaksnummer: String? = null
 )
+
+enum class Sakstype {
+    FAGSAK,
+    GENERELL_SAK,
+    ARKIVSAK
+}
+
+enum class FagsaksSystem {
+    AO01,
+    AO11,
+    BISYS,
+    FS36,
+    FS38,
+    IT01,
+    K9,
+    OB36,
+    OEBS,
+    PP01,
+    UFM,
+    BA,
+    EF,
+    KONT,
+    SUPSTONAD,
+    OMSORGSPENGER
+}
 
 //Always use FNR according to #team_dokumentløsninger
 private const val ID_TYPE = "FNR"
