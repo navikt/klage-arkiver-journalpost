@@ -5,6 +5,9 @@ metadata:
   namespace: klage
   labels:
     team: klage
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: "100M"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "120"
 spec:
   image: {{ image }}
   azure:
