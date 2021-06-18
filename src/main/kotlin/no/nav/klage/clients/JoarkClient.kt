@@ -29,6 +29,9 @@ class JoarkClient(
         private const val KLAGE_TITTEL = "Klage/Anke"
         private const val BREVKODE_KLAGESKJEMA = "NAV 90-00.08"
         private const val BEHANDLINGSTEMA_LONNSKOMPENSASJON = "ab0438"
+        private const val BEHANDLINGSTEMA_TILBAKEBETALING_FORSKUDD_PAA_DAGPENGER = "ab0451"
+        private const val BEHANDLINGSTEMA_FERIEPENGER_AV_DAGPENGER = "ab0452"
+
     }
 
     @Value("\${DRY_RUN}")
@@ -124,13 +127,23 @@ class JoarkClient(
     }
 
     private fun getBehandlingstema(klage: Klage): String? {
-        return if (klage.isLonnskompensasjon())
-            BEHANDLINGSTEMA_LONNSKOMPENSASJON
-        else
-            null
+        return when {
+            klage.isLonnskompensasjon() -> BEHANDLINGSTEMA_LONNSKOMPENSASJON
+            klage.isTilbakebetalingAvForskuddPaaDagpenger() -> BEHANDLINGSTEMA_TILBAKEBETALING_FORSKUDD_PAA_DAGPENGER
+            klage.isFeriepengerAvDagpenger() -> BEHANDLINGSTEMA_FERIEPENGER_AV_DAGPENGER
+            else -> null
+        }
     }
 
     private fun Klage.isLonnskompensasjon(): Boolean {
         return tema == "DAG" && ytelse == "Lønnskompensasjon for permitterte"
+    }
+
+    private fun Klage.isTilbakebetalingAvForskuddPaaDagpenger(): Boolean {
+        return tema == "DAG" && ytelse == "Tilbakebetaling av forskudd på dagpenger"
+    }
+
+    private fun Klage.isFeriepengerAvDagpenger(): Boolean {
+        return tema == "DAG" && ytelse == "Feriepenger av dagpenger"
     }
 }
