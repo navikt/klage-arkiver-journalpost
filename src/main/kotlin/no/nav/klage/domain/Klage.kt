@@ -26,7 +26,20 @@ data class Klage(
     val fullmektigNavn: String?,
     val fullmektigFnr: String?
 
-)
+) {
+
+    fun isLonnskompensasjon(): Boolean {
+        return tema == "DAG" && ytelse == "Lønnskompensasjon for permitterte"
+    }
+
+    fun isTilbakebetalingAvForskuddPaaDagpenger(): Boolean {
+        return tema == "DAG" && ytelse == "Tilbakebetaling av forskudd på dagpenger"
+    }
+
+    fun isFeriepengerAvDagpenger(): Boolean {
+        return tema == "DAG" && ytelse == "Feriepenger av dagpenger"
+    }
+}
 
 data class Vedlegg(
     val id: Int,

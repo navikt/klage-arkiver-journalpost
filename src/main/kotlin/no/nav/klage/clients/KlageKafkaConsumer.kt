@@ -54,10 +54,19 @@ class KlageKafkaConsumer(
 
     private fun Klage.logIt() {
         val klageid = this.id.toString()
-        if (this.tema == "DAG" && this.ytelse == "Lønnskompensasjon for permitterte") {
-            slackClient.postMessage(String.format("Klage (Lønnskompenssasjon for permitterte) med id <%s|%s> mottatt.", Kibana.createUrl(klageid), klageid))
-        } else {
-            slackClient.postMessage(String.format("Klage med id <%s|%s> mottatt.", Kibana.createUrl(klageid), klageid))
+        when {
+            this.isLonnskompensasjon() -> {
+                slackClient.postMessage(String.format("Klage (Lønnskompenssasjon for permitterte) med id <%s|%s> mottatt.", Kibana.createUrl(klageid), klageid))
+            }
+            this.isTilbakebetalingAvForskuddPaaDagpenger() -> {
+                slackClient.postMessage(String.format("Klage (Tilbakebetaling av forskudd på dagpenger) med id <%s|%s> mottatt.", Kibana.createUrl(klageid), klageid))
+            }
+            this.isFeriepengerAvDagpenger() -> {
+                slackClient.postMessage(String.format("Klage (Feriepenger av dagpenger) med id <%s|%s> mottatt.", Kibana.createUrl(klageid), klageid))
+            }
+            else -> {
+                slackClient.postMessage(String.format("Klage med id <%s|%s> mottatt.", Kibana.createUrl(klageid), klageid))
+            }
         }
 
         logger.debug("Received klage has id: {}", this.id)
