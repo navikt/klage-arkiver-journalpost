@@ -128,7 +128,7 @@ class JoarkClient(
 
     private fun getBehandlingstema(klage: Klage): String? {
         return when {
-            klage.isLonnskompensasjon() -> BEHANDLINGSTEMA_LONNSKOMPENSASJON
+            klage.isLoennskompensasjon() -> BEHANDLINGSTEMA_LONNSKOMPENSASJON
             klage.isTilbakebetalingAvForskuddPaaDagpenger() -> BEHANDLINGSTEMA_TILBAKEBETALING_FORSKUDD_PAA_DAGPENGER
             klage.isFeriepengerAvDagpenger() -> BEHANDLINGSTEMA_FERIEPENGER_AV_DAGPENGER
             else -> null
