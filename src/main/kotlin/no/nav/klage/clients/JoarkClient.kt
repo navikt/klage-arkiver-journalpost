@@ -134,16 +134,4 @@ class JoarkClient(
             else -> null
         }
     }
-
-    private fun Klage.isLonnskompensasjon(): Boolean {
-        return tema == "DAG" && ytelse == "Lønnskompensasjon for permitterte"
-    }
-
-    private fun Klage.isTilbakebetalingAvForskuddPaaDagpenger(): Boolean {
-        return tema == "DAG" && ytelse == "Tilbakebetaling av forskudd på dagpenger"
-    }
-
-    private fun Klage.isFeriepengerAvDagpenger(): Boolean {
-        return tema == "DAG" && ytelse == "Feriepenger av dagpenger"
-    }
 }
