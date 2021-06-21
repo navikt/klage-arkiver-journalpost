@@ -39,6 +39,12 @@ data class Klage(
     fun isFeriepengerAvDagpenger(): Boolean {
         return tema == "DAG" && ytelse == "Feriepenger av dagpenger"
     }
+
+    fun isDagpengerVariant(): Boolean {
+        return (isLonnskompensasjon() ||
+                isTilbakebetalingAvForskuddPaaDagpenger() ||
+                isFeriepengerAvDagpenger())
+    }
 }
 
 data class Vedlegg(
