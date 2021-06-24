@@ -5,8 +5,8 @@ import io.github.resilience4j.retry.Retry
 import no.nav.klage.domain.Klage
 import no.nav.klage.domain.KlagePDFModel
 import no.nav.klage.domain.Vedlegg
-import no.nav.klage.util.TextUtil
 import no.nav.klage.getLogger
+import no.nav.klage.util.sanitizeText
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
@@ -17,8 +17,7 @@ import java.time.format.DateTimeFormatter
 @Component
 class PDFGeneratorClient(
     private val pdfWebClient: WebClient,
-    private val retryPdf: Retry,
-    private val textUtil: TextUtil
+    private val retryPdf: Retry
 ) {
 
     companion object {
@@ -45,8 +44,8 @@ class PDFGeneratorClient(
         adresse = adresse,
         telefonnummer = telefon,
         vedtak = vedtak,
-        begrunnelse = textUtil.sanitizeText(begrunnelse),
-        saksnummer = textUtil.sanitizeText(getSaksnummerString(userSaksnummer, internalSaksnummer)),
+        begrunnelse = sanitizeText(begrunnelse),
+        saksnummer = sanitizeText(getSaksnummerString(userSaksnummer, internalSaksnummer)),
         oversiktVedlegg = getOversiktVedlegg(vedlegg),
         dato = dato.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")),
         ytelse = ytelse,
