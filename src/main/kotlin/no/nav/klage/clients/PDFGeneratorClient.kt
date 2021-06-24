@@ -6,6 +6,7 @@ import no.nav.klage.domain.Klage
 import no.nav.klage.domain.KlagePDFModel
 import no.nav.klage.domain.Vedlegg
 import no.nav.klage.getLogger
+import no.nav.klage.util.sanitizeText
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
@@ -43,8 +44,8 @@ class PDFGeneratorClient(
         adresse = adresse,
         telefonnummer = telefon,
         vedtak = vedtak,
-        begrunnelse = begrunnelse,
-        saksnummer = getSaksnummerString(userSaksnummer, internalSaksnummer),
+        begrunnelse = sanitizeText(begrunnelse),
+        saksnummer = sanitizeText(getSaksnummerString(userSaksnummer, internalSaksnummer)),
         oversiktVedlegg = getOversiktVedlegg(vedlegg),
         dato = dato.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")),
         ytelse = ytelse,
