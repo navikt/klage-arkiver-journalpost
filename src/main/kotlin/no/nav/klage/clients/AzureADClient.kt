@@ -31,11 +31,17 @@ class AzureADClient(
     @Value("\${AZURE_APP_WELL_KNOWN_URL}")
     private lateinit var discoveryUrl: String
 
-    @Value("\${KLAGE_DITTNAV_API_CLIENT_ID}")
-    private lateinit var klageDittnavApiClientId: String
+    @Value("\${KLAGE_FILE_API_APP_NAME}")
+    private lateinit var klageFileApiAppName: String
 
-    @Value("\${KLAGE_FILE_API_CLIENT_ID}")
-    private lateinit var klageFileApiClientId: String
+    @Value("\${KLAGE_DITTNAV_API_APP_NAME}")
+    private lateinit var klageDittnavApiAppName: String
+
+    @Value("\${NAIS_CLUSTER_NAME}")
+    lateinit var naisCluster: String
+
+    @Value("\${NAIS_NAMESPACE}")
+    lateinit var naisNamespace: String
 
     private fun oidcDiscovery(): OidcDiscovery {
         if (cachedOidcDiscovery == null) {
@@ -54,7 +60,7 @@ class AzureADClient(
 
     fun klageDittnavApiOidcToken(): String {
         if (cachedKlageDittnavApiOidcToken.shouldBeRenewed()) {
-            cachedKlageDittnavApiOidcToken = returnUpdatedToken(klageDittnavApiClientId)
+            cachedKlageDittnavApiOidcToken = returnUpdatedToken(getKlageDittnavApiScope())
         }
 
         return cachedKlageDittnavApiOidcToken!!.token
@@ -62,21 +68,21 @@ class AzureADClient(
 
     fun klageFileApiOidcToken(): String {
         if (cachedKlageFileApiOidcToken.shouldBeRenewed()) {
-            cachedKlageFileApiOidcToken = returnUpdatedToken(klageFileApiClientId)
+            cachedKlageFileApiOidcToken = returnUpdatedToken(getKlageFileApiScope())
         }
 
         return cachedKlageFileApiOidcToken!!.token
     }
 
-    private fun returnUpdatedToken(targetClientId: String): OidcToken {
+    private fun returnUpdatedToken(scope: String): OidcToken {
         val map = LinkedMultiValueMap<String, String>()
 
         map.add("client_id", clientId)
         map.add("client_secret", clientSecret)
         map.add("grant_type", "client_credentials")
-        map.add("scope", "api://${targetClientId}/.default")
+        map.add("scope", "api://${scope}/.default")
 
-        logger.debug("Getting access token from OIDC for target client {}", targetClientId)
+        logger.debug("Getting access token from OIDC for target client {}", scope)
 
         return azureADWebClient.post()
                 .uri(oidcDiscovery().token_endpoint)
@@ -90,4 +96,11 @@ class AzureADClient(
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     data class OidcDiscovery(val token_endpoint: String, val jwks_uri: String, val issuer: String)
+
+    private fun getKlageFileApiScope(): String = getScopeString(klageFileApiAppName)
+
+    private fun getKlageDittnavApiScope(): String = getScopeString(klageDittnavApiAppName)
+
+    private fun getScopeString(appName: String): String = "${naisCluster}.${naisNamespace}.${appName}"
+
 }
