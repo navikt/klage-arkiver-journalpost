@@ -37,10 +37,10 @@ class JoarkClient(
     @Value("\${DRY_RUN}")
     private lateinit var dryRun: String
 
-    fun createJournalpost(klage: Klage): String {
+    fun createJournalpost(klageAnkeInput: KlageAnkeInput): String {
         logger.debug("Creating journalpost.")
 
-        val journalpost = getJournalpost(klage)
+        val journalpost = getJournalpost(klageAnkeInput)
 
         val journalpostAsJSONForLogging = getJournalpostAsJSONForLogging(journalpost)
         secureLogger.debug("Journalpost as JSON (what we post to dokarkiv/Joark): {}", journalpostAsJSONForLogging)
@@ -56,7 +56,7 @@ class JoarkClient(
                 .bodyValue(journalpost)
                 .retrieve()
                 .bodyToMono(JournalpostResponse::class.java)
-                .block() ?: throw RuntimeException("Journalpost could not be created for klage with id ${klage.id}.")
+                .block() ?: throw RuntimeException("Journalpost could not be created for klage with id ${klageAnkeInput.id}.")
 
             logger.debug("Journalpost successfully created in Joark with id {}.", journalpostResponse.journalpostId)
 
@@ -64,39 +64,39 @@ class JoarkClient(
         }
     }
 
-    private fun getJournalpost(klage: Klage): Journalpost =
+    private fun getJournalpost(klageAnkeInput: KlageAnkeInput): Journalpost =
         Journalpost(
-            tema = klage.tema,
-            behandlingstema = getBehandlingstema(klage),
+            tema = klageAnkeInput.tema,
+            behandlingstema = getBehandlingstema(klageAnkeInput),
             avsenderMottaker = AvsenderMottaker(
-                id = klage.fullmektigFnr ?: klage.identifikasjonsnummer,
-                navn = klage.fullmektigNavn ?: "${klage.fornavn} ${klage.mellomnavn} ${klage.etternavn}"
+                id = klageAnkeInput.fullmektigFnr ?: klageAnkeInput.identifikasjonsnummer,
+                navn = klageAnkeInput.fullmektigNavn ?: "${klageAnkeInput.fornavn} ${klageAnkeInput.mellomnavn} ${klageAnkeInput.etternavn}"
             ),
-            sak = getSak(klage),
+            sak = getSak(klageAnkeInput),
             tittel = KLAGE_TITTEL,
             bruker = Bruker(
-                id = klage.identifikasjonsnummer,
+                id = klageAnkeInput.identifikasjonsnummer,
             ),            
-            dokumenter = getDokumenter(klage),
-            tilleggsopplysninger = listOf(Tilleggsopplysning(nokkel = KLAGE_ID_KEY, verdi = klage.id.toString()))
+            dokumenter = getDokumenter(klageAnkeInput),
+            tilleggsopplysninger = listOf(Tilleggsopplysning(nokkel = KLAGE_ID_KEY, verdi = klageAnkeInput.id.toString()))
         )
 
-    private fun getSak(klage: Klage): Sak? =
-        if (klage.tema == "FOR" && klage.internalSaksnummer?.toIntOrNull() != null) {
-            Sak(sakstype = Sakstype.FAGSAK, fagsaksystem = FagsaksSystem.FS36, fagsakid = klage.internalSaksnummer)
+    private fun getSak(klageAnkeInput: KlageAnkeInput): Sak? =
+        if (klageAnkeInput.tema == "FOR" && klageAnkeInput.internalSaksnummer?.toIntOrNull() != null) {
+            Sak(sakstype = Sakstype.FAGSAK, fagsaksystem = FagsaksSystem.FS36, fagsakid = klageAnkeInput.internalSaksnummer)
         } else {
             null
         }
 
-    private fun getDokumenter(klage: Klage): List<Dokument> {
+    private fun getDokumenter(klageAnkeInput: KlageAnkeInput): List<Dokument> {
         val hovedDokument = Dokument(
             tittel = KLAGE_TITTEL,
             brevkode = BREVKODE_KLAGESKJEMA,
-            dokumentVarianter = getDokumentVariant(klage.fileContentAsBytes, "PDFA")
+            dokumentVarianter = getDokumentVariant(klageAnkeInput.fileContentAsBytes, "PDFA")
         )
         val documents = mutableListOf(hovedDokument)
 
-        klage.vedlegg.forEach {
+        klageAnkeInput.vedlegg.forEach {
             //Attachments will always be PDF as of now.
             val doc = Dokument(
                 tittel = it.tittel,
@@ -126,11 +126,11 @@ class JoarkClient(
         return jacksonObjectMapper().writeValueAsString(journalpostCopyWithoutFileData)
     }
 
-    private fun getBehandlingstema(klage: Klage): String? {
+    private fun getBehandlingstema(klageAnkeInput: KlageAnkeInput): String? {
         return when {
-            klage.isLoennskompensasjon() -> BEHANDLINGSTEMA_LONNSKOMPENSASJON
-            klage.isTilbakebetalingAvForskuddPaaDagpenger() -> BEHANDLINGSTEMA_TILBAKEBETALING_FORSKUDD_PAA_DAGPENGER
-            klage.isFeriepengerAvDagpenger() -> BEHANDLINGSTEMA_FERIEPENGER_AV_DAGPENGER
+            klageAnkeInput.isLoennskompensasjon() -> BEHANDLINGSTEMA_LONNSKOMPENSASJON
+            klageAnkeInput.isTilbakebetalingAvForskuddPaaDagpenger() -> BEHANDLINGSTEMA_TILBAKEBETALING_FORSKUDD_PAA_DAGPENGER
+            klageAnkeInput.isFeriepengerAvDagpenger() -> BEHANDLINGSTEMA_FERIEPENGER_AV_DAGPENGER
             else -> null
         }
     }
