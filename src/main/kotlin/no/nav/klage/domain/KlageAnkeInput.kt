@@ -6,6 +6,8 @@ data class KlageAnkeInput(
     val id: Int,
     val identifikasjonstype: String,
     val identifikasjonsnummer: String,
+    val klageInstans: Boolean?,
+    val trygderetten: Boolean?,
     val fornavn: String,
     val mellomnavn: String,
     val etternavn: String,
