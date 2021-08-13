@@ -2,7 +2,7 @@ package no.nav.klage.clients
 
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import no.nav.klage.domain.Klage
+import no.nav.klage.domain.KlageAnkeInput
 import no.nav.klage.getLogger
 import no.nav.klage.getSecureLogger
 import no.nav.klage.service.ApplicationService
@@ -50,9 +50,9 @@ class KlageKafkaConsumer(
         }
     }
 
-    private fun String.toKlage(): Klage = mapper.readValue(this, Klage::class.java)
+    private fun String.toKlage(): KlageAnkeInput = mapper.readValue(this, KlageAnkeInput::class.java)
 
-    private fun Klage.logIt() {
+    private fun KlageAnkeInput.logIt() {
         val klageid = this.id.toString()
         when {
             this.isDagpengerVariant() -> {

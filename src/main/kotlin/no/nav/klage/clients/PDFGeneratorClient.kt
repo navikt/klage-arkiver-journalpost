@@ -2,7 +2,7 @@ package no.nav.klage.clients
 
 import io.github.resilience4j.kotlin.retry.executeFunction
 import io.github.resilience4j.retry.Retry
-import no.nav.klage.domain.Klage
+import no.nav.klage.domain.KlageAnkeInput
 import no.nav.klage.domain.KlagePDFModel
 import no.nav.klage.domain.Vedlegg
 import no.nav.klage.getLogger
@@ -25,18 +25,18 @@ class PDFGeneratorClient(
         private val logger = getLogger(javaClass.enclosingClass)
     }
 
-    fun getFilledOutPDF(klage: Klage): ByteArray {
+    fun getFilledOutPDF(klageAnkeInput: KlageAnkeInput): ByteArray {
         logger.debug("Creating PDF from klage.")
         return retryPdf.executeFunction { pdfWebClient.post()
                 .contentType(MediaType.APPLICATION_JSON)
-                .bodyValue(klage.toPDFModel())
+                .bodyValue(klageAnkeInput.toPDFModel())
                 .retrieve()
                 .bodyToMono<ByteArray>()
                 .block() ?: throw RuntimeException("PDF could not be generated")
         }
     }
 
-    private fun Klage.toPDFModel() = KlagePDFModel(
+    private fun KlageAnkeInput.toPDFModel() = KlagePDFModel(
         foedselsnummer = StringBuilder(identifikasjonsnummer).insert(6, " ").toString(),
         fornavn = fornavn,
         mellomnavn = mellomnavn,

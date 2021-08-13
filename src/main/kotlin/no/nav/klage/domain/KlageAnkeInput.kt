@@ -2,12 +2,10 @@ package no.nav.klage.domain
 
 import java.time.LocalDate
 
-data class Klage(
+data class KlageAnkeInput(
     val id: Int,
     val identifikasjonstype: String,
     val identifikasjonsnummer: String,
-    val klageInstans: Boolean,
-    val trygderetten: Boolean,
     val fornavn: String,
     val mellomnavn: String,
     val etternavn: String,
@@ -24,8 +22,9 @@ data class Klage(
     val userSaksnummer: String?,
     val internalSaksnummer: String?,
     val fullmektigNavn: String?,
-    val fullmektigFnr: String?
-
+    val fullmektigFnr: String?,
+    val KlageAnkeType: KlageAnkeType? = no.nav.klage.domain.KlageAnkeType.KLAGE,
+    val previousUtfall: String?
 ) {
 
     fun isLoennskompensasjon(): Boolean {
@@ -45,6 +44,10 @@ data class Klage(
                 isTilbakebetalingAvForskuddPaaDagpenger() ||
                 isFeriepengerAvDagpenger())
     }
+}
+
+enum class KlageAnkeType {
+    KLAGE, ANKE
 }
 
 data class Vedlegg(
