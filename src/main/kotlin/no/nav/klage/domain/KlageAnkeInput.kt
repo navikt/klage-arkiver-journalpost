@@ -25,7 +25,7 @@ data class KlageAnkeInput(
     val internalSaksnummer: String?,
     val fullmektigNavn: String?,
     val fullmektigFnr: String?,
-    val KlageAnkeType: KlageAnkeType? = no.nav.klage.domain.KlageAnkeType.KLAGE,
+    val klageAnkeType: KlageAnkeType? = no.nav.klage.domain.KlageAnkeType.KLAGE,
     val previousUtfall: String?
 ) {
 
