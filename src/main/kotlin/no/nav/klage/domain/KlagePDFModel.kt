@@ -13,7 +13,7 @@ data class KlagePDFModel(
     val oversiktVedlegg: String,
     val dato: String,
     val ytelse: String,
-    val userChoices: List<String>? = listOf(),
+    val userChoices: List<String>? = emptyList(),
     val fullmektigNavn: String,
     val fullmektigFnr: String
 )
