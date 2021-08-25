@@ -16,7 +16,7 @@ class FileClientConfiguration(
         private val logger = getLogger(javaClass.enclosingClass)
     }
 
-    @Value("\${FILE_SERVICE_URL}")
+    @Value("\${KLAGE_FILE_API_SERVICE_URL}")
     private lateinit var fileServiceURL: String
 
     @Bean

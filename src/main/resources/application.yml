@@ -40,9 +40,9 @@ KAFKA_TOPIC: aapen-klager-klageOpprettet
 navCallId: Nav-Callid
 navConsumerId: Nav-Consumer-Id
 
-PDF_SERVICE_URL: http://klage-dittnav-pdfgen/api/v1/genpdf/klage-dittnav-pdfgen/klage
+PDF_SERVICE_URL: http://klage-dittnav-pdfgen/api/v1/genpdf/klage-dittnav-pdfgen/
 SERVICE_USER_USERNAME: srvklage-dittnav
-FILE_SERVICE_URL: http://klage-file-api
+KLAGE_FILE_API_SERVICE_URL: http://klage-file-api
 KLAGE_FILE_API_APP_NAME: klage-file-api
 KLAGE-DITTNAV-API_SERVICE_URL: http://klage-dittnav-api
 KLAGE_DITTNAV_API_APP_NAME: klage-dittnav-api

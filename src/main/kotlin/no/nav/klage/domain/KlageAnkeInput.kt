@@ -46,6 +46,10 @@ data class KlageAnkeInput(
                 isTilbakebetalingAvForskuddPaaDagpenger() ||
                 isFeriepengerAvDagpenger())
     }
+
+    fun isKlage(): Boolean {
+        return klageAnkeType == KlageAnkeType.KLAGE
+    }
 }
 
 enum class KlageAnkeType {

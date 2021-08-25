@@ -47,6 +47,7 @@ spec:
         - application: klage-dittnav-pdfgen
         - application: klage-file-api
         - application: klage-dittnav-api
+        - application: kabal-api
       external:
       {{#each externalHosts as |host|}}
         - host: {{host}}

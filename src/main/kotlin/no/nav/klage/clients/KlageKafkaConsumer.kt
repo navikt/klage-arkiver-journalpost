@@ -33,16 +33,25 @@ class KlageKafkaConsumer(
         secureLogger.debug("Klage received from Kafka topic: {}", klageRecord.value())
 
         runCatching {
-            val klage = klageRecord.value().toKlage()
-            klage.logIt()
-            val journalpostIdResponse = klageDittnavAPIClient.getJournalpostForKlageId(klage.id)
+            val klageAnke = klageRecord.value().toKlage()
+            klageAnke.logIt()
+            val journalpostIdResponse =
+                if (klageAnke.isKlage()) {
+                    klageDittnavAPIClient.getJournalpostForKlageId(klageAnke.id)
+                } else {
+                    klageDittnavAPIClient.getJournalpostForAnkeInternalSaksnummer(klageAnke.internalSaksnummer!!)
+                }
 
             if (journalpostIdResponse.journalpostId != null) {
-                logger.info("Klage with ID {} is already registered in Joark with journalpost ID {}. Ignoring.", klage.id, journalpostIdResponse.journalpostId)
+                logger.info(
+                    "Klage with ID {} is already registered in Joark with journalpost ID {}. Ignoring.",
+                    klageAnke.id,
+                    journalpostIdResponse.journalpostId
+                )
                 return
             }
 
-            applicationService.createJournalpost(klage)
+            applicationService.createJournalpost(klageAnke)
         }.onFailure {
             slackClient.postMessage("Nylig mottatt klage feilet! (${causeClass(rootCause(it))})", Severity.ERROR)
             secureLogger.error("Failed to process klage", it)
@@ -54,13 +63,36 @@ class KlageKafkaConsumer(
 
     private fun KlageAnkeInput.logIt() {
         val klageid = this.id.toString()
-        when {
-            this.isDagpengerVariant() -> {
-                slackClient.postMessage(String.format("Klage (%s) med id <%s|%s> mottatt.", this.ytelse, Kibana.createUrl(klageid), klageid))
+        if (this.isKlage()) {
+            when {
+                this.isDagpengerVariant() -> {
+                    slackClient.postMessage(
+                        String.format(
+                            "Klage (%s) med id <%s|%s> mottatt.",
+                            this.ytelse,
+                            Kibana.createUrl(klageid),
+                            klageid
+                        )
+                    )
+                }
+                else -> {
+                    slackClient.postMessage(
+                        String.format(
+                            "Klage med id <%s|%s> mottatt.",
+                            Kibana.createUrl(klageid),
+                            klageid
+                        )
+                    )
+                }
             }
-            else -> {
-                slackClient.postMessage(String.format("Klage med id <%s|%s> mottatt.", Kibana.createUrl(klageid), klageid))
-            }
+        } else {
+            slackClient.postMessage(
+                String.format(
+                    "Anke med id <%s|%s> mottatt.",
+                    this.internalSaksnummer?.let { Kibana.createUrl(it) },
+                    this.internalSaksnummer
+                )
+            )
         }
 
         logger.debug("Received klage has id: {}", this.id)
