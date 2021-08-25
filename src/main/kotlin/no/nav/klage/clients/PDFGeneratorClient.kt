@@ -25,9 +25,32 @@ class PDFGeneratorClient(
         private val logger = getLogger(javaClass.enclosingClass)
     }
 
-    fun getFilledOutPDF(klageAnkeInput: KlageAnkeInput): ByteArray {
+    fun generatePDF(klageAnkeInput: KlageAnkeInput): ByteArray {
+        return if (klageAnkeInput.isKlage()) {
+            getKlagePDF(klageAnkeInput)
+        } else {
+            getAnkePDF(klageAnkeInput)
+        }
+    }
+
+    fun getKlagePDF(klageAnkeInput: KlageAnkeInput): ByteArray {
         logger.debug("Creating PDF from klage.")
-        return retryPdf.executeFunction { pdfWebClient.post()
+        return retryPdf.executeFunction {
+            pdfWebClient.post()
+                .uri { it.path("/klage").build() }
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(klageAnkeInput.toPDFModel())
+                .retrieve()
+                .bodyToMono<ByteArray>()
+                .block() ?: throw RuntimeException("PDF could not be generated")
+        }
+    }
+
+    fun getAnkePDF(klageAnkeInput: KlageAnkeInput): ByteArray {
+        logger.debug("Creating PDF from anke.")
+        return retryPdf.executeFunction {
+            pdfWebClient.post()
+                .uri { it.path("/anke").build() }
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(klageAnkeInput.toPDFModel())
                 .retrieve()
@@ -48,7 +71,7 @@ class PDFGeneratorClient(
         saksnummer = sanitizeText(getSaksnummerString(userSaksnummer, internalSaksnummer)),
         oversiktVedlegg = getOversiktVedlegg(vedlegg),
         dato = dato.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")),
-        ytelse = ytelse,
+        ytelse = ytelse.decapitalize(),
         userChoices = userChoices,
         fullmektigNavn = fullmektigNavn ?: "",
         fullmektigFnr = fullmektigFnr ?: ""

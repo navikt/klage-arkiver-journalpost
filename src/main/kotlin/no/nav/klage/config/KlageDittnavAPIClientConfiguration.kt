@@ -20,7 +20,7 @@ class KlageDittnavAPIClientConfiguration(private val webClientBuilder: WebClient
     @Bean
     fun klageDittnavAPIWebClient(): WebClient {
         return webClientBuilder
-            .baseUrl(klageDittnavAPIServiceURL + "/internal/klager/")
+            .baseUrl(klageDittnavAPIServiceURL + "/internal/")
             .build()
     }
 }

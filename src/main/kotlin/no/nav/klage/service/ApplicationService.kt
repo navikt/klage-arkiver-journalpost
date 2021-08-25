@@ -15,7 +15,8 @@ class ApplicationService(
         private val fileClient: FileClient,
         private val joarkClient: JoarkClient,
         private val klageDittnavAPIClient: KlageDittnavAPIClient,
-        private val klageMetrics: KlageMetrics
+        private val klageMetrics: KlageMetrics,
+        private val joarkService: JoarkService
 ) {
 
     companion object {
@@ -25,7 +26,7 @@ class ApplicationService(
 
     fun createJournalpost(klageAnkeInput: KlageAnkeInput) {
         //Create PDF
-        klageAnkeInput.fileContentAsBytes = pdfGenerator.getFilledOutPDF(klageAnkeInput)
+        klageAnkeInput.fileContentAsBytes = pdfGenerator.generatePDF(klageAnkeInput)
 
         //Download attachments from temporary storage
         klageAnkeInput.vedlegg.forEach {
@@ -33,14 +34,19 @@ class ApplicationService(
         }
 
         //Create journalpost and archive it
-        val journalpostId = joarkClient.createJournalpost(klageAnkeInput)
+        val journalpostId = joarkService.createJournalpostInJoark(klageAnkeInput)
 
         //Record metrics
         klageMetrics.incrementKlagerArkivert()
 
         //Callback with journalpostId
         runCatching {
-            klageDittnavAPIClient.setJournalpostIdToKlage(klageAnkeInput.id, journalpostId)
+            if (klageAnkeInput.isKlage()) {
+                klageDittnavAPIClient.setJournalpostIdToKlage(klageAnkeInput.id, journalpostId)
+            } else {
+                klageDittnavAPIClient.setJournalpostIdToAnke(klageAnkeInput.internalSaksnummer!!, journalpostId)
+            }
+
         }.onFailure {
             logger.error("Could not call back to klage-api with journalpostId", it)
         }
