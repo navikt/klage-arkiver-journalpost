@@ -10,7 +10,8 @@ import java.util.*
 
 @Service
 class JoarkService(
-    private val joarkClient: JoarkClient
+    private val joarkClient: JoarkClient,
+    private val pdfService: PdfService
 ) {
     companion object {
         @Suppress("JAVA_CLASS_ON_COMPANION")
@@ -26,6 +27,8 @@ class JoarkService(
         private const val BEHANDLINGSTEMA_LONNSKOMPENSASJON = "ab0438"
         private const val BEHANDLINGSTEMA_TILBAKEBETALING_FORSKUDD_PAA_DAGPENGER = "ab0451"
         private const val BEHANDLINGSTEMA_FERIEPENGER_AV_DAGPENGER = "ab0452"
+        private const val PDF_CODE = "PDF"
+        private const val PDFA_CODE = "PDFA"
 
     }
 
@@ -75,7 +78,7 @@ class JoarkService(
         val hovedDokument = Dokument(
             tittel = if (klageAnkeInput.isKlage()) KLAGE_TITTEL else ANKE_TITTEL,
             brevkode = if (klageAnkeInput.isKlage()) BREVKODE_KLAGESKJEMA else BREVKODE_KLAGESKJEMA_ANKE,
-            dokumentVarianter = getDokumentVariant(klageAnkeInput.fileContentAsBytes, "PDFA")
+            dokumentVarianter = getDokumentVariant(klageAnkeInput.fileContentAsBytes)
         )
         val documents = mutableListOf(hovedDokument)
 
@@ -83,20 +86,22 @@ class JoarkService(
             //Attachments will always be PDF as of now.
             val doc = Dokument(
                 tittel = it.tittel,
-                dokumentVarianter = getDokumentVariant(it.fileContentAsBytes, "PDF")
+                dokumentVarianter = getDokumentVariant(it.fileContentAsBytes)
             )
             documents.add(doc)
         }
         return documents
     }
 
-    private fun getDokumentVariant(bytes: ByteArray?, fileType: String): List<DokumentVariant> {
-        val dokumentVariant = DokumentVariant(
-            filtype = fileType,
-            variantformat = "ARKIV",
-            fysiskDokument = Base64.getEncoder().encodeToString(bytes)
-        )
-        return listOf(dokumentVariant)
+    private fun getDokumentVariant(bytes: ByteArray?): List<DokumentVariant> {
+        return if (bytes != null) {
+            val dokumentVariant = DokumentVariant(
+                filtype = if (pdfService.pdfByteArrayIsPdfa(bytes)) PDFA_CODE else PDF_CODE,
+                variantformat = "ARKIV",
+                fysiskDokument = Base64.getEncoder().encodeToString(bytes)
+            )
+            listOf(dokumentVariant)
+        } else emptyList()
     }
 
     private fun getJournalpostAsJSONForLogging(journalpost: Journalpost): String {
