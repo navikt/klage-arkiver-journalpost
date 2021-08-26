@@ -32,7 +32,7 @@ class JoarkService(
     fun createJournalpostInJoark(klageAnkeInput: KlageAnkeInput): String {
         logger.debug("Creating journalpost.")
 
-        val journalpost = getJournalpost(klageAnkeInput, klageAnkeInput.isKlage())
+        val journalpost = getJournalpost(klageAnkeInput)
 
         val journalpostAsJSONForLogging = getJournalpostAsJSONForLogging(journalpost)
         secureLogger.debug("Journalpost as JSON (what we post to dokarkiv/Joark): {}", journalpostAsJSONForLogging)
@@ -41,22 +41,22 @@ class JoarkService(
 
     }
 
-    private fun getJournalpost(klageAnkeInput: KlageAnkeInput, isKlage: Boolean): Journalpost {
+    private fun getJournalpost(klageAnkeInput: KlageAnkeInput): Journalpost {
         return Journalpost(
             tema = klageAnkeInput.tema,
-            behandlingstema = if (isKlage) getBehandlingstema(klageAnkeInput) else null,
+            behandlingstema = if (klageAnkeInput.isKlage()) getBehandlingstema(klageAnkeInput) else null,
             avsenderMottaker = AvsenderMottaker(
                 id = klageAnkeInput.fullmektigFnr ?: klageAnkeInput.identifikasjonsnummer,
                 navn = klageAnkeInput.fullmektigNavn
                     ?: "${klageAnkeInput.fornavn} ${klageAnkeInput.mellomnavn} ${klageAnkeInput.etternavn}"
             ),
             sak = getSak(klageAnkeInput),
-            tittel = if (isKlage) KLAGE_TITTEL else ANKE_TITTEL,
+            tittel = if (klageAnkeInput.isKlage()) KLAGE_TITTEL else ANKE_TITTEL,
             bruker = Bruker(
                 id = klageAnkeInput.identifikasjonsnummer,
             ),
-            dokumenter = getDokumenter(klageAnkeInput, isKlage),
-            tilleggsopplysninger = if (isKlage) {
+            dokumenter = getDokumenter(klageAnkeInput),
+            tilleggsopplysninger = if (klageAnkeInput.isKlage()) {
                 listOf(Tilleggsopplysning(nokkel = KLAGE_ID_KEY, verdi = klageAnkeInput.id.toString()))
             } else {
                 listOf(Tilleggsopplysning(nokkel = ANKE_ID_KEY, verdi = klageAnkeInput.internalSaksnummer.toString()))
@@ -71,10 +71,10 @@ class JoarkService(
             null
         }
 
-    private fun getDokumenter(klageAnkeInput: KlageAnkeInput, isKlage: Boolean): List<Dokument> {
+    private fun getDokumenter(klageAnkeInput: KlageAnkeInput): List<Dokument> {
         val hovedDokument = Dokument(
-            tittel = if (isKlage) KLAGE_TITTEL else ANKE_TITTEL,
-            brevkode = if (isKlage) BREVKODE_KLAGESKJEMA else BREVKODE_KLAGESKJEMA_ANKE,
+            tittel = if (klageAnkeInput.isKlage()) KLAGE_TITTEL else ANKE_TITTEL,
+            brevkode = if (klageAnkeInput.isKlage()) BREVKODE_KLAGESKJEMA else BREVKODE_KLAGESKJEMA_ANKE,
             dokumentVarianter = getDokumentVariant(klageAnkeInput.fileContentAsBytes, "PDFA")
         )
         val documents = mutableListOf(hovedDokument)
