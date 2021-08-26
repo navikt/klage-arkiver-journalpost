@@ -3,6 +3,8 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 val logstashVersion = "5.1"
 val springSleuthVersion = "2.2.3.RELEASE"
 val resilience4jVersion = "1.5.0"
+val verapdfVersion = "1.18.8"
+val mockkVersion = "1.9.3"
 
 val githubUser: String by project
 val githubPassword: String by project
@@ -49,10 +51,13 @@ dependencies {
 
     implementation("no.nav.slackposter:simple-slack-poster:5")
 
+    implementation("org.verapdf:validation-model:$verapdfVersion")
+
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
         exclude(group = "org.junit.vintage", module = "org.junit.vintage")
     }
     testImplementation("org.junit.jupiter:junit-jupiter-engine")
+    testImplementation("io.mockk:mockk:$mockkVersion")
 }
 
 idea {
