@@ -60,16 +60,26 @@ class JoarkService(
             ),
             dokumenter = getDokumenter(klageAnkeInput),
             tilleggsopplysninger = if (klageAnkeInput.isKlage()) {
-                listOf(Tilleggsopplysning(nokkel = KLAGE_ID_KEY, verdi = klageAnkeInput.id.toString()))
+                listOf(
+                    Tilleggsopplysning(nokkel = KLAGE_ID_KEY, verdi = klageAnkeInput.id.toString()),
+                    Tilleggsopplysning(nokkel = "ytelse", verdi = klageAnkeInput.ytelse)
+                )
             } else {
-                listOf(Tilleggsopplysning(nokkel = ANKE_ID_KEY, verdi = klageAnkeInput.internalSaksnummer.toString()))
+                listOf(
+                    Tilleggsopplysning(nokkel = ANKE_ID_KEY, verdi = klageAnkeInput.internalSaksnummer.toString()),
+                    Tilleggsopplysning(nokkel = "ytelse", verdi = klageAnkeInput.ytelse)
+                )
             }
         )
     }
 
     private fun getSak(klageAnkeInput: KlageAnkeInput): Sak? =
         if (klageAnkeInput.tema == "FOR" && klageAnkeInput.internalSaksnummer?.toIntOrNull() != null) {
-            Sak(sakstype = Sakstype.FAGSAK, fagsaksystem = FagsaksSystem.FS36, fagsakid = klageAnkeInput.internalSaksnummer)
+            Sak(
+                sakstype = Sakstype.FAGSAK,
+                fagsaksystem = FagsaksSystem.FS36,
+                fagsakid = klageAnkeInput.internalSaksnummer
+            )
         } else {
             null
         }
