@@ -2,6 +2,13 @@ package no.nav.klage.domain
 
 import java.time.LocalDate
 
+private const val BEHANDLINGSTEMA_LONNSKOMPENSASJON = "ab0438"
+private const val BEHANDLINGSTEMA_TILBAKEBETALING_FORSKUDD_PAA_DAGPENGER = "ab0451"
+private const val BEHANDLINGSTEMA_FERIEPENGER_AV_DAGPENGER = "ab0452"
+private const val BEHANDLINGSTEMA_ENGANGSSTONAD = "ab0327"
+private const val BEHANDLINGSTEMA_FORELDREPENGER = "ab0326"
+private const val BEHANDLINGSTEMA_SVANGERSKAPSPENGER = "ab0126"
+
 data class KlageAnkeInput(
     val id: Int,
     val identifikasjonstype: String,
@@ -41,10 +48,36 @@ data class KlageAnkeInput(
         return tema == "DAG" && ytelse == "Feriepenger av dagpenger"
     }
 
+    fun isForeldrepenger(): Boolean {
+        return tema == "FOR" && ytelse == "Foreldrepenger"
+    }
+
+    fun isEngangsstonad(): Boolean {
+        return tema == "FOR" && ytelse == "Engangsstonad"
+    }
+
+    fun isSvangerskapspenger(): Boolean {
+        return tema == "FOR" && ytelse == "Svangerskapspenger"
+    }
+
     fun isDagpengerVariant(): Boolean {
         return (isLoennskompensasjon() ||
                 isTilbakebetalingAvForskuddPaaDagpenger() ||
                 isFeriepengerAvDagpenger())
+    }
+
+    fun getBehandlingstema(): String? {
+        return if (isKlage()) {
+            when {
+                this.isLoennskompensasjon() -> BEHANDLINGSTEMA_LONNSKOMPENSASJON
+                this.isTilbakebetalingAvForskuddPaaDagpenger() -> BEHANDLINGSTEMA_TILBAKEBETALING_FORSKUDD_PAA_DAGPENGER
+                this.isFeriepengerAvDagpenger() -> BEHANDLINGSTEMA_FERIEPENGER_AV_DAGPENGER
+                this.isForeldrepenger() -> BEHANDLINGSTEMA_FORELDREPENGER
+                this.isEngangsstonad() -> BEHANDLINGSTEMA_ENGANGSSTONAD
+                this.isSvangerskapspenger() -> BEHANDLINGSTEMA_SVANGERSKAPSPENGER
+                else -> null
+            }
+        } else null
     }
 
     fun isKlage(): Boolean {
