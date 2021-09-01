@@ -53,7 +53,7 @@ data class KlageAnkeInput(
     }
 
     fun isEngangsstonad(): Boolean {
-        return tema == "FOR" && ytelse == "Engangsstonad"
+        return tema == "FOR" && ytelse == "Engangsstønad"
     }
 
     fun isSvangerskapspenger(): Boolean {
