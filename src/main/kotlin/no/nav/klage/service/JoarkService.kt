@@ -24,9 +24,6 @@ class JoarkService(
         private const val ANKE_TITTEL = "Anke"
         private const val BREVKODE_KLAGESKJEMA = "NAV 90-00.08"
         private const val BREVKODE_KLAGESKJEMA_ANKE = "NAV 90-00.08 A"
-        private const val BEHANDLINGSTEMA_LONNSKOMPENSASJON = "ab0438"
-        private const val BEHANDLINGSTEMA_TILBAKEBETALING_FORSKUDD_PAA_DAGPENGER = "ab0451"
-        private const val BEHANDLINGSTEMA_FERIEPENGER_AV_DAGPENGER = "ab0452"
         private const val PDF_CODE = "PDF"
         private const val PDFA_CODE = "PDFA"
 
@@ -47,7 +44,7 @@ class JoarkService(
     private fun getJournalpost(klageAnkeInput: KlageAnkeInput): Journalpost {
         return Journalpost(
             tema = klageAnkeInput.tema,
-            behandlingstema = if (klageAnkeInput.isKlage()) getBehandlingstema(klageAnkeInput) else null,
+            behandlingstema = klageAnkeInput.getBehandlingstema(),
             avsenderMottaker = AvsenderMottaker(
                 id = klageAnkeInput.fullmektigFnr ?: klageAnkeInput.identifikasjonsnummer,
                 navn = klageAnkeInput.fullmektigNavn
@@ -62,12 +59,12 @@ class JoarkService(
             tilleggsopplysninger = if (klageAnkeInput.isKlage()) {
                 listOf(
                     Tilleggsopplysning(nokkel = KLAGE_ID_KEY, verdi = klageAnkeInput.id.toString()),
-                    Tilleggsopplysning(nokkel = "ytelse", verdi = klageAnkeInput.ytelse)
+                    Tilleggsopplysning(nokkel = "klage_ytelse", verdi = klageAnkeInput.ytelse)
                 )
             } else {
                 listOf(
                     Tilleggsopplysning(nokkel = ANKE_ID_KEY, verdi = klageAnkeInput.internalSaksnummer.toString()),
-                    Tilleggsopplysning(nokkel = "ytelse", verdi = klageAnkeInput.ytelse)
+                    Tilleggsopplysning(nokkel = "klage_ytelse", verdi = klageAnkeInput.ytelse)
                 )
             }
         )
@@ -122,14 +119,5 @@ class JoarkService(
         }
         val journalpostCopyWithoutFileData = journalpost.copy(dokumenter = dokumenterWithoutFileData)
         return jacksonObjectMapper().writeValueAsString(journalpostCopyWithoutFileData)
-    }
-
-    private fun getBehandlingstema(klageAnkeInput: KlageAnkeInput): String? {
-        return when {
-            klageAnkeInput.isLoennskompensasjon() -> BEHANDLINGSTEMA_LONNSKOMPENSASJON
-            klageAnkeInput.isTilbakebetalingAvForskuddPaaDagpenger() -> BEHANDLINGSTEMA_TILBAKEBETALING_FORSKUDD_PAA_DAGPENGER
-            klageAnkeInput.isFeriepengerAvDagpenger() -> BEHANDLINGSTEMA_FERIEPENGER_AV_DAGPENGER
-            else -> null
-        }
     }
 }
