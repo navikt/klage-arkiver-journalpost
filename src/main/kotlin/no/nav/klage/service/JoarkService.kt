@@ -20,6 +20,7 @@ class JoarkService(
 
         private const val KLAGE_ID_KEY = "klage_id"
         private const val ANKE_ID_KEY = "anke_id"
+        private const val KLAGE_YTELSE_KEY = "klage_ytelse"
         private const val KLAGE_TITTEL = "Klage"
         private const val ANKE_TITTEL = "Anke"
         private const val BREVKODE_KLAGESKJEMA = "NAV 90-00.08"
@@ -59,12 +60,12 @@ class JoarkService(
             tilleggsopplysninger = if (klageAnkeInput.isKlage()) {
                 listOf(
                     Tilleggsopplysning(nokkel = KLAGE_ID_KEY, verdi = klageAnkeInput.id.toString()),
-                    Tilleggsopplysning(nokkel = "klage_ytelse", verdi = klageAnkeInput.ytelse)
+                    Tilleggsopplysning(nokkel = KLAGE_YTELSE_KEY, verdi = klageAnkeInput.ytelse)
                 )
             } else {
                 listOf(
                     Tilleggsopplysning(nokkel = ANKE_ID_KEY, verdi = klageAnkeInput.internalSaksnummer.toString()),
-                    Tilleggsopplysning(nokkel = "klage_ytelse", verdi = klageAnkeInput.ytelse)
+                    Tilleggsopplysning(nokkel = KLAGE_YTELSE_KEY, verdi = klageAnkeInput.ytelse)
                 )
             }
         )
