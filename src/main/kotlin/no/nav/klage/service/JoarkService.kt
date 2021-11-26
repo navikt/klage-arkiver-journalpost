@@ -92,6 +92,7 @@ class JoarkService(
 
         klageAnkeInput.vedlegg.forEach {
             //Attachments will always be PDF as of now.
+            secureLogger.debug("Adding attachment with title ${it.tittel} and id ${it.id} to journalpost")
             val doc = Dokument(
                 tittel = it.tittel,
                 dokumentVarianter = getDokumentVariant(it.fileContentAsBytes)
