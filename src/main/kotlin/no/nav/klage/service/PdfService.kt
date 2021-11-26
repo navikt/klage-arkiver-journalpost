@@ -30,8 +30,7 @@ class PdfService {
         } catch (e: ModelParsingException) {
             secureLogger.warn("Error parsing document", e)
         } catch (e: ValidationException) {
-            secureLogger.error("Error validating document", e)
-            throw e
+            secureLogger.warn("Error validating document", e)
         }
         return false
     }
