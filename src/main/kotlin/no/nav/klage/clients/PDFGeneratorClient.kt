@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.bodyToMono
 import java.time.format.DateTimeFormatter
+import java.util.*
 
 
 @Component
@@ -71,7 +72,7 @@ class PDFGeneratorClient(
         saksnummer = sanitizeText(getSaksnummerString(userSaksnummer, internalSaksnummer)),
         oversiktVedlegg = getOversiktVedlegg(vedlegg),
         dato = dato.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")),
-        ytelse = ytelse.decapitalize(),
+        ytelse = ytelse.replaceFirstChar { it.lowercase(Locale.getDefault()) },
         userChoices = userChoices,
         fullmektigNavn = fullmektigNavn ?: "",
         fullmektigFnr = fullmektigFnr ?: ""
