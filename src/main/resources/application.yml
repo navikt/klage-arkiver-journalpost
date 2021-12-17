@@ -1,4 +1,6 @@
 spring:
+  application:
+    name: klage-arkiver-journalpost
   main:
     banner-mode: OFF
   codec:
