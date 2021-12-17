@@ -89,7 +89,7 @@ class AzureADClient(
                 .bodyValue(map)
                 .retrieve()
                 .bodyToMono<OidcToken>()
-                .block()
+                .block()!!
     }
 
     private fun OidcToken?.shouldBeRenewed(): Boolean = this?.hasExpired() ?: true

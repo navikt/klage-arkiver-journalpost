@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 val logstashVersion = "5.1"
-val springSleuthVersion = "2.2.3.RELEASE"
+val springSleuthVersion = "3.0.4"
 val resilience4jVersion = "1.5.0"
 val verapdfVersion = "1.18.8"
 val mockkVersion = "1.9.3"
@@ -22,9 +22,9 @@ repositories {
 }
 
 plugins {
-    id("org.jetbrains.kotlin.jvm") version "1.4.0"
-    id("org.springframework.boot") version "2.2.6.RELEASE"
-    id("org.jetbrains.kotlin.plugin.spring") version "1.4.0"
+    id("org.jetbrains.kotlin.jvm") version "1.6.0"
+    id("org.springframework.boot") version "2.5.7"
+    id("org.jetbrains.kotlin.plugin.spring") version "1.6.0"
     idea
 }
 
@@ -36,6 +36,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-webflux")
+    implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.projectreactor:reactor-spring:1.0.1.RELEASE")
     implementation("org.springframework.cloud:spring-cloud-starter-sleuth:$springSleuthVersion")
 
@@ -67,19 +68,19 @@ idea {
 }
 
 tasks.withType<KotlinCompile> {
-    kotlinOptions.jvmTarget = "1.8"
+    kotlinOptions{
+        freeCompilerArgs = listOf("-Xjsr305=strict")
+        jvmTarget = "17"
+    }
+}
+
+tasks.withType<Test> {
+    useJUnitPlatform()
+    testLogging {
+        events("passed", "skipped", "failed")
+    }
 }
 
 tasks.getByName<org.springframework.boot.gradle.tasks.bundling.BootJar>("bootJar") {
     this.archiveFileName.set("app.jar")
 }
-
-tasks.test {
-    useJUnitPlatform()
-}
-
-kotlin.sourceSets["main"].kotlin.srcDirs("src/main/kotlin")
-kotlin.sourceSets["test"].kotlin.srcDirs("src/test/kotlin")
-
-sourceSets["main"].resources.srcDirs("src/main/resources")
-sourceSets["test"].resources.srcDirs("src/test/resources")
