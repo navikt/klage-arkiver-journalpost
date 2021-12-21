@@ -95,17 +95,17 @@ class JoarkService(
             secureLogger.debug("Adding attachment with title ${it.tittel} and id ${it.id} to journalpost")
             val doc = Dokument(
                 tittel = it.tittel,
-                dokumentVarianter = getDokumentVariant(it.fileContentAsBytes)
+                dokumentVarianter = getDokumentVariant(it.fileContentAsBytes, false)
             )
             documents.add(doc)
         }
         return documents
     }
 
-    private fun getDokumentVariant(bytes: ByteArray?): List<DokumentVariant> {
+    private fun getDokumentVariant(bytes: ByteArray?, performPdfaCheck: Boolean = true): List<DokumentVariant> {
         return if (bytes != null) {
             val dokumentVariant = DokumentVariant(
-                filtype = if (pdfService.pdfByteArrayIsPdfa(bytes)) PDFA_CODE else PDF_CODE,
+                filtype = if (performPdfaCheck && pdfService.pdfByteArrayIsPdfa(bytes)) PDFA_CODE else PDF_CODE,
                 variantformat = "ARKIV",
                 fysiskDokument = Base64.getEncoder().encodeToString(bytes)
             )
