@@ -95,7 +95,7 @@ class JoarkService(
             secureLogger.debug("Adding attachment with title ${it.tittel} and id ${it.id} to journalpost")
             val doc = Dokument(
                 tittel = it.tittel,
-                dokumentVarianter = getDokumentVariant(it.fileContentAsBytes, false)
+                dokumentVarianter = getDokumentVariant(bytes = it.fileContentAsBytes, performPdfaCheck = false)
             )
             documents.add(doc)
         }
