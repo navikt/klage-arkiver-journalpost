@@ -1,5 +1,8 @@
 package no.nav.klage.domain
 
+import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import java.time.LocalDate
 
 private const val BEHANDLINGSTEMA_LONNSKOMPENSASJON = "ab0438"
@@ -27,6 +30,8 @@ data class KlageAnkeInput(
     val ytelse: String,
     val vedlegg: List<Vedlegg> = emptyList(),
     var fileContentAsBytes: ByteArray? = null,
+    //deprecated, only used to parse old kafka entries
+    val saksnummer: String? = null,
     val userChoices: List<String>? = emptyList(),
     val userSaksnummer: String?,
     val internalSaksnummer: String?,
@@ -35,37 +40,37 @@ data class KlageAnkeInput(
     val klageAnkeType: KlageAnkeType = no.nav.klage.domain.KlageAnkeType.KLAGE,
     val previousUtfall: String?
 ) {
-
+    @JsonIgnore
     fun isLoennskompensasjon(): Boolean {
         return tema == "DAG" && ytelse == "Lønnskompensasjon for permitterte"
     }
-
+    @JsonIgnore
     fun isTilbakebetalingAvForskuddPaaDagpenger(): Boolean {
         return tema == "DAG" && ytelse == "Tilbakebetaling av forskudd på dagpenger"
     }
-
+    @JsonIgnore
     fun isFeriepengerAvDagpenger(): Boolean {
         return tema == "DAG" && ytelse == "Feriepenger av dagpenger"
     }
-
+    @JsonIgnore
     fun isForeldrepenger(): Boolean {
         return tema == "FOR" && ytelse == "Foreldrepenger"
     }
-
+    @JsonIgnore
     fun isEngangsstonad(): Boolean {
         return tema == "FOR" && ytelse == "Engangsstønad"
     }
-
+    @JsonIgnore
     fun isSvangerskapspenger(): Boolean {
         return tema == "FOR" && ytelse == "Svangerskapspenger"
     }
-
+    @JsonIgnore
     fun isDagpengerVariant(): Boolean {
         return (isLoennskompensasjon() ||
                 isTilbakebetalingAvForskuddPaaDagpenger() ||
                 isFeriepengerAvDagpenger())
     }
-
+    @JsonIgnore
     fun getBehandlingstema(): String? {
         return if (isKlage()) {
             when {
@@ -79,9 +84,16 @@ data class KlageAnkeInput(
             }
         } else null
     }
-
+    @JsonIgnore
     fun isKlage(): Boolean {
         return klageAnkeType == KlageAnkeType.KLAGE
+    }
+
+    val deprecatedFields = listOf(saksnummer)
+
+    fun containsDeprecatedFields(): Boolean {
+        deprecatedFields.forEach { if (it != null) return true }
+        return false
     }
 }
 
@@ -98,3 +110,7 @@ data class Vedlegg(
     var fileContentAsBytes: ByteArray? = null,
     val sizeInBytes: Int
 )
+
+fun String.toKlage(): KlageAnkeInput = jacksonObjectMapper()
+    .registerModule(JavaTimeModule())
+    .readValue(this, KlageAnkeInput::class.java)
