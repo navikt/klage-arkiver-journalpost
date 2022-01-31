@@ -89,11 +89,8 @@ data class KlageAnkeInput(
         return klageAnkeType == KlageAnkeType.KLAGE
     }
 
-    val deprecatedFields = listOf(saksnummer)
-
     fun containsDeprecatedFields(): Boolean {
-        deprecatedFields.forEach { if (it != null) return true }
-        return false
+        return saksnummer != null
     }
 }
 

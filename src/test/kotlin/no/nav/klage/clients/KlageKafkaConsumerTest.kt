@@ -13,10 +13,11 @@ import no.nav.klage.service.ApplicationService
 import no.nav.slackposter.Severity
 import no.nav.slackposter.SlackClient
 import org.apache.kafka.clients.consumer.ConsumerRecord
-import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.MockitoAnnotations
 import org.springframework.test.context.junit.jupiter.SpringExtension
@@ -147,13 +148,13 @@ class KlageKafkaConsumerTest {
         val inputString = mapper
             .writeValueAsString(oldKlageInput)
         val parsedKlage = inputString.toKlage()
-        assertTrue(parsedKlage.id == oldKlageInput.id)
+        assertEquals(parsedKlage.id, oldKlageInput.id)
     }
 
     @Nested
     inner class GammelModell {
         @Test
-        fun `Dersom klageDittnavAPI gir journalpostID så går ikke klageKafkaConsumer videre til createJournalpost`() {
+        fun `klageKafkaConsumer går ikke videre til createJournalpost`() {
             val inputString = mapper
                 .writeValueAsString(oldKlageInput)
 
@@ -166,14 +167,24 @@ class KlageKafkaConsumerTest {
         }
 
         @Test
-        fun `Dersom klageDittnavAPI ikke gir journalpostID så varsles det i slack - Går ikke videre til createJournalpost`() {
+        fun `Dersom klageDittnavAPI ikke gir journalpostID så varsles det i slack`() {
             val inputString = mapper
                 .writeValueAsString(oldKlageInput)
 
             every { slackClient.postMessage(any(), any()) } returns Unit
             every { klageDittnavAPIClient.getJournalpostForKlageId(any()) } returns JournalpostIdResponse(journalpostId = null)
 
-            klageKafkaConsumer.listen(ConsumerRecord("aapen-klager-klageOpprettet", 0, 0, "test", inputString))
+            assertThrows<RuntimeException> {
+                klageKafkaConsumer.listen(
+                    ConsumerRecord(
+                        "aapen-klager-klageOpprettet",
+                        0,
+                        0,
+                        "test",
+                        inputString
+                    )
+                )
+            }
 
             verify(exactly = 0) { applicationService.createJournalpost(any()) }
             verify {
