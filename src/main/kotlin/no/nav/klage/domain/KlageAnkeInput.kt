@@ -32,6 +32,7 @@ data class KlageAnkeInput(
     var fileContentAsBytes: ByteArray? = null,
     //deprecated, only used to parse old kafka entries
     val saksnummer: String? = null,
+    val booleanUserChoices: List<String>? = emptyList(),
     val userChoices: List<String>? = emptyList(),
     val userSaksnummer: String?,
     val internalSaksnummer: String?,
@@ -90,7 +91,8 @@ data class KlageAnkeInput(
     }
 
     fun containsDeprecatedFields(): Boolean {
-        return saksnummer != null
+        return (saksnummer != null
+                || !booleanUserChoices.isNullOrEmpty())
     }
 }
 

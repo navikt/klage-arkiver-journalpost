@@ -154,7 +154,7 @@ class KlageKafkaConsumerTest {
     @Nested
     inner class GammelModell {
         @Test
-        fun `klageKafkaConsumer går ikke videre til createJournalpost`() {
+        fun `utdatert modell - klageKafkaConsumer går ikke videre til createJournalpost`() {
             val inputString = mapper
                 .writeValueAsString(oldKlageInput)
 
@@ -167,7 +167,7 @@ class KlageKafkaConsumerTest {
         }
 
         @Test
-        fun `Dersom klageDittnavAPI ikke gir journalpostID så varsles det i slack`() {
+        fun `utdatert modell - dersom klageDittnavAPI ikke gir journalpostID så varsles det i slack`() {
             val inputString = mapper
                 .writeValueAsString(oldKlageInput)
 
