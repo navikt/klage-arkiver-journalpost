@@ -42,9 +42,17 @@ class KlageKafkaConsumer(
                 }
 
             if (klageAnke.containsDeprecatedFields()) {
-                slackClient.postMessage("Nylig mottatt innsending med id ${klageAnke.id} har utdatert modell.", Severity.ERROR)
+                slackClient.postMessage(
+                    "Nylig mottatt innsending med id ${klageAnke.id} har utdatert modell.",
+                    Severity.ERROR
+                )
                 if (journalpostIdResponse.journalpostId == null) {
-                    slackClient.postMessage("Innsending med id ${klageAnke.id} har ikke journalpostId. Undersøk dette nærmere!", Severity.ERROR)
+                    slackClient.postMessage(
+                        "Innsending med id ${klageAnke.id} har ikke journalpostId. Undersøk dette nærmere!",
+                        Severity.ERROR
+                    )
+                    secureLogger.error("Expired input has no journalpostId", klageAnke)
+                    throw RuntimeException("Expired input has no journalpostId. See more details in secure log.")
                 }
                 return
             }
