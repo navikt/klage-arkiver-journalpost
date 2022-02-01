@@ -9,8 +9,10 @@ import no.nav.slackposter.Kibana
 import no.nav.slackposter.Severity
 import no.nav.slackposter.SlackClient
 import org.apache.kafka.clients.consumer.ConsumerRecord
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.kafka.annotation.KafkaListener
 import org.springframework.stereotype.Component
+import org.springframework.web.reactive.function.client.WebClientResponseException
 
 @Component
 class KlageKafkaConsumer(
@@ -25,6 +27,9 @@ class KlageKafkaConsumer(
         private val secureLogger = getSecureLogger()
     }
 
+    @Value("\${NAIS_CLUSTER_NAME}")
+    lateinit var naisCluster: String
+
     @KafkaListener(topics = ["\${KAFKA_TOPIC}"])
     fun listen(klageRecord: ConsumerRecord<String, String>) {
         logger.debug("Klage received from Kafka topic")
@@ -35,11 +40,28 @@ class KlageKafkaConsumer(
             klageAnke.logIt()
 
             val journalpostIdResponse =
+            try {
                 if (klageAnke.isKlage()) {
                     klageDittnavAPIClient.getJournalpostForKlageId(klageAnke.id)
                 } else {
                     klageDittnavAPIClient.getJournalpostForAnkeInternalSaksnummer(klageAnke.internalSaksnummer!!)
                 }
+            } catch (e: WebClientResponseException.NotFound) {
+                slackClient.postMessage(
+                    "Innsending med id ${klageAnke.id} fins ikke i klage-dittnav-api. Undersøk dette nærmere!",
+                    Severity.ERROR
+                )
+                logger.error("Input has id not found in klage-dittnav-api. See more details in secure log.")
+                secureLogger.error("Input has id not found in klage-dittnav-api,", klageAnke)
+                if (naisCluster == "dev-gcp") {
+                    return
+                } else{
+                    throw RuntimeException("Input not found in klage-dittnav-api!")
+                }
+
+            }
+
+
 
             if (klageAnke.containsDeprecatedFields()) {
                 slackClient.postMessage(
