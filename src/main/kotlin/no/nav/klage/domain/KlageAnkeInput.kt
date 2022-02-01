@@ -32,6 +32,7 @@ data class KlageAnkeInput(
     var fileContentAsBytes: ByteArray? = null,
     //deprecated, only used to parse old kafka entries
     val saksnummer: String? = null,
+    //deprecated, only used to parse old kafka entries
     val booleanUserChoices: List<String>? = emptyList(),
     val userChoices: List<String>? = emptyList(),
     val userSaksnummer: String?,

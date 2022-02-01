@@ -40,28 +40,25 @@ class KlageKafkaConsumer(
             klageAnke.logIt()
 
             val journalpostIdResponse =
-            try {
-                if (klageAnke.isKlage()) {
-                    klageDittnavAPIClient.getJournalpostForKlageId(klageAnke.id)
-                } else {
-                    klageDittnavAPIClient.getJournalpostForAnkeInternalSaksnummer(klageAnke.internalSaksnummer!!)
+                try {
+                    if (klageAnke.isKlage()) {
+                        klageDittnavAPIClient.getJournalpostForKlageId(klageAnke.id)
+                    } else {
+                        klageDittnavAPIClient.getJournalpostForAnkeInternalSaksnummer(klageAnke.internalSaksnummer!!)
+                    }
+                } catch (e: WebClientResponseException.NotFound) {
+                    slackClient.postMessage(
+                        "Innsending med id ${klageAnke.id} fins ikke i klage-dittnav-api. Undersøk dette nærmere!",
+                        Severity.ERROR
+                    )
+                    logger.error("Input has id not found in klage-dittnav-api. See more details in secure log.")
+                    secureLogger.error("Input has id not found in klage-dittnav-api,", klageAnke)
+                    if (naisCluster == "dev-gcp") {
+                        return
+                    } else {
+                        throw RuntimeException("Input not found in klage-dittnav-api!")
+                    }
                 }
-            } catch (e: WebClientResponseException.NotFound) {
-                slackClient.postMessage(
-                    "Innsending med id ${klageAnke.id} fins ikke i klage-dittnav-api. Undersøk dette nærmere!",
-                    Severity.ERROR
-                )
-                logger.error("Input has id not found in klage-dittnav-api. See more details in secure log.")
-                secureLogger.error("Input has id not found in klage-dittnav-api,", klageAnke)
-                if (naisCluster == "dev-gcp") {
-                    return
-                } else{
-                    throw RuntimeException("Input not found in klage-dittnav-api!")
-                }
-
-            }
-
-
 
             if (klageAnke.containsDeprecatedFields()) {
                 slackClient.postMessage(
