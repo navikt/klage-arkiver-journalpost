@@ -6,6 +6,7 @@ fun sanitizeText(input: String): String {
     result = remove0002(result)
     result = remove0008(result)
     result = remove000B(result)
+    result = remove0016(result)
     return result
 }
 
@@ -27,4 +28,8 @@ private fun remove0008(input: String): String {
 
 private fun remove000B(input: String): String {
     return input.replace("\u000B", "")
+}
+
+private fun remove0016(input: String): String {
+    return input.replace("\u0016", "")
 }
