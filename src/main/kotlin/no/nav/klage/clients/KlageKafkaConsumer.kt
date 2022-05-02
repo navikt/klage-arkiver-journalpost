@@ -71,7 +71,7 @@ class KlageKafkaConsumer(
                         Severity.ERROR
                     )
                     secureLogger.error("Expired input has no journalpostId", klageAnke)
-                    throw RuntimeException("Expired input has no journalpostId. See more details in secure log.")
+                    logger.error("Expired input has no journalpostId. See more details in secure log.")
                 } else {
                     logger.error("Input has expired model. See more details in secure log.")
                     secureLogger.error("Input has expired model.", klageAnke)
