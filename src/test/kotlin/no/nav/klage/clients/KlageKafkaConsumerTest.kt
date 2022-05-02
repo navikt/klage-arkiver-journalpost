@@ -174,17 +174,17 @@ class KlageKafkaConsumerTest {
             every { slackClient.postMessage(any(), any()) } returns Unit
             every { klageDittnavAPIClient.getJournalpostForKlageId(any()) } returns JournalpostIdResponse(journalpostId = null)
 
-            assertThrows<RuntimeException> {
-                klageKafkaConsumer.listen(
-                    ConsumerRecord(
-                        "aapen-klager-klageOpprettet",
-                        0,
-                        0,
-                        "test",
-                        inputString
-                    )
+
+            klageKafkaConsumer.listen(
+                ConsumerRecord(
+                    "aapen-klager-klageOpprettet",
+                    0,
+                    0,
+                    "test",
+                    inputString
                 )
-            }
+            )
+            
 
             verify(exactly = 0) { applicationService.createJournalpost(any()) }
             verify {
