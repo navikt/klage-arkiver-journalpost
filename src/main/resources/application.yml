@@ -37,7 +37,7 @@ management:
       application: ${spring.application.name}
 
 KAFKA_GROUP_ID: klage-arkiver-journalpost
-KAFKA_TOPIC: aapen-klager-klageOpprettet
+KAFKA_TOPIC: klage.privat-klage-mottatt-v1
 
 navCallId: Nav-Callid
 navConsumerId: Nav-Consumer-Id

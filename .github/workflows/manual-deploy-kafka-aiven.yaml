@@ -1,0 +1,29 @@
+name: Deploy kafka topics
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - kafka-aiven/**
+      - '!kafka-aiven/README.md'
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        cluster: [dev, prod]
+        topic: [privat-klage-mottatt-v1-DLT]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: deploy kafka-topic ${{ matrix.topic }} to ${{ matrix.cluster }}
+        uses: nais/deploy/actions/deploy@v1
+        env:
+          APIKEY: ${{ secrets.NAIS_DEPLOY_API_KEY }}
+          CLUSTER: ${{ matrix.cluster }}-gcp
+          RESOURCE: kafka-aiven/${{ matrix.topic }}/topic.yaml
+          VARS: kafka-aiven/${{ matrix.topic }}/${{ matrix.cluster }}-vars.yaml
+          PRINT_PAYLOAD: true

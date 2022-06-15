@@ -40,16 +40,16 @@ class ApplicationService(
         klageMetrics.incrementKlagerArkivert()
 
         //Callback with journalpostId
-        runCatching {
+//        runCatching {
             if (klageAnkeInput.isKlage()) {
                 klageDittnavAPIClient.setJournalpostIdToKlage(klageAnkeInput.id, journalpostId)
             } else {
                 klageDittnavAPIClient.setJournalpostIdToAnke(klageAnkeInput.internalSaksnummer!!, journalpostId)
             }
 
-        }.onFailure {
-            logger.error("Could not call back to klage-api with journalpostId", it)
-        }
+//        }.onFailure {
+//            logger.error("Could not call back to klage-api with journalpostId", it)
+//        }
 
         //Remove all attachments from the temporary storage
         klageAnkeInput.vedlegg.forEach {
