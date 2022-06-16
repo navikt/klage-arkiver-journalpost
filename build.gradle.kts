@@ -12,7 +12,7 @@ val githubPassword: String by project
 
 repositories {
     mavenCentral()
-    jcenter()
+    maven ("https://github-package-registry-mirror.gc.nav.no/cached/maven-release")
     maven {
         url = uri("https://maven.pkg.github.com/navikt/simple-slack-poster")
         credentials {
