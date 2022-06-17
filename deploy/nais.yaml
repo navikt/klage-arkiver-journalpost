@@ -13,6 +13,8 @@ spec:
   azure:
     application:
       enabled: true
+  kafka:
+    pool: {{kafka_pool}}
   port: 7075
   liveness:
     path: /internal/health

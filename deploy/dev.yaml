@@ -6,4 +6,5 @@ externalHosts:
   - login.microsoftonline.com
   - hooks.slack.com
 springProfile: dev-gcp
+kafka_pool: nav-dev
 
