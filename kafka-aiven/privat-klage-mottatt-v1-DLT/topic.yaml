@@ -16,5 +16,8 @@ spec:
       application: klage-arkiver-journalpost
       access: write
     - team: klage
+      application: klage-dlt-consumer
+      access: read
+    - team: klage
       application: klage-kafka-manager
       access: read
