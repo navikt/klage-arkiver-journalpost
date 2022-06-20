@@ -68,7 +68,7 @@ class JoarkService(
                     Tilleggsopplysning(nokkel = KLAGE_YTELSE_KEY, verdi = klageAnkeInput.ytelse)
                 )
             },
-            eksternReferanseId = klageAnkeInput.id.toString(),
+            eksternReferanseId = "${klageAnkeInput.klageAnkeType.name}_${klageAnkeInput.id}",
         )
     }
 
