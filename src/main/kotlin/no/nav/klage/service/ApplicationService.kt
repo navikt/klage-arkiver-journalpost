@@ -1,7 +1,6 @@
 package no.nav.klage.service
 
 import no.nav.klage.clients.FileClient
-import no.nav.klage.clients.JoarkClient
 import no.nav.klage.clients.KlageDittnavAPIClient
 import no.nav.klage.clients.PDFGeneratorClient
 import no.nav.klage.common.KlageMetrics
@@ -11,12 +10,11 @@ import org.springframework.stereotype.Service
 
 @Service
 class ApplicationService(
-        private val pdfGenerator: PDFGeneratorClient,
-        private val fileClient: FileClient,
-        private val joarkClient: JoarkClient,
-        private val klageDittnavAPIClient: KlageDittnavAPIClient,
-        private val klageMetrics: KlageMetrics,
-        private val joarkService: JoarkService
+    private val pdfGenerator: PDFGeneratorClient,
+    private val fileClient: FileClient,
+    private val klageDittnavAPIClient: KlageDittnavAPIClient,
+    private val klageMetrics: KlageMetrics,
+    private val joarkService: JoarkService
 ) {
 
     companion object {
@@ -34,22 +32,18 @@ class ApplicationService(
         }
 
         //Create journalpost and archive it
+        //If duplicate, we still get journalpostId and continue
         val journalpostId = joarkService.createJournalpostInJoark(klageAnkeInput)
+
+        //Callback with journalpostId
+        if (klageAnkeInput.isKlage()) {
+            klageDittnavAPIClient.setJournalpostIdToKlage(klageAnkeInput.id, journalpostId)
+        } else {
+            klageDittnavAPIClient.setJournalpostIdToAnke(klageAnkeInput.internalSaksnummer!!, journalpostId)
+        }
 
         //Record metrics
         klageMetrics.incrementKlagerArkivert()
-
-        //Callback with journalpostId
-//        runCatching {
-            if (klageAnkeInput.isKlage()) {
-                klageDittnavAPIClient.setJournalpostIdToKlage(klageAnkeInput.id, journalpostId)
-            } else {
-                klageDittnavAPIClient.setJournalpostIdToAnke(klageAnkeInput.internalSaksnummer!!, journalpostId)
-            }
-
-//        }.onFailure {
-//            logger.error("Could not call back to klage-api with journalpostId", it)
-//        }
 
         //Remove all attachments from the temporary storage
         klageAnkeInput.vedlegg.forEach {

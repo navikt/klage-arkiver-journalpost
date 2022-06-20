@@ -1,15 +1,15 @@
 package no.nav.klage.clients
 
-import brave.Tracer
 import no.nav.klage.domain.Journalpost
 import no.nav.klage.domain.JournalpostResponse
 import no.nav.klage.getLogger
-import no.nav.klage.getSecureLogger
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpHeaders
+import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
+import reactor.core.publisher.Mono
 
 
 @Component
@@ -39,6 +39,10 @@ class JoarkClient(
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(journalpost)
                 .retrieve()
+                .onStatus(HttpStatus.CONFLICT::equals) {
+                    //Means that the flow continues
+                    Mono.empty()
+                }
                 .bodyToMono(JournalpostResponse::class.java)
                 .block()
                 ?: throw RuntimeException("Journalpost could not be created for klageAnke with id ${klageAnkeId}.")

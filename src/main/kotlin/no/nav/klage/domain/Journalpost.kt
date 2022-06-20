@@ -10,7 +10,8 @@ data class Journalpost(
     val bruker: Bruker,
     val sak: Sak? = null,
     val dokumenter: List<Dokument> = mutableListOf(),
-    val tilleggsopplysninger: List<Tilleggsopplysning> = mutableListOf()
+    val tilleggsopplysninger: List<Tilleggsopplysning> = mutableListOf(),
+    val eksternReferanseId: String,
 )
 
 data class Tilleggsopplysning(val nokkel: String, val verdi: String)
