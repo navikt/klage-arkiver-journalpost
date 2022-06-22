@@ -53,7 +53,7 @@ class AivenKafkaConfiguration(
         //Setup sending to dead-letter topic after two retries
         val recoverer = DeadLetterPublishingRecoverer(aivenKafkaTemplate()) f@
         { r, _ ->
-            val dltTopic = r.topic().toString() + "-DLT"
+            val dltTopic = r.topic().toString() + "-dlt"
             logger.debug("Message could not be processed and will be sent to DLT: {}", dltTopic)
             slackClient.postMessage("Innsending av klage feilet og vil nå bli lagt på DLT", Severity.ERROR)
             return@f TopicPartition(

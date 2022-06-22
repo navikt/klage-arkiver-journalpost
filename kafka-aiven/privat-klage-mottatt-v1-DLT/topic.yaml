@@ -1,7 +1,7 @@
 apiVersion: kafka.nais.io/v1
 kind: Topic
 metadata:
-  name: privat-klage-mottatt-v1-DLT
+  name: privat-klage-mottatt-v1-dlt
   namespace: klage
   labels:
     team: klage
