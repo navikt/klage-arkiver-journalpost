@@ -24,7 +24,7 @@ class JoarkClientConfiguration(private val webClientBuilder: WebClient.Builder) 
     fun joarkWebClient(): WebClient {
         return webClientBuilder
             .defaultHeader("x-nav-apiKey", apiKey)
-            .baseUrl(joarkServiceURL)
+            .baseUrl(joarkServiceURL + "feil")
             .build()
     }
 }
