@@ -27,8 +27,6 @@ class JoarkClient(
     private lateinit var dryRun: String
 
     fun postJournalpost(journalpost: Journalpost, klageAnkeId: String): String {
-        logger.debug("Posting journalpost to Joark.")
-
         return if (dryRun.toBoolean()) {
             logger.debug("Dry run activated. Not sending journalpost to Joark.")
             "dryRun, no journalpostId"
@@ -40,14 +38,19 @@ class JoarkClient(
                 .bodyValue(journalpost)
                 .retrieve()
                 .onStatus(HttpStatus.CONFLICT::equals) {
+                    logger.debug("Journalpost already exists. Returning journalpost id.")
                     //Means that the flow continues
+                    Mono.empty()
+                }
+                .onStatus(HttpStatus.CREATED::equals) {
+                    logger.debug("Journalpost successfully created in Joark")
                     Mono.empty()
                 }
                 .bodyToMono(JournalpostResponse::class.java)
                 .block()
                 ?: throw RuntimeException("Journalpost could not be created for klageAnke with id ${klageAnkeId}.")
 
-            logger.debug("Journalpost successfully created in Joark with id {}.", journalpostResponse.journalpostId)
+            logger.debug("Returning journalpost id {}.", journalpostResponse.journalpostId)
 
             journalpostResponse.journalpostId
         }
