@@ -161,7 +161,7 @@ class KlageKafkaConsumerTest {
             every { slackClient.postMessage(any(), any()) } returns Unit
             every { klageDittnavAPIClient.getJournalpostForKlageId(any()) } returns JournalpostIdResponse(journalpostId = "321")
 
-            klageKafkaConsumer.listen(ConsumerRecord("aapen-klager-klageOpprettet", 0, 0, "test", inputString))
+            klageKafkaConsumer.listen(ConsumerRecord("klage.privat-klage-mottatt-v1", 0, 0, "test", inputString))
 
             verify(exactly = 0) { applicationService.createJournalpost(any()) }
         }
@@ -177,7 +177,7 @@ class KlageKafkaConsumerTest {
             assertThrows<RuntimeException> {
                 klageKafkaConsumer.listen(
                     ConsumerRecord(
-                        "aapen-klager-klageOpprettet",
+                        "klage.privat-klage-mottatt-v1",
                         0,
                         0,
                         "test",
@@ -206,7 +206,7 @@ class KlageKafkaConsumerTest {
             every { slackClient.postMessage(any(), any()) } returns Unit
             every { klageDittnavAPIClient.getJournalpostForKlageId(any()) } returns JournalpostIdResponse(journalpostId = "321")
 
-            klageKafkaConsumer.listen(ConsumerRecord("aapen-klager-klageOpprettet", 0, 0, "test", inputString))
+            klageKafkaConsumer.listen(ConsumerRecord("klage.privat-klage-mottatt-v1", 0, 0, "test", inputString))
 
             verify(exactly = 0) { applicationService.createJournalpost(any()) }
         }
@@ -220,7 +220,7 @@ class KlageKafkaConsumerTest {
             every { klageDittnavAPIClient.getJournalpostForKlageId(any()) } returns JournalpostIdResponse(journalpostId = null)
             every { applicationService.createJournalpost(any()) } returns Unit
 
-            klageKafkaConsumer.listen(ConsumerRecord("aapen-klager-klageOpprettet", 0, 0, "test", inputString))
+            klageKafkaConsumer.listen(ConsumerRecord("klage.privat-klage-mottatt-v1", 0, 0, "test", inputString))
 
             verify(exactly = 1) { applicationService.createJournalpost(any()) }
         }

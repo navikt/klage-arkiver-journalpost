@@ -37,8 +37,6 @@ class KlageKafkaConsumer(
 
         runCatching {
             val klageAnke = klageRecord.value().toKlage()
-            klageAnke.logIt()
-
             val journalpostIdResponse =
                 try {
                     if (klageAnke.isKlage()) {
@@ -94,44 +92,6 @@ class KlageKafkaConsumer(
             secureLogger.error("Failed to process klage", it)
             throw RuntimeException("Could not process klage. See more details in secure log.")
         }
-    }
-
-    private fun KlageAnkeInput.logIt() {
-        val klageid = this.id.toString()
-        if (this.isKlage()) {
-            when {
-                this.isDagpengerVariant() -> {
-                    slackClient.postMessage(
-                        String.format(
-                            "Klage (%s) med id <%s|%s> mottatt.",
-                            this.ytelse,
-                            Kibana.createUrl(klageid),
-                            klageid
-                        )
-                    )
-                }
-                else -> {
-                    slackClient.postMessage(
-                        String.format(
-                            "Klage med id <%s|%s> mottatt.",
-                            Kibana.createUrl(klageid),
-                            klageid
-                        )
-                    )
-                }
-            }
-        } else {
-            slackClient.postMessage(
-                String.format(
-                    "Anke med id <%s|%s> mottatt.",
-                    this.internalSaksnummer?.let { Kibana.createUrl(it) },
-                    this.internalSaksnummer
-                )
-            )
-        }
-
-        logger.debug("Received klage has id: {}", this.id)
-        secureLogger.debug("Received klage has id: {} and fnr: {}", this.id, this.identifikasjonsnummer)
     }
 
     private fun rootCause(t: Throwable): Throwable = t.cause?.run { rootCause(this) } ?: t
