@@ -1,7 +1,7 @@
 package no.nav.klage.service
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import no.nav.klage.domain.ArkiverJournalpostEvent
+import no.nav.klage.domain.Event
 import no.nav.klage.getLogger
 import no.nav.klage.getSecureLogger
 import org.springframework.beans.factory.annotation.Value
@@ -20,7 +20,7 @@ class KafkaEventService(
         private val secureLogger = getSecureLogger()
     }
 
-    fun publishEvent(event: ArkiverJournalpostEvent) {
+    fun publishEvent(event: Event) {
         runCatching {
             logger.debug("Publishing arkiverJournalpost event to Kafka for subscribers: {}", event)
 
