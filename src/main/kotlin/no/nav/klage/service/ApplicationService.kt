@@ -4,6 +4,7 @@ import no.nav.klage.clients.FileClient
 import no.nav.klage.clients.KlageDittnavAPIClient
 import no.nav.klage.clients.PDFGeneratorClient
 import no.nav.klage.common.KlageMetrics
+import no.nav.klage.domain.ArkiverJournalpostEvent
 import no.nav.klage.domain.KlageAnkeInput
 import no.nav.klage.getLogger
 import org.springframework.stereotype.Service
@@ -13,6 +14,7 @@ class ApplicationService(
     private val pdfGenerator: PDFGeneratorClient,
     private val fileClient: FileClient,
     private val klageDittnavAPIClient: KlageDittnavAPIClient,
+    private val kafkaEventService: KafkaEventService,
     private val klageMetrics: KlageMetrics,
     private val joarkService: JoarkService
 ) {
@@ -38,8 +40,10 @@ class ApplicationService(
         //Callback with journalpostId
         if (klageAnkeInput.isKlage()) {
             klageDittnavAPIClient.setJournalpostIdToKlage(klageAnkeInput.id, journalpostId)
+            publishArkiverJournalpostEvent(klageAnkeInput.id.toString(), journalpostId)
         } else {
             klageDittnavAPIClient.setJournalpostIdToAnke(klageAnkeInput.internalSaksnummer!!, journalpostId)
+            publishArkiverJournalpostEvent(klageAnkeInput.internalSaksnummer.toString(), journalpostId)
         }
 
         //Record metrics
@@ -60,5 +64,14 @@ class ApplicationService(
         }.onFailure {
             logger.error("Could not upload klage-pdf to file store.", it)
         }
+    }
+
+    private fun publishArkiverJournalpostEvent(klageId: String, journalpostId: String) {
+        kafkaEventService.publishEvent(
+            ArkiverJournalpostEvent(
+                klageId = klageId,
+                journalpostId = journalpostId,
+            )
+        )
     }
 }

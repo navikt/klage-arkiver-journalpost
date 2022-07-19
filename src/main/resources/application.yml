@@ -38,6 +38,8 @@ management:
 
 KAFKA_GROUP_ID: klage-arkiver-journalpost
 KAFKA_TOPIC: klage.privat-klage-mottatt-v1
+KAFKA_DLT_TOPIC: klage.privat-klage-mottatt-v1-dlt
+ARKIVER_JOURNALPOST_EVENT_TOPIC: klage.arkiver-journalpost-events-v1
 
 navCallId: Nav-Callid
 navConsumerId: Nav-Consumer-Id
