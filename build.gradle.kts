@@ -2,7 +2,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 val logstashVersion = "5.1"
 val springSleuthVersion = "3.0.4"
-val resilience4jVersion = "1.5.0"
+val resilience4jVersion = "1.7.1"
 val verapdfVersion = "1.18.8"
 val mockkVersion = "1.9.3"
 val springMockkVersion = "3.0.1"
