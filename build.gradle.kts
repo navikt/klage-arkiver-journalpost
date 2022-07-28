@@ -5,7 +5,7 @@ val springSleuthVersion = "3.0.4"
 val resilience4jVersion = "1.5.0"
 val verapdfVersion = "1.18.8"
 val mockkVersion = "1.9.3"
-val springMockkVersion = "3.0.1"
+val springMockkVersion = "3.1.1"
 
 val githubUser: String by project
 val githubPassword: String by project
