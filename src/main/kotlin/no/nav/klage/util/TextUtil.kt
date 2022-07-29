@@ -4,6 +4,7 @@ package no.nav.klage.util
 fun sanitizeText(input: String): String {
     var result = removeFEFF(input)
     result = remove0002(result)
+    result = remove0003(result)
     result = remove0008(result)
     result = remove000B(result)
     result = remove0016(result)
@@ -19,6 +20,10 @@ private fun removeFEFF(input: String): String {
 
 private fun remove0002(input: String): String {
     return input.replace("\u0002", "")
+}
+
+private fun remove0003(input: String): String {
+    return input.replace("\u0003", "")
 }
 
 //Backspace, not accepted by pdfgen.
