@@ -4,7 +4,7 @@ val logstashVersion = "5.1"
 val springSleuthVersion = "3.0.4"
 val resilience4jVersion = "1.7.1"
 val verapdfVersion = "1.18.8"
-val mockkVersion = "1.9.3"
+val mockkVersion = "1.12.5"
 val springMockkVersion = "3.1.1"
 
 val githubUser: String by project
