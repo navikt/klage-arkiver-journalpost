@@ -21,7 +21,7 @@ import org.springframework.kafka.core.DefaultKafkaConsumerFactory
 import org.springframework.kafka.core.DefaultKafkaProducerFactory
 import org.springframework.kafka.core.KafkaTemplate
 import org.springframework.kafka.listener.DeadLetterPublishingRecoverer
-import org.springframework.kafka.listener.SeekToCurrentErrorHandler
+import org.springframework.kafka.listener.DefaultErrorHandler
 import org.springframework.util.backoff.FixedBackOff
 import java.time.Duration
 
@@ -61,13 +61,13 @@ class AivenKafkaConfiguration(
                 r.partition()
             )
         }
-        factory.setErrorHandler(
-            SeekToCurrentErrorHandler(recoverer, FixedBackOff(0L, 2L))
+        factory.setCommonErrorHandler(
+            DefaultErrorHandler(recoverer, FixedBackOff(0L, 2L))
         )
 
         //Retry consumer/listener even if authorization fails at first
         factory.setContainerCustomizer { container ->
-            container.containerProperties.authorizationExceptionRetryInterval = Duration.ofSeconds(10L)
+            container.containerProperties.setAuthExceptionRetryInterval(Duration.ofSeconds(10L))
         }
 
         return factory
