@@ -7,19 +7,9 @@ val verapdfVersion = "1.22.2"
 val mockkVersion = "1.13.2"
 val springMockkVersion = "3.1.1"
 
-val githubUser: String by project
-val githubPassword: String by project
-
 repositories {
     mavenCentral()
-    maven ("https://github-package-registry-mirror.gc.nav.no/cached/maven-release")
-    maven {
-        url = uri("https://maven.pkg.github.com/navikt/simple-slack-poster")
-        credentials {
-            username = githubUser
-            password = githubPassword
-        }
-    }
+    maven("https://jitpack.io")
 }
 
 plugins {
@@ -52,7 +42,7 @@ dependencies {
     implementation("io.github.resilience4j:resilience4j-retry:$resilience4jVersion")
     implementation("io.github.resilience4j:resilience4j-kotlin:$resilience4jVersion")
 
-    implementation("no.nav.slackposter:simple-slack-poster:21")
+    implementation("com.github.navikt:simple-slack-poster:0.0.3")
 
     implementation("org.verapdf:validation-model:$verapdfVersion")
 
