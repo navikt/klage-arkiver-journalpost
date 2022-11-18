@@ -2,6 +2,7 @@ package no.nav.klage.clients
 
 import no.nav.klage.domain.KlageApiJournalpost
 import no.nav.klage.getLogger
+import no.nav.klage.util.TokenUtil
 import org.springframework.http.HttpHeaders
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
@@ -9,8 +10,8 @@ import org.springframework.web.reactive.function.client.bodyToMono
 
 @Component
 class KlageDittnavAPIClient(
-        private val klageDittnavAPIWebClient: WebClient,
-        private val azureADClient: AzureADClient
+    private val klageDittnavAPIWebClient: WebClient,
+    private val tokenUtil: TokenUtil,
 ) {
 
     companion object {
@@ -22,7 +23,7 @@ class KlageDittnavAPIClient(
         logger.debug("Registering journalpost ID for klage in klage-dittnav-api. KlageId: {}, journalpostId: {}", klageId, journalpostId)
         klageDittnavAPIWebClient.post()
                 .uri("klager/$klageId/journalpostid")
-                .header(HttpHeaders.AUTHORIZATION, "Bearer ${azureADClient.klageDittnavApiOidcToken()}")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer ${tokenUtil.getAppAccessTokenWithKlageDittnavApiScope()}")
                 .bodyValue(KlageApiJournalpost(journalpostId))
                 .retrieve()
                 .toBodilessEntity()
@@ -33,7 +34,7 @@ class KlageDittnavAPIClient(
         logger.debug("Getting journalpostId for klage from klage-dittnav-api. KlageId: {}", klageId)
         return klageDittnavAPIWebClient.get()
             .uri("klager/$klageId/journalpostid")
-            .header(HttpHeaders.AUTHORIZATION, "Bearer ${azureADClient.klageDittnavApiOidcToken()}")
+            .header(HttpHeaders.AUTHORIZATION, "Bearer ${tokenUtil.getAppAccessTokenWithKlageDittnavApiScope()}")
             .retrieve()
             .bodyToMono<JournalpostIdResponse>()
             .block() ?: throw RuntimeException("Unable to get journalpost ID from klage-dittnav-api.")
@@ -43,7 +44,7 @@ class KlageDittnavAPIClient(
         logger.debug("Registering journalpost ID for anke in klage-dittnav-api. Internal ref: {}, journalpostId: {}", internalSaksnummer, journalpostId)
         klageDittnavAPIWebClient.post()
             .uri("anker/$internalSaksnummer/journalpostid")
-            .header(HttpHeaders.AUTHORIZATION, "Bearer ${azureADClient.klageDittnavApiOidcToken()}")
+            .header(HttpHeaders.AUTHORIZATION, "Bearer ${tokenUtil.getAppAccessTokenWithKlageDittnavApiScope()}")
             .bodyValue(KlageApiJournalpost(journalpostId))
             .retrieve()
             .toBodilessEntity()
@@ -54,7 +55,7 @@ class KlageDittnavAPIClient(
         logger.debug("Getting journalpostId for anke from klage-dittnav-api. Internal ref: {}", internalSaksnummer)
         return klageDittnavAPIWebClient.get()
             .uri("anker/$internalSaksnummer/journalpostid")
-            .header(HttpHeaders.AUTHORIZATION, "Bearer ${azureADClient.klageDittnavApiOidcToken()}")
+            .header(HttpHeaders.AUTHORIZATION, "Bearer ${tokenUtil.getAppAccessTokenWithKlageDittnavApiScope()}")
             .retrieve()
             .bodyToMono<JournalpostIdResponse>()
             .block() ?: throw RuntimeException("Unable to get journalpost ID for anke from klage-dittnav-api.")

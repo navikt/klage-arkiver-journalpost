@@ -1,4 +1,7 @@
+TENANT_ID: 62366534-1ec3-4962-8869-9b5535279d0b
+
 KAFKA_BOOTSTRAP_SERVERS: a01apvl00145.adeo.no:8443,a01apvl00146.adeo.no:8443,a01apvl00147.adeo.no:8443,a01apvl00148.adeo.no:8443,a01apvl00149.adeo.no:8443,a01apvl00150.adeo.no:8443
-SECURITY_TOKEN_SERVICE_REST_URL: https://api-gw.oera.no/security-token-service
-JOARK_SERVICE_URL: https://api-gw.oera.no/dokarkiv/rest/journalpostapi/v1/journalpost
+
+DOKARKIV_SCOPE: prod-fss.teamdokumenthandtering.dokarkiv/
+JOARK_SERVICE_URL: https://dokarkiv.prod-fss-pub.nais.io/rest/journalpostapi/v1/journalpost
 DRY_RUN: false

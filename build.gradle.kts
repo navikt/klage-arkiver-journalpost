@@ -6,6 +6,7 @@ val resilience4jVersion = "1.7.1"
 val verapdfVersion = "1.22.2"
 val mockkVersion = "1.13.2"
 val springMockkVersion = "3.1.1"
+val tokenClientVersion = "2.1.8"
 
 repositories {
     mavenCentral()
@@ -38,6 +39,7 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
     implementation("org.springframework.kafka:spring-kafka")
+    implementation("no.nav.security:token-client-spring:$tokenClientVersion")
 
     implementation("io.github.resilience4j:resilience4j-retry:$resilience4jVersion")
     implementation("io.github.resilience4j:resilience4j-kotlin:$resilience4jVersion")
