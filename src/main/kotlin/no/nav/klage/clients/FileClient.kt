@@ -1,6 +1,7 @@
 package no.nav.klage.clients
 
 import no.nav.klage.getLogger
+import no.nav.klage.util.TokenUtil
 import org.springframework.http.HttpHeaders
 import org.springframework.http.client.MultipartBodyBuilder
 import org.springframework.stereotype.Component
@@ -11,7 +12,7 @@ import org.springframework.web.reactive.function.client.bodyToMono
 @Component
 class FileClient(
     private val fileWebClient: WebClient,
-    private val azureADClient: AzureADClient
+    private val tokenUtil: TokenUtil,
 ) {
 
     companion object {
@@ -24,7 +25,7 @@ class FileClient(
 
         return this.fileWebClient.get()
             .uri { it.path("/attachment/{id}").build(id) }
-            .header(HttpHeaders.AUTHORIZATION, "Bearer ${azureADClient.klageFileApiOidcToken()}")
+            .header(HttpHeaders.AUTHORIZATION, "Bearer ${tokenUtil.getAppAccessTokenWithKlageFileApiScope()}")
             .retrieve()
             .bodyToMono<ByteArray>()
             .block() ?: throw RuntimeException("Attachment could not be fetched")
@@ -36,7 +37,7 @@ class FileClient(
         val deletedInGCS = fileWebClient
             .delete()
             .uri("/attachment/$id")
-            .header(HttpHeaders.AUTHORIZATION, "Bearer ${azureADClient.klageFileApiOidcToken()}")
+            .header(HttpHeaders.AUTHORIZATION, "Bearer ${tokenUtil.getAppAccessTokenWithKlageFileApiScope()}")
             .retrieve()
             .bodyToMono<Boolean>()
             .block()
@@ -56,7 +57,7 @@ class FileClient(
         val klageCreatedResponse = fileWebClient
             .post()
             .uri("/klage/$journalpostId")
-            .header(HttpHeaders.AUTHORIZATION, "Bearer ${azureADClient.klageFileApiOidcToken()}")
+            .header(HttpHeaders.AUTHORIZATION, "Bearer ${tokenUtil.getAppAccessTokenWithKlageFileApiScope()}")
             .body(BodyInserters.fromMultipartData(bodyBuilder.build()))
             .retrieve()
             .bodyToMono<KlageCreatedResponse>()

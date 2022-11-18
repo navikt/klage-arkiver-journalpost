@@ -36,14 +36,40 @@ management:
     tags:
       application: ${spring.application.name}
 
-KAFKA_GROUP_ID: klage-arkiver-journalpost
+no.nav.security.jwt:
+  client:
+    registration:
+      dokarkiv-maskintilmaskin:
+        token-endpoint-url: https://login.microsoftonline.com/${TENANT_ID}/oauth2/v2.0/token
+        grant-type: client_credentials
+        scope: api://${DOKARKIV_SCOPE}/.default
+        authentication:
+          client-id: ${AZURE_APP_CLIENT_ID}
+          client-jwk: ${AZURE_APP_JWK}
+          client-auth-method: private_key_jwt
+      klage-file-api-maskintilmaskin:
+        token-endpoint-url: https://login.microsoftonline.com/${TENANT_ID}/oauth2/v2.0/token
+        grant-type: client_credentials
+        scope: api://${NAIS_CLUSTER_NAME}.${NAIS_NAMESPACE}.${KLAGE_FILE_API_APP_NAME}/.default
+        authentication:
+          client-id: ${AZURE_APP_CLIENT_ID}
+          client-jwk: ${AZURE_APP_JWK}
+          client-auth-method: private_key_jwt
+      klage-dittnav-api-maskintilmaskin:
+        token-endpoint-url: https://login.microsoftonline.com/${TENANT_ID}/oauth2/v2.0/token
+        grant-type: client_credentials
+        scope: api://${NAIS_CLUSTER_NAME}.${NAIS_NAMESPACE}.${KLAGE_DITTNAV_API_APP_NAME}/.default
+        authentication:
+          client-id: ${AZURE_APP_CLIENT_ID}
+          client-jwk: ${AZURE_APP_JWK}
+          client-auth-method: private_key_jwt
+
 KAFKA_TOPIC: klage.privat-klage-mottatt-v1
 
 navCallId: Nav-Callid
 navConsumerId: Nav-Consumer-Id
 
 PDF_SERVICE_URL: http://klage-dittnav-pdfgen/api/v1/genpdf/klage-dittnav-pdfgen/
-SERVICE_USER_USERNAME: srvklage-dittnav
 KLAGE_FILE_API_SERVICE_URL: http://klage-file-api
 KLAGE_FILE_API_APP_NAME: klage-file-api
 KLAGE-DITTNAV-API_SERVICE_URL: http://klage-dittnav-api

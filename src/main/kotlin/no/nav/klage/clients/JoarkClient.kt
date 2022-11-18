@@ -3,6 +3,7 @@ package no.nav.klage.clients
 import no.nav.klage.domain.Journalpost
 import no.nav.klage.domain.JournalpostResponse
 import no.nav.klage.getLogger
+import no.nav.klage.util.TokenUtil
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
@@ -15,7 +16,7 @@ import reactor.core.publisher.Mono
 @Component
 class JoarkClient(
     private val joarkWebClient: WebClient,
-    private val stsClient: StsClient
+    private val tokenUtil: TokenUtil,
 ) {
 
     companion object {
@@ -33,7 +34,7 @@ class JoarkClient(
         } else {
             logger.debug("Posting journalpost to Joark.")
             val journalpostResponse = joarkWebClient.post()
-                .header(HttpHeaders.AUTHORIZATION, "Bearer ${stsClient.oidcToken()}")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer ${tokenUtil.getAppAccessTokenWithDokarkivScope()}")
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(journalpost)
                 .retrieve()
