@@ -40,6 +40,7 @@ dependencies {
 
     implementation("org.springframework.kafka:spring-kafka")
     implementation("no.nav.security:token-client-spring:$tokenClientVersion")
+    implementation("no.nav.security:token-validation-spring:$tokenClientVersion")
 
     implementation("io.github.resilience4j:resilience4j-retry:$resilience4jVersion")
     implementation("io.github.resilience4j:resilience4j-kotlin:$resilience4jVersion")
