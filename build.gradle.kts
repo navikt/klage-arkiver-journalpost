@@ -4,7 +4,7 @@ val logstashVersion = "7.2"
 val springSleuthVersion = "3.1.5"
 val resilience4jVersion = "1.7.1"
 val verapdfVersion = "1.22.2"
-val mockkVersion = "1.13.2"
+val mockkVersion = "1.13.3"
 val springMockkVersion = "3.1.1"
 val tokenClientVersion = "2.1.8"
 
