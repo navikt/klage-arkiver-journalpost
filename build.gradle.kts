@@ -6,7 +6,7 @@ val resilience4jVersion = "2.0.0"
 val verapdfVersion = "1.22.2"
 val mockkVersion = "1.13.3"
 val springMockkVersion = "3.1.2"
-val tokenClientVersion = "2.1.8"
+val tokenClientVersion = "3.0.0"
 
 repositories {
     mavenCentral()
