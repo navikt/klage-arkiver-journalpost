@@ -1,9 +1,9 @@
 package no.nav.klage
 
+import jakarta.annotation.PostConstruct
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
-import javax.annotation.PostConstruct
 
 @SpringBootApplication
 class Application {
