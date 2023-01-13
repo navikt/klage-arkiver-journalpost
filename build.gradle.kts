@@ -5,7 +5,7 @@ val resilience4jVersion = "2.0.2"
 val verapdfVersion = "1.22.2"
 val mockkVersion = "1.13.3"
 val springMockkVersion = "4.0.0"
-val tokenClientVersion = "3.0.2"
+val tokenValidationVersion = "3.0.2"
 val simpleSlackPosterVersion = "0.0.6"
 
 repositories {
@@ -40,8 +40,8 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
     implementation("org.springframework.kafka:spring-kafka")
-    implementation("no.nav.security:token-client-spring:$tokenClientVersion")
-    implementation("no.nav.security:token-validation-spring:$tokenClientVersion")
+    implementation("no.nav.security:token-client-spring:$tokenValidationVersion")
+    implementation("no.nav.security:token-validation-spring:$tokenValidationVersion")
 
     implementation("io.github.resilience4j:resilience4j-retry:$resilience4jVersion")
     implementation("io.github.resilience4j:resilience4j-kotlin:$resilience4jVersion")
