@@ -5,21 +5,14 @@ spring:
     banner-mode: OFF
   codec:
     max-in-memory-size: 10MB
-  sleuth:
-    propagation-keys:
-      - Nav-Callid
-      - Nav-Consumer-Id
-    log:
-      slf4j:
-        whitelisted-mdc-keys:
-          - Nav-Callid
-          - Nav-Consumer-Id
 
 server:
   port: 7075
   error:
     whitelabel:
       enabled: false
+
+navCallIdName: Nav-Callid
 
 management:
   endpoint:
@@ -30,13 +23,25 @@ management:
       include: info, health, metrics, prometheus
     base-path: "/internal"
   metrics:
-    export:
-      prometheus:
-        enabled: true
     tags:
       application: ${spring.application.name}
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+  tracing:
+    baggage:
+      remote-fields:
+        - ${navCallIdName}
+      correlation:
+        fields:
+          - ${navCallIdName}
 
 no.nav.security.jwt:
+  issuer:
+    aad:
+      discoveryurl: ${AZURE_APP_WELL_KNOWN_URL}
+      accepted_audience: ${AZURE_APP_CLIENT_ID}
   client:
     registration:
       dokarkiv-maskintilmaskin:
@@ -65,9 +70,6 @@ no.nav.security.jwt:
           client-auth-method: private_key_jwt
 
 KAFKA_TOPIC: klage.privat-klage-mottatt-v1
-
-navCallId: Nav-Callid
-navConsumerId: Nav-Consumer-Id
 
 PDF_SERVICE_URL: http://klage-dittnav-pdfgen/api/v1/genpdf/klage-dittnav-pdfgen/
 KLAGE_FILE_API_SERVICE_URL: http://klage-file-api

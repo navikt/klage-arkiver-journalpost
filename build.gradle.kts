@@ -1,12 +1,12 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 val logstashVersion = "7.2"
-val springSleuthVersion = "3.1.5"
 val resilience4jVersion = "2.0.2"
 val verapdfVersion = "1.22.2"
 val mockkVersion = "1.13.3"
-val springMockkVersion = "3.1.2"
-val tokenClientVersion = "2.1.8"
+val springMockkVersion = "4.0.0"
+val tokenValidationVersion = "3.0.2"
+val simpleSlackPosterVersion = "0.0.6"
 
 repositories {
     mavenCentral()
@@ -14,8 +14,8 @@ repositories {
 }
 
 plugins {
-    val kotlinVersion = "1.7.22"
-    id("org.springframework.boot") version "2.7.5"
+    val kotlinVersion = "1.8.0"
+    id("org.springframework.boot") version "3.0.1"
     kotlin("jvm") version kotlinVersion
     kotlin("plugin.spring") version kotlinVersion
     idea
@@ -31,23 +31,26 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-webflux")
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.projectreactor:reactor-spring:1.0.1.RELEASE")
-    implementation("org.springframework.cloud:spring-cloud-starter-sleuth:$springSleuthVersion")
 
     implementation("io.micrometer:micrometer-registry-prometheus")
+    implementation("io.micrometer:micrometer-tracing-bridge-brave")
+
     implementation("ch.qos.logback:logback-classic")
     implementation("net.logstash.logback:logstash-logback-encoder:$logstashVersion")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
     implementation("org.springframework.kafka:spring-kafka")
-    implementation("no.nav.security:token-client-spring:$tokenClientVersion")
-    implementation("no.nav.security:token-validation-spring:$tokenClientVersion")
+    implementation("no.nav.security:token-client-spring:$tokenValidationVersion")
+    implementation("no.nav.security:token-validation-spring:$tokenValidationVersion")
 
     implementation("io.github.resilience4j:resilience4j-retry:$resilience4jVersion")
     implementation("io.github.resilience4j:resilience4j-kotlin:$resilience4jVersion")
 
-    implementation("com.github.navikt:simple-slack-poster:0.0.5")
+    implementation("com.github.navikt:simple-slack-poster:$simpleSlackPosterVersion")
 
-    implementation("org.verapdf:validation-model:$verapdfVersion")
+    implementation("org.verapdf:validation-model:$verapdfVersion") {
+        exclude(group = "com.sun.xml.bind")
+    }
 
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
         exclude(group = "org.junit.vintage", module = "org.junit.vintage")
@@ -64,7 +67,7 @@ idea {
 }
 
 tasks.withType<KotlinCompile> {
-    kotlinOptions{
+    kotlinOptions {
         freeCompilerArgs = listOf("-Xjsr305=strict")
         jvmTarget = "17"
     }

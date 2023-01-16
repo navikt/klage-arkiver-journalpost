@@ -87,7 +87,8 @@ class JoarkService(
         val hovedDokument = Dokument(
             tittel = if (klageAnkeInput.isKlage()) KLAGE_TITTEL else ANKE_TITTEL,
             brevkode = if (klageAnkeInput.isKlage()) BREVKODE_KLAGESKJEMA else BREVKODE_KLAGESKJEMA_ANKE,
-            dokumentVarianter = getDokumentVariant(klageAnkeInput.fileContentAsBytes)
+            //Don't perform pdfa-check for now. Issues with compatibility with Vera and Spring Boot 3.
+            dokumentVarianter = getDokumentVariant(klageAnkeInput.fileContentAsBytes, performPdfaCheck = false)
         )
         val documents = mutableListOf(hovedDokument)
 
