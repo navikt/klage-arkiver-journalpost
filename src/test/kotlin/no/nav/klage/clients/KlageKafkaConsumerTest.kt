@@ -67,7 +67,6 @@ class KlageKafkaConsumerTest {
                 .configure(KotlinFeature.NullToEmptyCollection, false)
                 .configure(KotlinFeature.NullToEmptyMap, false)
                 .configure(KotlinFeature.NullIsSameAsDefault, false)
-                .configure(KotlinFeature.SingletonSupport, DISABLED)
                 .configure(KotlinFeature.StrictNullChecks, false)
                 .build()
         )
