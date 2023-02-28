@@ -3,6 +3,7 @@ package no.nav.klage.clients
 import io.github.resilience4j.kotlin.retry.executeFunction
 import io.github.resilience4j.retry.Retry
 import no.nav.klage.domain.KlageAnkeInput
+import no.nav.klage.domain.KlageAnkeType
 import no.nav.klage.domain.KlagePDFModel
 import no.nav.klage.domain.Vedlegg
 import no.nav.klage.getLogger
@@ -27,10 +28,9 @@ class PDFGeneratorClient(
     }
 
     fun generatePDF(klageAnkeInput: KlageAnkeInput): ByteArray {
-        return if (klageAnkeInput.isKlage()) {
-            getKlagePDF(klageAnkeInput)
-        } else {
-            getAnkePDF(klageAnkeInput)
+        return when(klageAnkeInput.klageAnkeType) {
+            KlageAnkeType.KLAGE -> getKlagePDF(klageAnkeInput)
+            KlageAnkeType.ANKE -> getAnkePDF(klageAnkeInput)
         }
     }
 
@@ -65,8 +65,6 @@ class PDFGeneratorClient(
         fornavn = fornavn,
         mellomnavn = mellomnavn,
         etternavn = etternavn,
-        adresse = adresse,
-        telefonnummer = telefon,
         vedtak = vedtak,
         begrunnelse = sanitizeText(begrunnelse),
         saksnummer = sanitizeText(getSaksnummerString(userSaksnummer, internalSaksnummer)),
@@ -74,8 +72,6 @@ class PDFGeneratorClient(
         dato = dato.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")),
         ytelse = ytelse.replaceFirstChar { it.lowercase(Locale.getDefault()) },
         userChoices = userChoices,
-        fullmektigNavn = fullmektigNavn ?: "",
-        fullmektigFnr = fullmektigFnr ?: ""
     )
 
     private fun getOversiktVedlegg(vedlegg: List<Vedlegg>): String {

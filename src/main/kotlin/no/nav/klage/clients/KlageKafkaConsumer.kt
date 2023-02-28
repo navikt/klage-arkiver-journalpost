@@ -1,6 +1,7 @@
 package no.nav.klage.clients
 
-import no.nav.klage.domain.toKlage
+import no.nav.klage.domain.KlageAnkeType
+import no.nav.klage.domain.toKlageAnkeInput
 import no.nav.klage.getLogger
 import no.nav.klage.getSecureLogger
 import no.nav.klage.service.ApplicationService
@@ -34,13 +35,12 @@ class KlageKafkaConsumer(
         secureLogger.debug("Klage received from Kafka topic: {}", klageRecord.value())
 
         runCatching {
-            val klageAnke = klageRecord.value().toKlage()
+            val klageAnke = klageRecord.value().toKlageAnkeInput()
             val journalpostIdResponse =
                 try {
-                    if (klageAnke.isKlage()) {
-                        klageDittnavAPIClient.getJournalpostForKlageId(klageAnke.id)
-                    } else {
-                        klageDittnavAPIClient.getJournalpostForAnkeInternalSaksnummer(klageAnke.internalSaksnummer!!)
+                    when (klageAnke.klageAnkeType) {
+                        KlageAnkeType.KLAGE -> klageDittnavAPIClient.getJournalpostForKlageId(klageAnke.id)
+                        KlageAnkeType.ANKE -> klageDittnavAPIClient.getJournalpostForAnkeId(klageAnke.id)
                     }
                 } catch (e: WebClientResponseException.NotFound) {
                     slackClient.postMessage(
@@ -67,9 +67,9 @@ class KlageKafkaConsumer(
 
             applicationService.createJournalpost(klageAnke)
         }.onFailure {
-            slackClient.postMessage("Nylig mottatt klage feilet! (${causeClass(rootCause(it))})", Severity.ERROR)
-            secureLogger.error("Failed to process klage", it)
-            throw RuntimeException("Could not process klage. See more details in secure log.")
+            slackClient.postMessage("Nylig mottatt innsending feilet! (${causeClass(rootCause(it))})", Severity.ERROR)
+            secureLogger.error("Failed to process innsending", it)
+            throw RuntimeException("Could not process innsending. See more details in secure log.")
         }
     }
 

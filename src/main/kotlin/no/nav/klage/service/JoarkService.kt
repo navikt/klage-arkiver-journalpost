@@ -23,7 +23,7 @@ class JoarkService(
         private const val KLAGE_YTELSE_KEY = "klage_ytelse"
         private const val KLAGE_TITTEL = "Klage"
         private const val ANKE_TITTEL = "Anke"
-        private const val BREVKODE_KLAGESKJEMA = "NAV 90-00.08"
+        private const val BREVKODE_KLAGESKJEMA_KLAGE = "NAV 90-00.08 K"
         private const val BREVKODE_KLAGESKJEMA_ANKE = "NAV 90-00.08 A"
         private const val PDF_CODE = "PDF"
         private const val PDFA_CODE = "PDFA"
@@ -38,8 +38,7 @@ class JoarkService(
         val journalpostAsJSONForLogging = getJournalpostAsJSONForLogging(journalpost)
         secureLogger.debug("Journalpost as JSON (what we post to dokarkiv/Joark): {}", journalpostAsJSONForLogging)
 
-        return joarkClient.postJournalpost(journalpost, klageAnkeInput.id.toString())
-
+        return joarkClient.postJournalpost(journalpost, klageAnkeInput.id)
     }
 
     private fun getJournalpost(klageAnkeInput: KlageAnkeInput): Journalpost {
@@ -47,23 +46,24 @@ class JoarkService(
             tema = klageAnkeInput.tema,
             behandlingstema = klageAnkeInput.getBehandlingstema(),
             avsenderMottaker = AvsenderMottaker(
-                id = klageAnkeInput.fullmektigFnr ?: klageAnkeInput.identifikasjonsnummer,
-                navn = klageAnkeInput.fullmektigNavn
-                    ?: "${klageAnkeInput.fornavn} ${klageAnkeInput.mellomnavn} ${klageAnkeInput.etternavn}"
+                id = klageAnkeInput.identifikasjonsnummer,
+                navn = "${klageAnkeInput.fornavn} ${klageAnkeInput.mellomnavn} ${klageAnkeInput.etternavn}"
             ),
             sak = getSak(klageAnkeInput),
-            tittel = if (klageAnkeInput.isKlage()) KLAGE_TITTEL else ANKE_TITTEL,
+            tittel = when (klageAnkeInput.klageAnkeType) {
+                KlageAnkeType.KLAGE -> KLAGE_TITTEL
+                KlageAnkeType.ANKE -> ANKE_TITTEL
+            },
             bruker = Bruker(
                 id = klageAnkeInput.identifikasjonsnummer,
             ),
             dokumenter = getDokumenter(klageAnkeInput),
-            tilleggsopplysninger = if (klageAnkeInput.isKlage()) {
-                listOf(
-                    Tilleggsopplysning(nokkel = KLAGE_ID_KEY, verdi = klageAnkeInput.id.toString()),
+            tilleggsopplysninger = when (klageAnkeInput.klageAnkeType) {
+                KlageAnkeType.KLAGE -> listOf(
+                    Tilleggsopplysning(nokkel = KLAGE_ID_KEY, verdi = klageAnkeInput.id),
                     Tilleggsopplysning(nokkel = KLAGE_YTELSE_KEY, verdi = klageAnkeInput.ytelse)
                 )
-            } else {
-                listOf(
+                KlageAnkeType.ANKE -> listOf(
                     Tilleggsopplysning(nokkel = ANKE_ID_KEY, verdi = klageAnkeInput.internalSaksnummer.toString()),
                     Tilleggsopplysning(nokkel = KLAGE_YTELSE_KEY, verdi = klageAnkeInput.ytelse)
                 )
@@ -85,8 +85,14 @@ class JoarkService(
 
     private fun getDokumenter(klageAnkeInput: KlageAnkeInput): List<Dokument> {
         val hovedDokument = Dokument(
-            tittel = if (klageAnkeInput.isKlage()) KLAGE_TITTEL else ANKE_TITTEL,
-            brevkode = if (klageAnkeInput.isKlage()) BREVKODE_KLAGESKJEMA else BREVKODE_KLAGESKJEMA_ANKE,
+            tittel = when (klageAnkeInput.klageAnkeType) {
+                KlageAnkeType.KLAGE -> KLAGE_TITTEL
+                KlageAnkeType.ANKE -> ANKE_TITTEL
+            },
+            brevkode = when (klageAnkeInput.klageAnkeType) {
+                KlageAnkeType.KLAGE -> BREVKODE_KLAGESKJEMA_KLAGE
+                KlageAnkeType.ANKE -> BREVKODE_KLAGESKJEMA_ANKE
+            },
             //Don't perform pdfa-check for now. Issues with compatibility with Vera and Spring Boot 3.
             dokumentVarianter = getDokumentVariant(klageAnkeInput.fileContentAsBytes, performPdfaCheck = false)
         )
@@ -94,7 +100,7 @@ class JoarkService(
 
         klageAnkeInput.vedlegg.forEach {
             //Attachments will always be PDF as of now.
-            secureLogger.debug("Adding attachment with title ${it.tittel} and id ${it.id} to journalpost")
+            secureLogger.debug("Adding attachment with title ${it.tittel} and GCS reference ${it.ref} to journalpost")
             val doc = Dokument(
                 tittel = it.tittel,
                 dokumentVarianter = getDokumentVariant(bytes = it.fileContentAsBytes, performPdfaCheck = false)
