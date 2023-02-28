@@ -1,11 +1,9 @@
 package no.nav.klage.clients
 
-import no.nav.klage.domain.KlageAnkeInput
 import no.nav.klage.domain.toKlage
 import no.nav.klage.getLogger
 import no.nav.klage.getSecureLogger
 import no.nav.klage.service.ApplicationService
-import no.nav.slackposter.Kibana
 import no.nav.slackposter.Severity
 import no.nav.slackposter.SlackClient
 import org.apache.kafka.clients.consumer.ConsumerRecord
@@ -57,25 +55,6 @@ class KlageKafkaConsumer(
                         throw RuntimeException("Input not found in klage-dittnav-api!")
                     }
                 }
-
-            if (klageAnke.containsDeprecatedFields()) {
-                slackClient.postMessage(
-                    "Nylig mottatt innsending med id ${klageAnke.id} har utdatert modell.",
-                    Severity.ERROR
-                )
-                if (journalpostIdResponse.journalpostId == null) {
-                    slackClient.postMessage(
-                        "Innsending med id ${klageAnke.id} har ikke journalpostId. Undersøk dette nærmere!",
-                        Severity.ERROR
-                    )
-                    secureLogger.error("Expired input has no journalpostId", klageAnke)
-                    throw RuntimeException("Expired input has no journalpostId. See more details in secure log.")
-                } else {
-                    logger.error("Input has expired model. See more details in secure log.")
-                    secureLogger.error("Input has expired model.", klageAnke)
-                }
-                return
-            }
 
             if (journalpostIdResponse.journalpostId != null) {
                 logger.info(

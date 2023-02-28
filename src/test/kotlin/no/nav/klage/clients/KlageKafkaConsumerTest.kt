@@ -7,6 +7,7 @@ import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import io.mockk.verify
 import no.nav.klage.domain.KlageAnkeInput
+import no.nav.klage.domain.KlageAnkeType
 import no.nav.klage.domain.Vedlegg
 import no.nav.klage.domain.toKlage
 import no.nav.klage.service.ApplicationService
@@ -136,7 +137,7 @@ class KlageKafkaConsumerTest {
         internalSaksnummer = null,
         fullmektigNavn = null,
         fullmektigFnr = null,
-        previousUtfall = null
+        klageAnkeType = KlageAnkeType.KLAGE,
     )
 
     val mapper = ObjectMapper()

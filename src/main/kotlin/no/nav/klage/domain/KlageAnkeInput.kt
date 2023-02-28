@@ -1,6 +1,7 @@
 package no.nav.klage.domain
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import java.time.LocalDate
@@ -12,6 +13,7 @@ private const val BEHANDLINGSTEMA_ENGANGSSTONAD = "ab0327"
 private const val BEHANDLINGSTEMA_FORELDREPENGER = "ab0326"
 private const val BEHANDLINGSTEMA_SVANGERSKAPSPENGER = "ab0126"
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 data class KlageAnkeInput(
     val id: Int,
     val identifikasjonstype: String,
@@ -30,17 +32,12 @@ data class KlageAnkeInput(
     val ytelse: String,
     val vedlegg: List<Vedlegg> = emptyList(),
     var fileContentAsBytes: ByteArray? = null,
-    //deprecated, only used to parse old kafka entries
-    val saksnummer: String? = null,
-    //deprecated, only used to parse old kafka entries
-    val booleanUserChoices: List<String>? = emptyList(),
     val userChoices: List<String>? = emptyList(),
     val userSaksnummer: String?,
     val internalSaksnummer: String?,
     val fullmektigNavn: String?,
     val fullmektigFnr: String?,
-    val klageAnkeType: KlageAnkeType = no.nav.klage.domain.KlageAnkeType.KLAGE,
-    val previousUtfall: String?
+    val klageAnkeType: KlageAnkeType,
 ) {
     @JsonIgnore
     fun isLoennskompensasjon(): Boolean {
@@ -89,11 +86,6 @@ data class KlageAnkeInput(
     @JsonIgnore
     fun isKlage(): Boolean {
         return klageAnkeType == KlageAnkeType.KLAGE
-    }
-
-    fun containsDeprecatedFields(): Boolean {
-        return (saksnummer != null
-                || !booleanUserChoices.isNullOrEmpty())
     }
 }
 
