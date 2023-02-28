@@ -5,6 +5,7 @@ import no.nav.klage.clients.KlageDittnavAPIClient
 import no.nav.klage.clients.PDFGeneratorClient
 import no.nav.klage.common.KlageMetrics
 import no.nav.klage.domain.KlageAnkeInput
+import no.nav.klage.domain.KlageAnkeType
 import no.nav.klage.getLogger
 import org.springframework.stereotype.Service
 
@@ -36,10 +37,9 @@ class ApplicationService(
         val journalpostId = joarkService.createJournalpostInJoark(klageAnkeInput)
 
         //Callback with journalpostId
-        if (klageAnkeInput.isKlage()) {
-            klageDittnavAPIClient.setJournalpostIdToKlage(klageAnkeInput.id, journalpostId)
-        } else {
-            klageDittnavAPIClient.setJournalpostIdToAnke(klageAnkeInput.internalSaksnummer!!, journalpostId)
+        when (klageAnkeInput.klageAnkeType) {
+            KlageAnkeType.KLAGE -> klageDittnavAPIClient.setJournalpostIdInKlage(klageAnkeInput.id, journalpostId)
+            KlageAnkeType.ANKE -> klageDittnavAPIClient.setJournalpostIdInAnke(klageAnkeInput.id, journalpostId)
         }
 
         //Record metrics

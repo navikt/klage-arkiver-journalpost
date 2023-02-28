@@ -15,16 +15,11 @@ private const val BEHANDLINGSTEMA_SVANGERSKAPSPENGER = "ab0126"
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class KlageAnkeInput(
-    val id: Int,
-    val identifikasjonstype: String,
+    val id: String,
     val identifikasjonsnummer: String,
-    val klageInstans: Boolean?,
-    val trygderetten: Boolean?,
     val fornavn: String,
     val mellomnavn: String,
     val etternavn: String,
-    val adresse: String,
-    val telefon: String,
     val vedtak: String,
     val dato: LocalDate,
     val begrunnelse: String,
@@ -35,44 +30,42 @@ data class KlageAnkeInput(
     val userChoices: List<String>? = emptyList(),
     val userSaksnummer: String?,
     val internalSaksnummer: String?,
-    val fullmektigNavn: String?,
-    val fullmektigFnr: String?,
     val klageAnkeType: KlageAnkeType,
 ) {
     @JsonIgnore
     fun isLoennskompensasjon(): Boolean {
         return tema == "DAG" && ytelse == "Lønnskompensasjon for permitterte"
     }
+
     @JsonIgnore
     fun isTilbakebetalingAvForskuddPaaDagpenger(): Boolean {
         return tema == "DAG" && ytelse == "Tilbakebetaling av forskudd på dagpenger"
     }
+
     @JsonIgnore
     fun isFeriepengerAvDagpenger(): Boolean {
         return tema == "DAG" && ytelse == "Feriepenger av dagpenger"
     }
+
     @JsonIgnore
     fun isForeldrepenger(): Boolean {
         return tema == "FOR" && ytelse == "Foreldrepenger"
     }
+
     @JsonIgnore
     fun isEngangsstonad(): Boolean {
         return tema == "FOR" && ytelse == "Engangsstønad"
     }
+
     @JsonIgnore
     fun isSvangerskapspenger(): Boolean {
         return tema == "FOR" && ytelse == "Svangerskapspenger"
     }
-    @JsonIgnore
-    fun isDagpengerVariant(): Boolean {
-        return (isLoennskompensasjon() ||
-                isTilbakebetalingAvForskuddPaaDagpenger() ||
-                isFeriepengerAvDagpenger())
-    }
+
     @JsonIgnore
     fun getBehandlingstema(): String? {
-        return if (isKlage()) {
-            when {
+        return when (klageAnkeType) {
+            KlageAnkeType.KLAGE -> when {
                 this.isLoennskompensasjon() -> BEHANDLINGSTEMA_LONNSKOMPENSASJON
                 this.isTilbakebetalingAvForskuddPaaDagpenger() -> BEHANDLINGSTEMA_TILBAKEBETALING_FORSKUDD_PAA_DAGPENGER
                 this.isFeriepengerAvDagpenger() -> BEHANDLINGSTEMA_FERIEPENGER_AV_DAGPENGER
@@ -81,11 +74,9 @@ data class KlageAnkeInput(
                 this.isSvangerskapspenger() -> BEHANDLINGSTEMA_SVANGERSKAPSPENGER
                 else -> null
             }
-        } else null
-    }
-    @JsonIgnore
-    fun isKlage(): Boolean {
-        return klageAnkeType == KlageAnkeType.KLAGE
+
+            KlageAnkeType.ANKE -> null
+        }
     }
 }
 
@@ -93,16 +84,13 @@ enum class KlageAnkeType {
     KLAGE, ANKE
 }
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 data class Vedlegg(
-    val id: Int,
     val tittel: String,
     val ref: String,
-    val klageId: Int,
-    val contentType: String,
     var fileContentAsBytes: ByteArray? = null,
-    val sizeInBytes: Int
 )
 
-fun String.toKlage(): KlageAnkeInput = jacksonObjectMapper()
+fun String.toKlageAnkeInput(): KlageAnkeInput = jacksonObjectMapper()
     .registerModule(JavaTimeModule())
     .readValue(this, KlageAnkeInput::class.java)

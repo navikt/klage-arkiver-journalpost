@@ -5,8 +5,6 @@ data class KlagePDFModel(
     val fornavn: String,
     val mellomnavn: String,
     val etternavn: String,
-    val adresse: String,
-    val telefonnummer: String,
     val vedtak: String,
     val begrunnelse: String,
     val saksnummer: String,
@@ -14,6 +12,4 @@ data class KlagePDFModel(
     val dato: String,
     val ytelse: String,
     val userChoices: List<String>? = emptyList(),
-    val fullmektigNavn: String,
-    val fullmektigFnr: String
 )

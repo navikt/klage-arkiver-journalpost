@@ -7,6 +7,7 @@ import org.springframework.http.HttpHeaders
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.bodyToMono
+import java.util.*
 
 @Component
 class KlageDittnavAPIClient(
@@ -19,7 +20,7 @@ class KlageDittnavAPIClient(
         private val logger = getLogger(javaClass.enclosingClass)
     }
 
-    fun setJournalpostIdToKlage(klageId: Int, journalpostId: String) {
+    fun setJournalpostIdInKlage(klageId: String, journalpostId: String) {
         logger.debug("Registering journalpost ID for klage in klage-dittnav-api. KlageId: {}, journalpostId: {}", klageId, journalpostId)
         klageDittnavAPIWebClient.post()
                 .uri("klager/$klageId/journalpostid")
@@ -30,7 +31,7 @@ class KlageDittnavAPIClient(
                 .block() ?: throw RuntimeException("Unable to register journalpost ID in klage-dittnav-api.")
     }
 
-    fun getJournalpostForKlageId(klageId: Int): JournalpostIdResponse {
+    fun getJournalpostForKlageId(klageId: String): JournalpostIdResponse {
         logger.debug("Getting journalpostId for klage from klage-dittnav-api. KlageId: {}", klageId)
         return klageDittnavAPIWebClient.get()
             .uri("klager/$klageId/journalpostid")
@@ -40,10 +41,10 @@ class KlageDittnavAPIClient(
             .block() ?: throw RuntimeException("Unable to get journalpost ID from klage-dittnav-api.")
     }
 
-    fun setJournalpostIdToAnke(internalSaksnummer: String, journalpostId: String) {
-        logger.debug("Registering journalpost ID for anke in klage-dittnav-api. Internal ref: {}, journalpostId: {}", internalSaksnummer, journalpostId)
+    fun setJournalpostIdInAnke(ankeId: String, journalpostId: String) {
+        logger.debug("Registering journalpost ID for anke in klage-dittnav-api. AnkeId ref: {}, journalpostId: {}", ankeId, journalpostId)
         klageDittnavAPIWebClient.post()
-            .uri("anker/$internalSaksnummer/journalpostid")
+            .uri("anker/$ankeId/journalpostid")
             .header(HttpHeaders.AUTHORIZATION, "Bearer ${tokenUtil.getAppAccessTokenWithKlageDittnavApiScope()}")
             .bodyValue(KlageApiJournalpost(journalpostId))
             .retrieve()
@@ -51,10 +52,10 @@ class KlageDittnavAPIClient(
             .block() ?: throw RuntimeException("Unable to register journalpost ID for anke in klage-dittnav-api.")
     }
 
-    fun getJournalpostForAnkeInternalSaksnummer(internalSaksnummer: String): JournalpostIdResponse {
-        logger.debug("Getting journalpostId for anke from klage-dittnav-api. Internal ref: {}", internalSaksnummer)
+    fun getJournalpostForAnkeId(ankeId: String): JournalpostIdResponse {
+        logger.debug("Getting journalpostId for anke from klage-dittnav-api. AnkeId: {}", ankeId)
         return klageDittnavAPIWebClient.get()
-            .uri("anker/$internalSaksnummer/journalpostid")
+            .uri("anker/$ankeId/journalpostid")
             .header(HttpHeaders.AUTHORIZATION, "Bearer ${tokenUtil.getAppAccessTokenWithKlageDittnavApiScope()}")
             .retrieve()
             .bodyToMono<JournalpostIdResponse>()
