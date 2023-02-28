@@ -5,7 +5,7 @@ val resilience4jVersion = "2.0.2"
 val verapdfVersion = "1.22.2"
 val mockkVersion = "1.13.4"
 val springMockkVersion = "4.0.0"
-val tokenValidationVersion = "3.0.3"
+val tokenValidationVersion = "3.0.4"
 val simpleSlackPosterVersion = "0.0.6"
 
 repositories {
