@@ -7,6 +7,7 @@ import no.nav.klage.domain.KlageAnkeType
 import no.nav.klage.domain.KlagePDFModel
 import no.nav.klage.domain.Vedlegg
 import no.nav.klage.getLogger
+import no.nav.klage.kodeverk.Enhet
 import no.nav.klage.util.sanitizeText
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
@@ -72,6 +73,7 @@ class PDFGeneratorClient(
         dato = dato.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")),
         ytelse = ytelse.replaceFirstChar { it.lowercase(Locale.getDefault()) },
         userChoices = userChoices,
+        enhetsnavn = Enhet.values().find { it.navn == enhetsnummer }?.beskrivelse
     )
 
     private fun getOversiktVedlegg(vedlegg: List<Vedlegg>): String {
