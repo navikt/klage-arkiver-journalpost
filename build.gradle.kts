@@ -7,6 +7,7 @@ val mockkVersion = "1.13.4"
 val springMockkVersion = "4.0.0"
 val tokenValidationVersion = "3.0.4"
 val simpleSlackPosterVersion = "0.0.6"
+val kodeverkVersion = "1.2.18"
 
 repositories {
     mavenCentral()
@@ -47,6 +48,7 @@ dependencies {
     implementation("io.github.resilience4j:resilience4j-kotlin:$resilience4jVersion")
 
     implementation("com.github.navikt:simple-slack-poster:$simpleSlackPosterVersion")
+    implementation("com.github.navikt:klage-kodeverk:$kodeverkVersion")
 
     implementation("org.verapdf:validation-model:$verapdfVersion") {
         exclude(group = "com.sun.xml.bind")
