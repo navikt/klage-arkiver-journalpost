@@ -57,6 +57,7 @@ class KlageKafkaConsumerTest {
         userSaksnummer = null,
         internalSaksnummer = null,
         klageAnkeType = KlageAnkeType.KLAGE,
+        enhetsnummer = "1234"
     )
 
     private val mapper = ObjectMapper()

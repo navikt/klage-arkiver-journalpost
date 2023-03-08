@@ -27,10 +27,13 @@ data class KlageAnkeInput(
     val ytelse: String,
     val vedlegg: List<Vedlegg> = emptyList(),
     var fileContentAsBytes: ByteArray? = null,
-    val userChoices: List<String>? = emptyList(),
     val userSaksnummer: String?,
     val internalSaksnummer: String?,
     val klageAnkeType: KlageAnkeType,
+    //klage specific
+    val userChoices: List<String>? = emptyList(),
+    //anke specific
+    val enhetsnummer: String?,
 ) {
     @JsonIgnore
     fun isLoennskompensasjon(): Boolean {

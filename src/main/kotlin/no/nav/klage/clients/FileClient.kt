@@ -49,8 +49,8 @@ class FileClient(
         }
     }
 
-    fun saveKlage(journalpostId: String, bytes: ByteArray) {
-        logger.debug("Uploading klage to storage, with journalpost id {} ", journalpostId)
+    fun saveKlageAnke(journalpostId: String, bytes: ByteArray) {
+        logger.debug("Uploading klage/anke to storage, with journalpost id {} ", journalpostId)
 
         val bodyBuilder = MultipartBodyBuilder()
         bodyBuilder.part("file", bytes).filename(journalpostId)
@@ -64,9 +64,9 @@ class FileClient(
             .block()
 
         if (klageCreatedResponse?.created == true) {
-            logger.debug("Klage was successfully uploaded in file store.")
+            logger.debug("Klage/anke was successfully uploaded in file store.")
         } else {
-            logger.warn("Could not successfully upload klage to file store.")
+            logger.warn("Could not successfully upload klage/anke to file store.")
         }
     }
 }
