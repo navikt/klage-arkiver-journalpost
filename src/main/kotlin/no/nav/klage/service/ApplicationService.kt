@@ -54,11 +54,11 @@ class ApplicationService(
             }
         }
 
-        //Save klage-pdf in storage
+        //Save klage/anke-pdf in storage
         runCatching {
-            klageAnkeInput.fileContentAsBytes?.let { fileClient.saveKlage(journalpostId, it) }
+            klageAnkeInput.fileContentAsBytes?.let { fileClient.saveKlageAnke(journalpostId, it) }
         }.onFailure {
-            logger.error("Could not upload klage-pdf to file store.", it)
+            logger.error("Could not upload klage/anke-pdf to file store.", it)
         }
     }
 }
