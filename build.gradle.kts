@@ -7,7 +7,7 @@ val mockkVersion = "1.13.4"
 val springMockkVersion = "4.0.2"
 val tokenValidationVersion = "3.0.9"
 val simpleSlackPosterVersion = "0.0.6"
-val kodeverkVersion = "v1.2.19"
+val kodeverkVersion = "1.2.21"
 
 repositories {
     mavenCentral()
