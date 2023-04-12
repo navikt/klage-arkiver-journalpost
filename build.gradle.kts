@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 val logstashVersion = "7.3"
 val resilience4jVersion = "2.0.2"
 val verapdfVersion = "1.22.2"
-val mockkVersion = "1.13.4"
+val mockkVersion = "1.13.5"
 val springMockkVersion = "4.0.2"
 val tokenValidationVersion = "3.0.10"
 val simpleSlackPosterVersion = "0.0.6"
