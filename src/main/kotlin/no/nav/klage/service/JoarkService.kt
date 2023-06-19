@@ -47,7 +47,7 @@ class JoarkService(
             behandlingstema = klageAnkeInput.getBehandlingstema(),
             avsenderMottaker = AvsenderMottaker(
                 id = klageAnkeInput.identifikasjonsnummer,
-                navn = "${klageAnkeInput.fornavn} ${klageAnkeInput.mellomnavn} ${klageAnkeInput.etternavn}"
+                navn = getFullName(klageAnkeInput),
             ),
             sak = getSak(klageAnkeInput),
             tittel = when (klageAnkeInput.klageAnkeType) {
@@ -70,6 +70,14 @@ class JoarkService(
             },
             eksternReferanseId = "${klageAnkeInput.klageAnkeType.name}_${klageAnkeInput.id}",
         )
+    }
+
+    private fun getFullName(klageAnkeInput: KlageAnkeInput): String {
+        return if (klageAnkeInput.mellomnavn.isBlank()) {
+            "${klageAnkeInput.fornavn} ${klageAnkeInput.etternavn}"
+        } else {
+            "${klageAnkeInput.fornavn} ${klageAnkeInput.mellomnavn} ${klageAnkeInput.etternavn}"
+        }
     }
 
     private fun getSak(klageAnkeInput: KlageAnkeInput): Sak? =
