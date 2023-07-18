@@ -6,7 +6,7 @@ val verapdfVersion = "1.22.2"
 val mockkVersion = "1.13.5"
 val springMockkVersion = "4.0.2"
 val tokenValidationVersion = "3.1.0"
-val simpleSlackPosterVersion = "0.1.0"
+val simpleSlackPosterVersion = "1"
 val kodeverkVersion = "1.5.5"
 
 repositories {
@@ -47,7 +47,7 @@ dependencies {
     implementation("io.github.resilience4j:resilience4j-retry:$resilience4jVersion")
     implementation("io.github.resilience4j:resilience4j-kotlin:$resilience4jVersion")
 
-    implementation("com.github.navikt:simple-slack-poster:$simpleSlackPosterVersion")
+    implementation("no.nav.slackposter:simple-slack-poster:$simpleSlackPosterVersion")
     implementation("no.nav.klage:klage-kodeverk:$kodeverkVersion")
 
     implementation("org.verapdf:validation-model:$verapdfVersion") {
