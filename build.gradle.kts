@@ -7,11 +7,11 @@ val mockkVersion = "1.13.5"
 val springMockkVersion = "4.0.2"
 val tokenValidationVersion = "3.1.0"
 val simpleSlackPosterVersion = "0.1.0"
-val kodeverkVersion = "v1.4.0"
+val kodeverkVersion = "1.5.5"
 
 repositories {
     mavenCentral()
-    maven("https://jitpack.io")
+    maven("https://github-package-registry-mirror.gc.nav.no/cached/maven-release")
 }
 
 plugins {
@@ -48,7 +48,7 @@ dependencies {
     implementation("io.github.resilience4j:resilience4j-kotlin:$resilience4jVersion")
 
     implementation("com.github.navikt:simple-slack-poster:$simpleSlackPosterVersion")
-    implementation("com.github.navikt:klage-kodeverk:$kodeverkVersion")
+    implementation("no.nav.klage:klage-kodeverk:$kodeverkVersion")
 
     implementation("org.verapdf:validation-model:$verapdfVersion") {
         exclude(group = "com.sun.xml.bind")
