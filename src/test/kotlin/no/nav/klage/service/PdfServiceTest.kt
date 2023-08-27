@@ -15,7 +15,7 @@ class PdfServiceTest {
     private val pdfService = PdfService()
 
     @Test
-    fun `pdf-a file is validated`() {
+    fun `pdf-a file is valid`() {
         val multipartFileMock = mockk<MultipartFile>()
         every { multipartFileMock.bytes } returns Files.readAllBytes(
             Path.of("src/test/resources/pdf/pdf-a.pdf")
@@ -24,7 +24,7 @@ class PdfServiceTest {
     }
 
     @Test
-    fun `non-compliant pdf file is not validated`() {
+    fun `non-compliant pdf file is not valid`() {
         val multipartFileMock = mockk<MultipartFile>()
         every { multipartFileMock.bytes } returns Files.readAllBytes(
             Path.of("src/test/resources/pdf/not-pdf-a.pdf")
