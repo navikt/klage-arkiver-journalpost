@@ -12,7 +12,7 @@ jobs:
   deploy_to_dev:
     name: Dev
     permissions:
-      contents: read
+      contents: write
       id-token: write
     uses: ./.github/workflows/deploy-to-dev.yaml
     secrets:
@@ -22,7 +22,7 @@ jobs:
   deploy_to_prod:
     name: Prod
     permissions:
-      contents: read
+      contents: write
       id-token: write
     needs: deploy_to_dev
     uses: ./.github/workflows/deploy-to-prod.yaml
