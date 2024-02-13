@@ -22,9 +22,13 @@ class JoarkService(
         private const val ANKE_ID_KEY = "anke_id"
         private const val KLAGE_YTELSE_KEY = "klage_ytelse"
         private const val KLAGE_TITTEL = "Klage"
+        private const val KLAGE_ETTERSENDELSE_TITTEL = "Ettersendelse til klage"
         private const val ANKE_TITTEL = "Anke"
+        private const val ANKE_ETTERSENDELSE_TITTEL = "Ettersendelse til anke"
         private const val BREVKODE_KLAGESKJEMA_KLAGE = "NAV 90-00.08 K"
+        private const val BREVKODE_KLAGESKJEMA_KLAGE_ETTERSENDELSE = "NAVe 90-00.08 K"
         private const val BREVKODE_KLAGESKJEMA_ANKE = "NAV 90-00.08 A"
+        private const val BREVKODE_KLAGESKJEMA_ANKE_ETTERSENDELSE = "NAVe 90-00.08 A"
         private const val PDF_CODE = "PDF"
         private const val PDFA_CODE = "PDFA"
 
@@ -53,17 +57,19 @@ class JoarkService(
             tittel = when (klageAnkeInput.klageAnkeType) {
                 KlageAnkeType.KLAGE -> KLAGE_TITTEL
                 KlageAnkeType.ANKE -> ANKE_TITTEL
+                KlageAnkeType.KLAGE_ETTERSENDELSE -> KLAGE_ETTERSENDELSE_TITTEL
+                KlageAnkeType.ANKE_ETTERSENDELSE -> ANKE_ETTERSENDELSE_TITTEL
             },
             bruker = Bruker(
                 id = klageAnkeInput.identifikasjonsnummer,
             ),
             dokumenter = getDokumenter(klageAnkeInput),
             tilleggsopplysninger = when (klageAnkeInput.klageAnkeType) {
-                KlageAnkeType.KLAGE -> listOf(
+                KlageAnkeType.KLAGE, KlageAnkeType.KLAGE_ETTERSENDELSE -> listOf(
                     Tilleggsopplysning(nokkel = KLAGE_ID_KEY, verdi = klageAnkeInput.id),
                     Tilleggsopplysning(nokkel = KLAGE_YTELSE_KEY, verdi = klageAnkeInput.ytelse)
                 )
-                KlageAnkeType.ANKE -> listOf(
+                KlageAnkeType.ANKE, KlageAnkeType.ANKE_ETTERSENDELSE -> listOf(
                     Tilleggsopplysning(nokkel = ANKE_ID_KEY, verdi = klageAnkeInput.internalSaksnummer.toString()),
                     Tilleggsopplysning(nokkel = KLAGE_YTELSE_KEY, verdi = klageAnkeInput.ytelse)
                 )
@@ -96,10 +102,14 @@ class JoarkService(
             tittel = when (klageAnkeInput.klageAnkeType) {
                 KlageAnkeType.KLAGE -> KLAGE_TITTEL
                 KlageAnkeType.ANKE -> ANKE_TITTEL
+                KlageAnkeType.KLAGE_ETTERSENDELSE -> KLAGE_ETTERSENDELSE_TITTEL
+                KlageAnkeType.ANKE_ETTERSENDELSE -> ANKE_ETTERSENDELSE_TITTEL
             },
             brevkode = when (klageAnkeInput.klageAnkeType) {
                 KlageAnkeType.KLAGE -> BREVKODE_KLAGESKJEMA_KLAGE
                 KlageAnkeType.ANKE -> BREVKODE_KLAGESKJEMA_ANKE
+                KlageAnkeType.KLAGE_ETTERSENDELSE -> BREVKODE_KLAGESKJEMA_KLAGE_ETTERSENDELSE
+                KlageAnkeType.ANKE_ETTERSENDELSE -> BREVKODE_KLAGESKJEMA_ANKE_ETTERSENDELSE
             },
             //Don't perform pdfa-check for now. Issues with compatibility with Vera and Spring Boot 3.
             dokumentVarianter = getDokumentVariant(klageAnkeInput.fileContentAsBytes, performPdfaCheck = false)

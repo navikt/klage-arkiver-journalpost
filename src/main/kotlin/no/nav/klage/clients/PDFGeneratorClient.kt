@@ -29,17 +29,17 @@ class PDFGeneratorClient(
     }
 
     fun generatePDF(klageAnkeInput: KlageAnkeInput): ByteArray {
-        return when(klageAnkeInput.klageAnkeType) {
-            KlageAnkeType.KLAGE -> getKlagePDF(klageAnkeInput)
-            KlageAnkeType.ANKE -> getAnkePDF(klageAnkeInput)
+        return when (klageAnkeInput.klageAnkeType) {
+            KlageAnkeType.KLAGE, KlageAnkeType.ANKE -> getKlageAnkePDF(klageAnkeInput)
+            KlageAnkeType.KLAGE_ETTERSENDELSE, KlageAnkeType.ANKE_ETTERSENDELSE -> getEttersendelsePDF(klageAnkeInput)
         }
     }
 
-    fun getKlagePDF(klageAnkeInput: KlageAnkeInput): ByteArray {
+    fun getKlageAnkePDF(klageAnkeInput: KlageAnkeInput): ByteArray {
         logger.debug("Creating PDF from klage.")
         return retryPdf.executeFunction {
             pdfWebClient.post()
-                .uri { it.path("/klage").build() }
+                .uri { it.path("/klageanke").build() }
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(klageAnkeInput.toPDFModel())
                 .retrieve()
@@ -48,11 +48,11 @@ class PDFGeneratorClient(
         }
     }
 
-    fun getAnkePDF(klageAnkeInput: KlageAnkeInput): ByteArray {
-        logger.debug("Creating PDF from anke.")
+    fun getEttersendelsePDF(klageAnkeInput: KlageAnkeInput): ByteArray {
+        logger.debug("Creating PDF from klage.")
         return retryPdf.executeFunction {
             pdfWebClient.post()
-                .uri { it.path("/anke").build() }
+                .uri { it.path("/ettersendelse").build() }
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(klageAnkeInput.toPDFModel())
                 .retrieve()
@@ -62,6 +62,10 @@ class PDFGeneratorClient(
     }
 
     private fun KlageAnkeInput.toPDFModel() = KlagePDFModel(
+        type = when (klageAnkeType) {
+            KlageAnkeType.KLAGE, KlageAnkeType.KLAGE_ETTERSENDELSE -> "klage"
+            KlageAnkeType.ANKE, KlageAnkeType.ANKE_ETTERSENDELSE -> "anke"
+        },
         foedselsnummer = StringBuilder(identifikasjonsnummer).insert(6, " ").toString(),
         fornavn = fornavn,
         mellomnavn = mellomnavn,
@@ -89,9 +93,11 @@ class PDFGeneratorClient(
             userSaksnummer != null -> {
                 "$userSaksnummer - Oppgitt av bruker"
             }
+
             internalSaksnummer != null -> {
                 "$internalSaksnummer - Hentet fra internt system"
             }
+
             else -> "Ikke angitt"
         }
     }

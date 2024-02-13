@@ -41,6 +41,8 @@ class KlageKafkaConsumer(
                     when (klageAnke.klageAnkeType) {
                         KlageAnkeType.KLAGE -> klageDittnavAPIClient.getJournalpostForKlageId(klageAnke.id)
                         KlageAnkeType.ANKE -> klageDittnavAPIClient.getJournalpostForAnkeId(klageAnke.id)
+                        KlageAnkeType.KLAGE_ETTERSENDELSE -> TODO()
+                        KlageAnkeType.ANKE_ETTERSENDELSE -> TODO()
                     }
                 } catch (e: WebClientResponseException.NotFound) {
                     slackClient.postMessage(

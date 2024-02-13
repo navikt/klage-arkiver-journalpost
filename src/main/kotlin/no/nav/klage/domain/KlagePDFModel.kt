@@ -1,6 +1,7 @@
 package no.nav.klage.domain
 
 data class KlagePDFModel(
+    val type: String,
     val foedselsnummer: String,
     val fornavn: String,
     val mellomnavn: String,
