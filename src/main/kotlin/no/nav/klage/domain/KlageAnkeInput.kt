@@ -68,7 +68,7 @@ data class KlageAnkeInput(
     @JsonIgnore
     fun getBehandlingstema(): String? {
         return when (klageAnkeType) {
-            KlageAnkeType.KLAGE -> when {
+            KlageAnkeType.KLAGE, KlageAnkeType.KLAGE_ETTERSENDELSE -> when {
                 this.isLoennskompensasjon() -> BEHANDLINGSTEMA_LONNSKOMPENSASJON
                 this.isTilbakebetalingAvForskuddPaaDagpenger() -> BEHANDLINGSTEMA_TILBAKEBETALING_FORSKUDD_PAA_DAGPENGER
                 this.isFeriepengerAvDagpenger() -> BEHANDLINGSTEMA_FERIEPENGER_AV_DAGPENGER
@@ -78,13 +78,13 @@ data class KlageAnkeInput(
                 else -> null
             }
 
-            KlageAnkeType.ANKE -> null
+            KlageAnkeType.ANKE, KlageAnkeType.ANKE_ETTERSENDELSE -> null
         }
     }
 }
 
 enum class KlageAnkeType {
-    KLAGE, ANKE
+    KLAGE, ANKE, KLAGE_ETTERSENDELSE, ANKE_ETTERSENDELSE
 }
 
 @JsonIgnoreProperties(ignoreUnknown = true)
