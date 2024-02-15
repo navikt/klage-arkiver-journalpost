@@ -38,8 +38,25 @@ class ApplicationService(
 
         //Callback with journalpostId
         when (klageAnkeInput.klageAnkeType) {
-            KlageAnkeType.KLAGE -> klageDittnavAPIClient.setJournalpostIdInKlage(klageAnkeInput.id, journalpostId)
-            KlageAnkeType.ANKE -> klageDittnavAPIClient.setJournalpostIdInAnke(klageAnkeInput.id, journalpostId)
+            KlageAnkeType.KLAGE -> klageDittnavAPIClient.setJournalpostIdInKlage(
+                klageId = klageAnkeInput.id,
+                journalpostId = journalpostId
+            )
+
+            KlageAnkeType.ANKE -> klageDittnavAPIClient.setJournalpostIdInAnke(
+                ankeId = klageAnkeInput.id,
+                journalpostId = journalpostId
+            )
+
+            KlageAnkeType.KLAGE_ETTERSENDELSE -> klageDittnavAPIClient.setJournalpostIdInKlanke(
+                klankeId = klageAnkeInput.id,
+                journalpostId = journalpostId
+            )
+
+            KlageAnkeType.ANKE_ETTERSENDELSE -> klageDittnavAPIClient.setJournalpostIdInKlanke(
+                klankeId = klageAnkeInput.id,
+                journalpostId = journalpostId
+            )
         }
 
         //Record metrics
