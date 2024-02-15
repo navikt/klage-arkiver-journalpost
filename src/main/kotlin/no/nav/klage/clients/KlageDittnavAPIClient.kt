@@ -20,6 +20,7 @@ class KlageDittnavAPIClient(
         private val logger = getLogger(javaClass.enclosingClass)
     }
 
+    @Deprecated("use setJournalpostIdInKlanke")
     fun setJournalpostIdInKlage(klageId: String, journalpostId: String) {
         logger.debug("Registering journalpost ID for klage in klage-dittnav-api. KlageId: {}, journalpostId: {}", klageId, journalpostId)
         klageDittnavAPIWebClient.post()
@@ -41,6 +42,7 @@ class KlageDittnavAPIClient(
             .block() ?: throw RuntimeException("Unable to get journalpost ID from klage-dittnav-api.")
     }
 
+    @Deprecated("use setJournalpostIdInKlanke")
     fun setJournalpostIdInAnke(ankeId: String, journalpostId: String) {
         logger.debug("Registering journalpost ID for anke in klage-dittnav-api. AnkeId ref: {}, journalpostId: {}", ankeId, journalpostId)
         klageDittnavAPIWebClient.post()
@@ -50,6 +52,17 @@ class KlageDittnavAPIClient(
             .retrieve()
             .toBodilessEntity()
             .block() ?: throw RuntimeException("Unable to register journalpost ID for anke in klage-dittnav-api.")
+    }
+
+    fun setJournalpostIdInKlanke(klankeId: String, journalpostId: String) {
+        logger.debug("Registering journalpost ID for klanke in klage-dittnav-api. KlankeId ref: {}, journalpostId: {}", klankeId, journalpostId)
+        klageDittnavAPIWebClient.post()
+            .uri("klanker/$klankeId/journalpostid")
+            .header(HttpHeaders.AUTHORIZATION, "Bearer ${tokenUtil.getAppAccessTokenWithKlageDittnavApiScope()}")
+            .bodyValue(KlageApiJournalpost(journalpostId))
+            .retrieve()
+            .toBodilessEntity()
+            .block() ?: throw RuntimeException("Unable to register journalpost ID for klanke in klage-dittnav-api.")
     }
 
     fun getJournalpostForAnkeId(ankeId: String): JournalpostIdResponse {
