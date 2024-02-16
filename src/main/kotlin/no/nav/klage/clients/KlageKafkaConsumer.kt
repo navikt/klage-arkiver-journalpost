@@ -35,25 +35,7 @@ class KlageKafkaConsumer(
         secureLogger.debug("Klage received from Kafka topic: {}", klageRecord.value())
 
         runCatching {
-            var klageAnke = klageRecord.value().toKlageAnkeInput()
-
-            if (klageAnke.id in listOf(
-                    "14f063f3-1ab3-45cf-83d9-636d60d43206",
-                    "b40efd4b-054c-444b-8805-274b88772519"
-                )
-            ) {
-                klageAnke =
-                    klageAnke.copy(vedlegg = klageAnke.vedlegg.filter {
-                        it.ref !in listOf(
-                            "07b51e2e-e732-4049-8b4e-7db089bbc8b6",
-                            "3afb2535-3f66-409d-8d0a-259a17bdc367",
-                            "3cd6a51d-f06e-4470-adee-757dff877a86",
-                            "f590e4cb-de70-4fd2-9428-3942ab133e20",
-                            "d82506b7-97c5-4e78-9277-22cd49912aa6",
-                            "758d2570-d8ac-4311-bf49-990a6670e2a1",
-                        )
-                    })
-            }
+            val klageAnke = klageRecord.value().toKlageAnkeInput()
 
             val journalpostIdResponse =
                 try {
