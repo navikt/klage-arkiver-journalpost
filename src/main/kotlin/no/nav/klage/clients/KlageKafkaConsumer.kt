@@ -37,9 +37,18 @@ class KlageKafkaConsumer(
         runCatching {
             var klageAnke = klageRecord.value().toKlageAnkeInput()
 
-            if (klageAnke.id == "14f063f3-1ab3-45cf-83d9-636d60d43206") {
+            if (klageAnke.id in listOf(
+                    "14f063f3-1ab3-45cf-83d9-636d60d43206",
+                    "b40efd4b-054c-444b-8805-274b88772519"
+                )
+            ) {
                 klageAnke =
-                    klageAnke.copy(vedlegg = klageAnke.vedlegg.filter { it.ref != "07b51e2e-e732-4049-8b4e-7db089bbc8b6" })
+                    klageAnke.copy(vedlegg = klageAnke.vedlegg.filter {
+                        it.ref !in listOf(
+                            "07b51e2e-e732-4049-8b4e-7db089bbc8b6",
+                            "d82506b7-97c5-4e78-9277-22cd49912aa6"
+                        )
+                    })
             }
 
             val journalpostIdResponse =
