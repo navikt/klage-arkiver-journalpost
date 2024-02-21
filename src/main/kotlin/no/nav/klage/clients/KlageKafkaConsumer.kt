@@ -36,6 +36,7 @@ class KlageKafkaConsumer(
 
         runCatching {
             val klageAnke = klageRecord.value().toKlageAnkeInput()
+
             val journalpostIdResponse =
                 try {
                     when (klageAnke.klageAnkeType) {
