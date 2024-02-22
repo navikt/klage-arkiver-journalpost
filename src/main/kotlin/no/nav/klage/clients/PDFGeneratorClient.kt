@@ -36,7 +36,7 @@ class PDFGeneratorClient(
     }
 
     fun getKlageAnkePDF(klageAnkeInput: KlageAnkeInput): ByteArray {
-        logger.debug("Creating PDF from klage.")
+        logger.debug("Creating PDF for klage/anke.")
         return retryPdf.executeFunction {
             pdfWebClient.post()
                 .uri { it.path("/klageanke").build() }
@@ -49,7 +49,7 @@ class PDFGeneratorClient(
     }
 
     fun getEttersendelsePDF(klageAnkeInput: KlageAnkeInput): ByteArray {
-        logger.debug("Creating PDF from klage.")
+        logger.debug("Creating PDF for ettersendelse.")
         return retryPdf.executeFunction {
             pdfWebClient.post()
                 .uri { it.path("/ettersendelse").build() }
@@ -62,10 +62,7 @@ class PDFGeneratorClient(
     }
 
     private fun KlageAnkeInput.toPDFModel() = KlagePDFModel(
-        type = when (klageAnkeType) {
-            KlageAnkeType.KLAGE, KlageAnkeType.KLAGE_ETTERSENDELSE -> "klage"
-            KlageAnkeType.ANKE, KlageAnkeType.ANKE_ETTERSENDELSE -> "anke"
-        },
+        type = klageAnkeType.name,
         foedselsnummer = StringBuilder(identifikasjonsnummer).insert(6, " ").toString(),
         fornavn = fornavn,
         mellomnavn = mellomnavn,
@@ -77,7 +74,7 @@ class PDFGeneratorClient(
         dato = dato.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")),
         ytelse = ytelse.replaceFirstChar { it.lowercase(Locale.getDefault()) },
         userChoices = userChoices,
-        enhetsnavn = Enhet.values().find { it.navn == enhetsnummer }?.beskrivelse
+        enhetsnavn = Enhet.entries.find { it.navn == enhetsnummer }?.beskrivelse
     )
 
     private fun getOversiktVedlegg(vedlegg: List<Vedlegg>): String {
