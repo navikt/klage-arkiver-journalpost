@@ -18,9 +18,8 @@ class JoarkService(
         private val logger = getLogger(javaClass.enclosingClass)
         private val secureLogger = getSecureLogger()
 
-        private const val KLAGE_ID_KEY = "klage_id"
-        private const val ANKE_ID_KEY = "anke_id"
-        private const val KLAGE_YTELSE_KEY = "klage_ytelse"
+        private const val KLAGE_ANKE_ID_KEY = "klage_anke_id"
+        private const val KLAGE_ANKE_YTELSE_KEY = "klage_anke_ytelse"
         private const val KLAGE_TITTEL = "Klage"
         private const val KLAGE_ETTERSENDELSE_TITTEL = "Ettersendelse til klage"
         private const val ANKE_TITTEL = "Anke"
@@ -37,15 +36,15 @@ class JoarkService(
     fun createJournalpostInJoark(klageAnkeInput: KlageAnkeInput): String {
         logger.debug("Creating journalpost.")
 
-        val journalpost = getJournalpost(klageAnkeInput)
+        val journalpostRequest = createJournalpostRequest(klageAnkeInput)
 
-        val journalpostAsJSONForLogging = getJournalpostAsJSONForLogging(journalpost)
+        val journalpostAsJSONForLogging = getJournalpostAsJSONForLogging(journalpostRequest)
         secureLogger.debug("Journalpost as JSON (what we post to dokarkiv/Joark): {}", journalpostAsJSONForLogging)
 
-        return joarkClient.postJournalpost(journalpost, klageAnkeInput.id)
+        return joarkClient.postJournalpost(journalpostRequest, klageAnkeInput.id)
     }
 
-    private fun getJournalpost(klageAnkeInput: KlageAnkeInput): Journalpost {
+    private fun createJournalpostRequest(klageAnkeInput: KlageAnkeInput): Journalpost {
         return Journalpost(
             tema = klageAnkeInput.tema,
             behandlingstema = klageAnkeInput.getBehandlingstema(),
@@ -64,16 +63,10 @@ class JoarkService(
                 id = klageAnkeInput.identifikasjonsnummer,
             ),
             dokumenter = getDokumenter(klageAnkeInput),
-            tilleggsopplysninger = when (klageAnkeInput.klageAnkeType) {
-                KlageAnkeType.KLAGE, KlageAnkeType.KLAGE_ETTERSENDELSE -> listOf(
-                    Tilleggsopplysning(nokkel = KLAGE_ID_KEY, verdi = klageAnkeInput.id),
-                    Tilleggsopplysning(nokkel = KLAGE_YTELSE_KEY, verdi = klageAnkeInput.ytelse)
-                )
-                KlageAnkeType.ANKE, KlageAnkeType.ANKE_ETTERSENDELSE -> listOf(
-                    Tilleggsopplysning(nokkel = ANKE_ID_KEY, verdi = klageAnkeInput.internalSaksnummer.toString()),
-                    Tilleggsopplysning(nokkel = KLAGE_YTELSE_KEY, verdi = klageAnkeInput.ytelse)
-                )
-            },
+            tilleggsopplysninger = listOf(
+                Tilleggsopplysning(nokkel = KLAGE_ANKE_ID_KEY, verdi = klageAnkeInput.id),
+                Tilleggsopplysning(nokkel = KLAGE_ANKE_YTELSE_KEY, verdi = klageAnkeInput.ytelse)
+            ),
             eksternReferanseId = "${klageAnkeInput.klageAnkeType.name}_${klageAnkeInput.id}",
         )
     }
