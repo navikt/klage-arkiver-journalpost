@@ -39,19 +39,14 @@ class KlageKafkaConsumer(
 
             val journalpostIdResponse =
                 try {
-                    when (klageAnke.klageAnkeType) {
-                        KlageAnkeType.KLAGE -> klageDittnavAPIClient.getJournalpostForKlageId(klageAnke.id)
-                        KlageAnkeType.ANKE -> klageDittnavAPIClient.getJournalpostForAnkeId(klageAnke.id)
-                        KlageAnkeType.KLAGE_ETTERSENDELSE -> TODO()
-                        KlageAnkeType.ANKE_ETTERSENDELSE -> TODO()
-                    }
+                    klageDittnavAPIClient.getJournalpostForKlankeId(klageAnke.id)
                 } catch (e: WebClientResponseException.NotFound) {
                     slackClient.postMessage(
                         "Innsending med id ${klageAnke.id} fins ikke i klage-dittnav-api. Undersøk dette nærmere!",
                         Severity.ERROR
                     )
                     logger.error("Input has id not found in klage-dittnav-api. See more details in secure log.")
-                    secureLogger.error("Input has id not found in klage-dittnav-api,", klageAnke)
+                    secureLogger.error("Input has id not found in klage-dittnav-api, {}", klageAnke)
                     if (naisCluster == "dev-gcp") {
                         return
                     } else {
