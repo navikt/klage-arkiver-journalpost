@@ -37,27 +37,10 @@ class ApplicationService(
         val journalpostId = joarkService.createJournalpostInJoark(klageAnkeInput)
 
         //Callback with journalpostId
-        when (klageAnkeInput.klageAnkeType) {
-            KlageAnkeType.KLAGE -> klageDittnavAPIClient.setJournalpostIdInKlage(
-                klageId = klageAnkeInput.id,
-                journalpostId = journalpostId
-            )
-
-            KlageAnkeType.ANKE -> klageDittnavAPIClient.setJournalpostIdInAnke(
-                ankeId = klageAnkeInput.id,
-                journalpostId = journalpostId
-            )
-
-            KlageAnkeType.KLAGE_ETTERSENDELSE -> klageDittnavAPIClient.setJournalpostIdInKlanke(
-                klankeId = klageAnkeInput.id,
-                journalpostId = journalpostId
-            )
-
-            KlageAnkeType.ANKE_ETTERSENDELSE -> klageDittnavAPIClient.setJournalpostIdInKlanke(
-                klankeId = klageAnkeInput.id,
-                journalpostId = journalpostId
-            )
-        }
+        klageDittnavAPIClient.setJournalpostIdInKlanke(
+            klankeId = klageAnkeInput.id,
+            journalpostId = journalpostId
+        )
 
         //Record metrics
         klageMetrics.incrementKlagerArkivert()

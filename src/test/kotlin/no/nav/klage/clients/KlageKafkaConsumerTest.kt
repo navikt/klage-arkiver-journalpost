@@ -79,7 +79,7 @@ class KlageKafkaConsumerTest {
             .writeValueAsString(input)
 
         every { slackClient.postMessage(any(), any()) } returns Unit
-        every { klageDittnavAPIClient.getJournalpostForKlageId(any()) } returns JournalpostIdResponse(journalpostId = "321")
+        every { klageDittnavAPIClient.getJournalpostForKlankeId(any()) } returns JournalpostIdResponse(journalpostId = "321")
 
         klageKafkaConsumer.listen(ConsumerRecord("klage.privat-klage-mottatt-v1", 0, 0, "test", inputString))
 
@@ -92,7 +92,7 @@ class KlageKafkaConsumerTest {
             .writeValueAsString(input)
 
         every { slackClient.postMessage(any(), any()) } returns Unit
-        every { klageDittnavAPIClient.getJournalpostForKlageId(any()) } returns JournalpostIdResponse(journalpostId = null)
+        every { klageDittnavAPIClient.getJournalpostForKlankeId(any()) } returns JournalpostIdResponse(journalpostId = null)
         every { applicationService.createJournalpost(any()) } returns Unit
 
         klageKafkaConsumer.listen(ConsumerRecord("klage.privat-klage-mottatt-v1", 0, 0, "test", inputString))
