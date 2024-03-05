@@ -32,7 +32,7 @@ data class KlageAnkeInput(
     val klageAnkeType: KlageAnkeType,
     //klage specific
     val userChoices: List<String>? = emptyList(),
-    //anke specific
+    //Not for klage
     val enhetsnummer: String?,
 ) {
     @JsonIgnore
