@@ -3,11 +3,11 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 val logstashVersion = "7.4"
 val resilience4jVersion = "2.2.0"
 val verapdfVersion = "1.24.1"
-val mockkVersion = "1.13.8"
+val mockkVersion = "1.13.10"
 val springMockkVersion = "4.0.2"
-val tokenValidationVersion = "3.2.0"
+val tokenValidationVersion = "4.1.3"
 val simpleSlackPosterVersion = "0.1.8"
-val kodeverkVersion = "1.7.15"
+val kodeverkVersion = "1.8.3"
 
 repositories {
     mavenCentral()
@@ -15,8 +15,8 @@ repositories {
 }
 
 plugins {
-    val kotlinVersion = "1.9.22"
-    id("org.springframework.boot") version "3.2.1"
+    val kotlinVersion = "1.9.23"
+    id("org.springframework.boot") version "3.2.3"
     kotlin("jvm") version kotlinVersion
     kotlin("plugin.spring") version kotlinVersion
     idea
