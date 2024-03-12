@@ -5,6 +5,7 @@ import no.nav.klage.clients.JoarkClient
 import no.nav.klage.domain.*
 import no.nav.klage.getLogger
 import no.nav.klage.getSecureLogger
+import no.nav.klage.kodeverk.Tema
 import org.springframework.stereotype.Service
 import java.util.*
 
@@ -68,7 +69,17 @@ class JoarkService(
                 Tilleggsopplysning(nokkel = KLAGE_ANKE_YTELSE_KEY, verdi = klageAnkeInput.ytelse)
             ),
             eksternReferanseId = "${klageAnkeInput.klageAnkeType.name}_${klageAnkeInput.id}",
+            journalfoerendeEnhet = getJournalfoerendeEnhet(klageAnkeInput.tema, klageAnkeInput.klageAnkeType)
         )
+    }
+
+    private fun getJournalfoerendeEnhet(tema: String, klageAnkeType: KlageAnkeType): String? {
+        return if (klageAnkeType in listOf(KlageAnkeType.ANKE, KlageAnkeType.ANKE_ETTERSENDELSE)) {
+            if (tema == Tema.YRK.name) {
+                "4291"
+            } else null
+        } else null
+
     }
 
     private fun getFullName(klageAnkeInput: KlageAnkeInput): String {
