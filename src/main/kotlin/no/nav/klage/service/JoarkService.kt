@@ -88,6 +88,8 @@ class JoarkService(
         val adressebeskyttelse =
             pdlClient.getPersonAdresseBeskyttelse(fnr = identifikasjonsnummer).data?.hentPerson?.adressebeskyttelse
 
+        secureLogger.debug("For check in dev. Id {}, found in pdl: {}", identifikasjonsnummer, adressebeskyttelse)
+
         if (adressebeskyttelse?.any {
                 it.equals(PdlPerson.Adressebeskyttelse.GraderingType.STRENGT_FORTROLIG)
                         || it.equals(PdlPerson.Adressebeskyttelse.GraderingType.STRENGT_FORTROLIG_UTLAND)
