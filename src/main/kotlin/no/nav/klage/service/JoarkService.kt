@@ -2,6 +2,8 @@ package no.nav.klage.service
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import no.nav.klage.clients.JoarkClient
+import no.nav.klage.clients.pdl.PdlClient
+import no.nav.klage.clients.pdl.PdlPerson
 import no.nav.klage.domain.*
 import no.nav.klage.getLogger
 import no.nav.klage.getSecureLogger
@@ -12,7 +14,8 @@ import java.util.*
 @Service
 class JoarkService(
     private val joarkClient: JoarkClient,
-    private val pdfService: PdfService
+    private val pdfService: PdfService,
+    private val pdlClient: PdlClient,
 ) {
     companion object {
         @Suppress("JAVA_CLASS_ON_COMPANION")
@@ -69,11 +72,29 @@ class JoarkService(
                 Tilleggsopplysning(nokkel = KLAGE_ANKE_YTELSE_KEY, verdi = klageAnkeInput.ytelse)
             ),
             eksternReferanseId = "${klageAnkeInput.klageAnkeType.name}_${klageAnkeInput.id}",
-            journalfoerendeEnhet = getJournalfoerendeEnhet(klageAnkeInput.tema, klageAnkeInput.klageAnkeType)
+            journalfoerendeEnhet = getJournalfoerendeEnhetOverride(
+                tema = klageAnkeInput.tema,
+                klageAnkeType = klageAnkeInput.klageAnkeType,
+                identifikasjonsnummer = klageAnkeInput.identifikasjonsnummer
+            )
         )
     }
 
-    private fun getJournalfoerendeEnhet(tema: String, klageAnkeType: KlageAnkeType): String? {
+    private fun getJournalfoerendeEnhetOverride(
+        tema: String,
+        klageAnkeType: KlageAnkeType,
+        identifikasjonsnummer: String
+    ): String? {
+        val adressebeskyttelse =
+            pdlClient.getPersonAdresseBeskyttelse(fnr = identifikasjonsnummer).data?.hentPerson?.adressebeskyttelse
+
+        if (adressebeskyttelse?.any {
+                it.equals(PdlPerson.Adressebeskyttelse.GraderingType.STRENGT_FORTROLIG)
+                        || it.equals(PdlPerson.Adressebeskyttelse.GraderingType.STRENGT_FORTROLIG_UTLAND)
+            } == true) {
+            return null
+        }
+
         return if (klageAnkeType in listOf(KlageAnkeType.ANKE, KlageAnkeType.ANKE_ETTERSENDELSE)) {
             if (tema == Tema.YRK.name) {
                 "4291"

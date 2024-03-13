@@ -5,6 +5,7 @@ externalHosts:
   - login.microsoftonline.com
   - hooks.slack.com
   - dokarkiv.dev-fss-pub.nais.io
+  - pdl-api.dev-fss-pub.nais.io
 springProfile: dev-gcp
 kafka_pool: nav-dev
 

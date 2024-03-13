@@ -8,6 +8,7 @@ externalHosts:
   - login.microsoftonline.com
   - hooks.slack.com
   - dokarkiv.prod-fss-pub.nais.io
+  - pdl-api.prod-fss-pub.nais.io
 springProfile: prod-gcp
 kafka_pool: nav-prod
 
