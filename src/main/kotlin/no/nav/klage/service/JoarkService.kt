@@ -91,8 +91,8 @@ class JoarkService(
         secureLogger.debug("For check in dev. Id {}, found in pdl: {}", identifikasjonsnummer, adressebeskyttelse)
 
         if (adressebeskyttelse?.any {
-                it.equals(PdlPerson.Adressebeskyttelse.GraderingType.STRENGT_FORTROLIG)
-                        || it.equals(PdlPerson.Adressebeskyttelse.GraderingType.STRENGT_FORTROLIG_UTLAND)
+                it.gradering == PdlPerson.Adressebeskyttelse.GraderingType.STRENGT_FORTROLIG
+                        || it.gradering == PdlPerson.Adressebeskyttelse.GraderingType.STRENGT_FORTROLIG_UTLAND
             } == true) {
             return null
         }
