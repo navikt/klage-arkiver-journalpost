@@ -4,4 +4,6 @@ KAFKA_BOOTSTRAP_SERVERS: a01apvl00145.adeo.no:8443,a01apvl00146.adeo.no:8443,a01
 
 DOKARKIV_SCOPE: prod-fss.teamdokumenthandtering.dokarkiv/
 JOARK_SERVICE_URL: https://dokarkiv.prod-fss-pub.nais.io/rest/journalpostapi/v1/journalpost
+PDL_BASE_URL: https://pdl-api.prod-fss-pub.nais.io/graphql
+PDL_SCOPE: prod-fss:pdl:pdl-api
 DRY_RUN: false
