@@ -48,27 +48,4 @@ class FileClient(
             logger.warn("Could not successfully delete attachment in file store.")
         }
     }
-
-    fun saveKlageAnke(journalpostId: String, bytes: ByteArray) {
-        logger.debug("Uploading klage/anke to storage, with journalpost id {} ", journalpostId)
-
-        val bodyBuilder = MultipartBodyBuilder()
-        bodyBuilder.part("file", bytes).filename(journalpostId)
-        val klageCreatedResponse = fileWebClient
-            .post()
-            .uri("/klage/$journalpostId")
-            .header(HttpHeaders.AUTHORIZATION, "Bearer ${tokenUtil.getAppAccessTokenWithKlageFileApiScope()}")
-            .body(BodyInserters.fromMultipartData(bodyBuilder.build()))
-            .retrieve()
-            .bodyToMono<KlageCreatedResponse>()
-            .block()
-
-        if (klageCreatedResponse?.created == true) {
-            logger.debug("Klage/anke was successfully uploaded in file store.")
-        } else {
-            logger.warn("Could not successfully upload klage/anke to file store.")
-        }
-    }
 }
-
-data class KlageCreatedResponse(val created: Boolean)

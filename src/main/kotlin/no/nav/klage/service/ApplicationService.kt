@@ -53,12 +53,5 @@ class ApplicationService(
                 logger.error("Could not delete attachment with id ${it.ref}", e)
             }
         }
-
-        //Save klage/anke-pdf in storage
-        runCatching {
-            klageAnkeInput.fileContentAsBytes?.let { fileClient.saveKlageAnke(journalpostId, it) }
-        }.onFailure {
-            logger.error("Could not upload klage/anke-pdf to file store.", it)
-        }
     }
 }
