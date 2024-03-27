@@ -10,26 +10,26 @@ class TokenUtil(
     private val oAuth2AccessTokenService: OAuth2AccessTokenService,
 ) {
     fun getAppAccessTokenWithDokarkivScope(): String {
-        val clientProperties = clientConfigurationProperties.registration["dokarkiv-maskintilmaskin"]
+        val clientProperties = clientConfigurationProperties.registration["dokarkiv-maskintilmaskin"]!!
         val response = oAuth2AccessTokenService.getAccessToken(clientProperties)
-        return response.accessToken
+        return response.accessToken!!
     }
 
     fun getAppAccessTokenWithKlageFileApiScope(): String {
-        val clientProperties = clientConfigurationProperties.registration["klage-file-api-maskintilmaskin"]
+        val clientProperties = clientConfigurationProperties.registration["klage-file-api-maskintilmaskin"]!!
         val response = oAuth2AccessTokenService.getAccessToken(clientProperties)
-        return response.accessToken
+        return response.accessToken!!
     }
 
     fun getAppAccessTokenWithKlageDittnavApiScope(): String {
-        val clientProperties = clientConfigurationProperties.registration["klage-dittnav-api-maskintilmaskin"]
+        val clientProperties = clientConfigurationProperties.registration["klage-dittnav-api-maskintilmaskin"]!!
         val response = oAuth2AccessTokenService.getAccessToken(clientProperties)
-        return response.accessToken
+        return response.accessToken!!
     }
 
     fun getAppAccessTokenWithPdlScope(): String {
-        val clientProperties = clientConfigurationProperties.registration["pdl-maskintilmaskin"]
+        val clientProperties = clientConfigurationProperties.registration["pdl-maskintilmaskin"]!!
         val response = oAuth2AccessTokenService.getAccessToken(clientProperties)
-        return response.accessToken
+        return response.accessToken!!
     }
 }
