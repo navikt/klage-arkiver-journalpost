@@ -9,7 +9,6 @@ import no.nav.klage.getLogger
 import no.nav.klage.getSecureLogger
 import no.nav.klage.kodeverk.Tema
 import no.nav.klage.kodeverk.innsendingsytelse.Innsendingsytelse
-import no.nav.klage.kodeverk.innsendingsytelse.innsendingsytelseToAnkeEnhet
 import no.nav.klage.kodeverk.innsendingsytelse.innsendingsytelseToTema
 import org.springframework.stereotype.Service
 import java.util.*
@@ -58,7 +57,7 @@ class JoarkService(
             innsendingsytelseToTema[Innsendingsytelse.of(klageAnkeInput.innsendingsYtelseId)]!!.name
         }
 
-        val innsendsingsytelse = klageAnkeInput.innsendingsYtelseId?.let { Innsendingsytelse.of(it) }
+        val innsendingsytelse = klageAnkeInput.innsendingsYtelseId?.let { Innsendingsytelse.of(it) }
 
         return Journalpost(
             tema = tema,
@@ -82,7 +81,7 @@ class JoarkService(
                 Tilleggsopplysning(nokkel = KLAGE_ANKE_ID_KEY, verdi = klageAnkeInput.id),
                 Tilleggsopplysning(
                     nokkel = KLAGE_ANKE_YTELSE_KEY,
-                    verdi = innsendsingsytelse?.name ?: klageAnkeInput.ytelse
+                    verdi = innsendingsytelse?.name ?: klageAnkeInput.ytelse
                 )
             ),
             eksternReferanseId = "${klageAnkeInput.klageAnkeType.name}_${klageAnkeInput.id}",
@@ -90,7 +89,7 @@ class JoarkService(
                 tema = klageAnkeInput.tema,
                 klageAnkeType = klageAnkeInput.klageAnkeType,
                 identifikasjonsnummer = klageAnkeInput.identifikasjonsnummer,
-                innsendingsytelse = innsendsingsytelse
+                innsendingsytelse = innsendingsytelse
             )
         )
     }
