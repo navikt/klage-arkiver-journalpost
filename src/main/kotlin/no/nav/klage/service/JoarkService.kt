@@ -8,6 +8,9 @@ import no.nav.klage.domain.*
 import no.nav.klage.getLogger
 import no.nav.klage.getSecureLogger
 import no.nav.klage.kodeverk.Tema
+import no.nav.klage.kodeverk.innsendingsytelse.Innsendingsytelse
+import no.nav.klage.kodeverk.innsendingsytelse.innsendingsytelseToAnkeEnhet
+import no.nav.klage.kodeverk.innsendingsytelse.innsendingsytelseToTema
 import org.springframework.stereotype.Service
 import java.util.*
 
@@ -49,8 +52,16 @@ class JoarkService(
     }
 
     private fun createJournalpostRequest(klageAnkeInput: KlageAnkeInput): Journalpost {
+        val tema = if (klageAnkeInput.innsendingsYtelseId.isNullOrBlank()) {
+            klageAnkeInput.tema
+        } else {
+            innsendingsytelseToTema[Innsendingsytelse.of(klageAnkeInput.innsendingsYtelseId)]!!.name
+        }
+
+        val innsendsingsytelse = klageAnkeInput.innsendingsYtelseId?.let { Innsendingsytelse.of(it) }
+
         return Journalpost(
-            tema = klageAnkeInput.tema,
+            tema = tema,
             behandlingstema = klageAnkeInput.getBehandlingstema(),
             avsenderMottaker = AvsenderMottaker(
                 id = klageAnkeInput.identifikasjonsnummer,
@@ -69,13 +80,17 @@ class JoarkService(
             dokumenter = getDokumenter(klageAnkeInput),
             tilleggsopplysninger = listOf(
                 Tilleggsopplysning(nokkel = KLAGE_ANKE_ID_KEY, verdi = klageAnkeInput.id),
-                Tilleggsopplysning(nokkel = KLAGE_ANKE_YTELSE_KEY, verdi = klageAnkeInput.ytelse)
+                Tilleggsopplysning(
+                    nokkel = KLAGE_ANKE_YTELSE_KEY,
+                    verdi = innsendsingsytelse?.name ?: klageAnkeInput.ytelse
+                )
             ),
             eksternReferanseId = "${klageAnkeInput.klageAnkeType.name}_${klageAnkeInput.id}",
             journalfoerendeEnhet = getJournalfoerendeEnhetOverride(
                 tema = klageAnkeInput.tema,
                 klageAnkeType = klageAnkeInput.klageAnkeType,
-                identifikasjonsnummer = klageAnkeInput.identifikasjonsnummer
+                identifikasjonsnummer = klageAnkeInput.identifikasjonsnummer,
+                innsendingsytelse = innsendsingsytelse
             )
         )
     }
@@ -83,7 +98,8 @@ class JoarkService(
     private fun getJournalfoerendeEnhetOverride(
         tema: String,
         klageAnkeType: KlageAnkeType,
-        identifikasjonsnummer: String
+        identifikasjonsnummer: String,
+        innsendingsytelse: Innsendingsytelse?
     ): String? {
         val adressebeskyttelse =
             pdlClient.getPersonAdresseBeskyttelse(fnr = identifikasjonsnummer).data?.hentPerson?.adressebeskyttelse
@@ -96,11 +112,14 @@ class JoarkService(
         }
 
         return if (klageAnkeType in listOf(KlageAnkeType.ANKE, KlageAnkeType.ANKE_ETTERSENDELSE)) {
+            //TODO: Introduce custom routing after thorough testing.
+//            if (innsendingsytelse != null) {
+//                innsendingsytelseToAnkeEnhet[innsendingsytelse]!!.navn
+//            } else
             if (tema == Tema.YRK.name) {
                 "4291"
             } else null
         } else null
-
     }
 
     private fun getFullName(klageAnkeInput: KlageAnkeInput): String {
@@ -111,8 +130,16 @@ class JoarkService(
         }
     }
 
-    private fun getSak(klageAnkeInput: KlageAnkeInput): Sak? =
-        if (klageAnkeInput.tema == "FOR" && klageAnkeInput.internalSaksnummer?.toIntOrNull() != null) {
+    private fun getSak(klageAnkeInput: KlageAnkeInput): Sak? {
+        val isInternalFORSak = if (klageAnkeInput.innsendingsYtelseId.isNullOrBlank() && klageAnkeInput.tema == "FOR") {
+            klageAnkeInput.internalSaksnummer?.toIntOrNull() != null
+        } else if (innsendingsytelseToTema[Innsendingsytelse.of(klageAnkeInput.innsendingsYtelseId!!)] == Tema.FOR) {
+            klageAnkeInput.internalSaksnummer?.toIntOrNull() != null
+        } else {
+            false
+        }
+
+        return if (isInternalFORSak) {
             Sak(
                 sakstype = Sakstype.FAGSAK,
                 fagsaksystem = FagsaksSystem.FS36,
@@ -121,6 +148,7 @@ class JoarkService(
         } else {
             null
         }
+    }
 
     private fun getDokumenter(klageAnkeInput: KlageAnkeInput): List<Dokument> {
         val hovedDokument = Dokument(

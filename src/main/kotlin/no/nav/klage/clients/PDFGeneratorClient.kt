@@ -8,6 +8,7 @@ import no.nav.klage.domain.KlagePDFModel
 import no.nav.klage.domain.Vedlegg
 import no.nav.klage.getLogger
 import no.nav.klage.kodeverk.Enhet
+import no.nav.klage.kodeverk.innsendingsytelse.Innsendingsytelse
 import no.nav.klage.util.sanitizeText
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
@@ -61,21 +62,29 @@ class PDFGeneratorClient(
         }
     }
 
-    private fun KlageAnkeInput.toPDFModel() = KlagePDFModel(
-        type = klageAnkeType.name,
-        foedselsnummer = StringBuilder(identifikasjonsnummer).insert(6, " ").toString(),
-        fornavn = fornavn,
-        mellomnavn = mellomnavn,
-        etternavn = etternavn,
-        vedtak = vedtak,
-        begrunnelse = sanitizeText(begrunnelse),
-        saksnummer = sanitizeText(getSaksnummerString(userSaksnummer, internalSaksnummer)),
-        oversiktVedlegg = getOversiktVedlegg(vedlegg),
-        dato = dato.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")),
-        ytelse = ytelse.replaceFirstChar { it.lowercase(Locale.getDefault()) },
-        userChoices = userChoices,
-        enhetsnavn = Enhet.entries.find { it.navn == enhetsnummer }?.beskrivelse
-    )
+    private fun KlageAnkeInput.toPDFModel(): KlagePDFModel {
+        val ytelseName = if (innsendingsYtelseId.isNullOrBlank()) {
+            ytelse
+        } else {
+            Innsendingsytelse.of(innsendingsYtelseId).nbName
+        }
+
+        return KlagePDFModel(
+            type = klageAnkeType.name,
+            foedselsnummer = StringBuilder(identifikasjonsnummer).insert(6, " ").toString(),
+            fornavn = fornavn,
+            mellomnavn = mellomnavn,
+            etternavn = etternavn,
+            vedtak = vedtak,
+            begrunnelse = sanitizeText(begrunnelse),
+            saksnummer = sanitizeText(getSaksnummerString(userSaksnummer, internalSaksnummer)),
+            oversiktVedlegg = getOversiktVedlegg(vedlegg),
+            dato = dato.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")),
+            ytelse = ytelseName.replaceFirstChar { it.lowercase(Locale.getDefault()) },
+            userChoices = userChoices,
+            enhetsnavn = Enhet.entries.find { it.navn == enhetsnummer }?.beskrivelse
+        )
+    }
 
     private fun getOversiktVedlegg(vedlegg: List<Vedlegg>): String {
         return if (vedlegg.isEmpty()) {

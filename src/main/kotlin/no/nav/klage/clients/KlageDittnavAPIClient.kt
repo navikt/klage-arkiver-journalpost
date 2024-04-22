@@ -7,7 +7,6 @@ import org.springframework.http.HttpHeaders
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.bodyToMono
-import java.util.*
 
 @Component
 class KlageDittnavAPIClient(
@@ -31,10 +30,10 @@ class KlageDittnavAPIClient(
             .block() ?: throw RuntimeException("Unable to register journalpost ID for klanke in klage-dittnav-api.")
     }
 
-    fun getJournalpostForKlankeId(ankeId: String): JournalpostIdResponse {
-        logger.debug("Getting journalpostId for klanke from klage-dittnav-api. KlankeId: {}", ankeId)
+    fun getJournalpostForKlankeId(klankeId: String): JournalpostIdResponse {
+        logger.debug("Getting journalpostId for klanke from klage-dittnav-api. KlankeId: {}", klankeId)
         return klageDittnavAPIWebClient.get()
-            .uri("klanker/$ankeId/journalpostid")
+            .uri("klanker/$klankeId/journalpostid")
             .header(HttpHeaders.AUTHORIZATION, "Bearer ${tokenUtil.getAppAccessTokenWithKlageDittnavApiScope()}")
             .retrieve()
             .bodyToMono<JournalpostIdResponse>()
