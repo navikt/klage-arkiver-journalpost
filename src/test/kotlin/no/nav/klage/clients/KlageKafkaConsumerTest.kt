@@ -9,6 +9,7 @@ import io.mockk.every
 import io.mockk.verify
 import no.nav.klage.domain.KlageAnkeInput
 import no.nav.klage.domain.KlageAnkeType
+import no.nav.klage.kodeverk.innsendingsytelse.Innsendingsytelse
 import no.nav.klage.service.ApplicationService
 import no.nav.slackposter.SlackClient
 import org.apache.kafka.clients.consumer.ConsumerRecord
@@ -57,7 +58,8 @@ class KlageKafkaConsumerTest {
         userSaksnummer = null,
         internalSaksnummer = null,
         klageAnkeType = KlageAnkeType.KLAGE,
-        enhetsnummer = "1234"
+        enhetsnummer = "1234",
+        innsendingsYtelseId = Innsendingsytelse.SYKDOM_I_FAMILIEN.id
     )
 
     private val mapper = ObjectMapper()

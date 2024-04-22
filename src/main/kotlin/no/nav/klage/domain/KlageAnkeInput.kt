@@ -4,11 +4,11 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import no.nav.klage.kodeverk.innsendingsytelse.Innsendingsytelse
 import java.time.LocalDate
 
 private const val BEHANDLINGSTEMA_LONNSKOMPENSASJON = "ab0438"
 private const val BEHANDLINGSTEMA_TILBAKEBETALING_FORSKUDD_PAA_DAGPENGER = "ab0451"
-private const val BEHANDLINGSTEMA_FERIEPENGER_AV_DAGPENGER = "ab0452"
 private const val BEHANDLINGSTEMA_ENGANGSSTONAD = "ab0327"
 private const val BEHANDLINGSTEMA_FORELDREPENGER = "ab0326"
 private const val BEHANDLINGSTEMA_SVANGERSKAPSPENGER = "ab0126"
@@ -34,35 +34,51 @@ data class KlageAnkeInput(
     val userChoices: List<String>? = emptyList(),
     //Not for klage
     val enhetsnummer: String?,
+    val innsendingsYtelseId: String?,
 ) {
     @JsonIgnore
     fun isLoennskompensasjon(): Boolean {
-        return tema == "DAG" && ytelse == "Lønnskompensasjon for permitterte"
+        return if (innsendingsYtelseId.isNullOrBlank()) {
+            tema == "DAG" && ytelse == "Lønnskompensasjon for permitterte"
+        } else {
+            Innsendingsytelse.of(innsendingsYtelseId) == Innsendingsytelse.LONNSKOMPENSASJON
+        }
     }
 
     @JsonIgnore
     fun isTilbakebetalingAvForskuddPaaDagpenger(): Boolean {
-        return tema == "DAG" && ytelse == "Tilbakebetaling av forskudd på dagpenger"
-    }
-
-    @JsonIgnore
-    fun isFeriepengerAvDagpenger(): Boolean {
-        return tema == "DAG" && ytelse == "Feriepenger av dagpenger"
+        return if (innsendingsYtelseId.isNullOrBlank()) {
+            return tema == "DAG" && ytelse == "Tilbakebetaling av forskudd på dagpenger"
+        } else {
+            Innsendingsytelse.of(innsendingsYtelseId) == Innsendingsytelse.DAGPENGER_TILBAKEBETALING_FORSKUDD
+        }
     }
 
     @JsonIgnore
     fun isForeldrepenger(): Boolean {
-        return tema == "FOR" && ytelse == "Foreldrepenger"
+        return if (innsendingsYtelseId.isNullOrBlank()) {
+            return tema == "FOR" && ytelse == "Foreldrepenger"
+        } else {
+            Innsendingsytelse.of(innsendingsYtelseId) == Innsendingsytelse.FORELDREPENGER
+        }
     }
 
     @JsonIgnore
     fun isEngangsstonad(): Boolean {
-        return tema == "FOR" && ytelse == "Engangsstønad"
+        return if (innsendingsYtelseId.isNullOrBlank()) {
+            return tema == "FOR" && ytelse == "Engangsstønad"
+        } else {
+            Innsendingsytelse.of(innsendingsYtelseId) == Innsendingsytelse.ENGANGSSTONAD
+        }
     }
 
     @JsonIgnore
     fun isSvangerskapspenger(): Boolean {
-        return tema == "FOR" && ytelse == "Svangerskapspenger"
+        return if (innsendingsYtelseId.isNullOrBlank()) {
+            return tema == "FOR" && ytelse == "Svangerskapspenger"
+        } else {
+            Innsendingsytelse.of(innsendingsYtelseId) == Innsendingsytelse.SVANGERSKAPSPENGER
+        }
     }
 
     @JsonIgnore
@@ -71,7 +87,6 @@ data class KlageAnkeInput(
             KlageAnkeType.KLAGE, KlageAnkeType.KLAGE_ETTERSENDELSE -> when {
                 this.isLoennskompensasjon() -> BEHANDLINGSTEMA_LONNSKOMPENSASJON
                 this.isTilbakebetalingAvForskuddPaaDagpenger() -> BEHANDLINGSTEMA_TILBAKEBETALING_FORSKUDD_PAA_DAGPENGER
-                this.isFeriepengerAvDagpenger() -> BEHANDLINGSTEMA_FERIEPENGER_AV_DAGPENGER
                 this.isForeldrepenger() -> BEHANDLINGSTEMA_FORELDREPENGER
                 this.isEngangsstonad() -> BEHANDLINGSTEMA_ENGANGSSTONAD
                 this.isSvangerskapspenger() -> BEHANDLINGSTEMA_SVANGERSKAPSPENGER
