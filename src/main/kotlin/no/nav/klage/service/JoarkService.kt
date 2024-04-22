@@ -131,9 +131,11 @@ class JoarkService(
     }
 
     private fun getSak(klageAnkeInput: KlageAnkeInput): Sak? {
-        val isInternalFORSak = if (klageAnkeInput.innsendingsYtelseId.isNullOrBlank() && klageAnkeInput.tema == "FOR") {
-            klageAnkeInput.internalSaksnummer?.toIntOrNull() != null
-        } else if (innsendingsytelseToTema[Innsendingsytelse.of(klageAnkeInput.innsendingsYtelseId!!)] == Tema.FOR) {
+        val isInternalFORSak = if (klageAnkeInput.innsendingsYtelseId.isNullOrBlank()) {
+            if (klageAnkeInput.tema == "FOR") {
+                klageAnkeInput.internalSaksnummer?.toIntOrNull() != null
+            } else false
+        } else if (innsendingsytelseToTema[Innsendingsytelse.of(klageAnkeInput.innsendingsYtelseId)] == Tema.FOR) {
             klageAnkeInput.internalSaksnummer?.toIntOrNull() != null
         } else {
             false
