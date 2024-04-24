@@ -9,6 +9,7 @@ import no.nav.klage.getLogger
 import no.nav.klage.getSecureLogger
 import no.nav.klage.kodeverk.Tema
 import no.nav.klage.kodeverk.innsendingsytelse.Innsendingsytelse
+import no.nav.klage.kodeverk.innsendingsytelse.innsendingsytelseToAnkeEnhet
 import no.nav.klage.kodeverk.innsendingsytelse.innsendingsytelseToTema
 import org.springframework.stereotype.Service
 import java.util.*
@@ -111,11 +112,9 @@ class JoarkService(
         }
 
         return if (klageAnkeType in listOf(KlageAnkeType.ANKE, KlageAnkeType.ANKE_ETTERSENDELSE)) {
-            //TODO: Introduce custom routing after thorough testing.
-//            if (innsendingsytelse != null) {
-//                innsendingsytelseToAnkeEnhet[innsendingsytelse]!!.navn
-//            } else
-            if (tema == Tema.YRK.name) {
+            if (innsendingsytelse != null) {
+                innsendingsytelseToAnkeEnhet[innsendingsytelse]!!.navn
+            } else if (tema == Tema.YRK.name) {
                 "4291"
             } else null
         } else null
