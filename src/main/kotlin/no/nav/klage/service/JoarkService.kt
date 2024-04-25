@@ -87,19 +87,19 @@ class JoarkService(
             ),
             eksternReferanseId = "${klageAnkeInput.klageAnkeType.name}_${klageAnkeInput.id}",
             journalfoerendeEnhet = getJournalfoerendeEnhetOverride(
-                tema = klageAnkeInput.tema,
                 klageAnkeType = klageAnkeInput.klageAnkeType,
                 identifikasjonsnummer = klageAnkeInput.identifikasjonsnummer,
-                innsendingsytelse = innsendingsytelse
+                innsendingsytelse = innsendingsytelse,
+                enhetsnummerExists = klageAnkeInput.enhetsnummer != null
             )
         )
     }
 
     private fun getJournalfoerendeEnhetOverride(
-        tema: String,
         klageAnkeType: KlageAnkeType,
         identifikasjonsnummer: String,
-        innsendingsytelse: Innsendingsytelse?
+        innsendingsytelse: Innsendingsytelse?,
+        enhetsnummerExists: Boolean,
     ): String? {
         val adressebeskyttelse =
             pdlClient.getPersonAdresseBeskyttelse(fnr = identifikasjonsnummer).data?.hentPerson?.adressebeskyttelse
@@ -111,12 +111,18 @@ class JoarkService(
             return null
         }
 
-        return if (klageAnkeType in listOf(KlageAnkeType.ANKE, KlageAnkeType.ANKE_ETTERSENDELSE)) {
+        return if (shouldBeSentToKA(klageAnkeType = klageAnkeType, enhetsnummerExists = enhetsnummerExists)) {
             if (innsendingsytelse != null) {
                 innsendingsytelseToAnkeEnhet[innsendingsytelse]!!.navn
             } else null
         } else null
     }
+
+    private fun shouldBeSentToKA(klageAnkeType: KlageAnkeType, enhetsnummerExists: Boolean): Boolean {
+        return (klageAnkeType == KlageAnkeType.KLAGE_ETTERSENDELSE && enhetsnummerExists) ||
+                (klageAnkeType in listOf(KlageAnkeType.ANKE, KlageAnkeType.ANKE_ETTERSENDELSE))
+    }
+
 
     private fun getFullName(klageAnkeInput: KlageAnkeInput): String {
         return if (klageAnkeInput.mellomnavn.isBlank()) {
