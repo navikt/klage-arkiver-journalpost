@@ -114,8 +114,6 @@ class JoarkService(
         return if (klageAnkeType in listOf(KlageAnkeType.ANKE, KlageAnkeType.ANKE_ETTERSENDELSE)) {
             if (innsendingsytelse != null) {
                 innsendingsytelseToAnkeEnhet[innsendingsytelse]!!.navn
-            } else if (tema == Tema.YRK.name) {
-                "4291"
             } else null
         } else null
     }
