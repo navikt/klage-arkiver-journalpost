@@ -1,7 +1,7 @@
 apiVersion: "nais.io/v1alpha1"
 kind: "Application"
 metadata:
-  name: klage-arkiver-journalpost
+  name: {{APP_NAME}}
   namespace: klage
   labels:
     team: klage
@@ -14,7 +14,7 @@ spec:
     application:
       enabled: true
   kafka:
-    pool: {{kafka_pool}}
+    pool: {{KAFKA_POOL}}
   port: 7075
   liveness:
     path: /internal/health
@@ -49,17 +49,16 @@ spec:
         - application: klage-dittnav-pdfgen
         - application: klage-file-api
         - application: klage-dittnav-api
-        - application: kabal-api
       external:
-      {{#each externalHosts as |host|}}
+      {{#each OUTBOUND_EXTERNAL_HOSTS as |host|}}
         - host: {{host}}
       {{/each}}
   envFrom:
-    - secret: srvklage-dittnav
-    - secret: sts-apikey
-    - secret: journalpost-apikey
+#    - secret: srvklage-dittnav
+#    - secret: sts-apikey
+#    - secret: journalpost-apikey
     - secret: slack-url
     - secret: slack-channel-id
   env:
     - name: SPRING_PROFILES_ACTIVE
-      value: {{springProfile}}
+      value: {{SPRING_PROFILE}}

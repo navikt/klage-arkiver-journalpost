@@ -1,0 +1,117 @@
+name: Manual deploy to specific dev environment
+run-name: Manual deploy of ${{ github.ref_name }} to ${{inputs.environment}}
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Environment"
+        required: true
+        default: q1
+        type: choice
+        options:
+          - q1
+    secrets:
+      NAIS_DEPLOY_API_KEY:
+        description: "API key for nais/deploy"
+        required: true
+      NAIS_WORKLOAD_IDENTITY_PROVIDER:
+        description: "Identity provider for nais/docker-build-push"
+        required: true
+
+jobs:
+  build:
+    name: Build
+    permissions:
+      contents: read
+      id-token: write
+    outputs:
+      image: ${{ steps.docker-build-push.outputs.image }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle.kts') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Install Java 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: 21
+          distribution: temurin
+
+      - name: Test and build
+        run: ./gradlew test bootJar
+        env:
+          ORG_GRADLE_PROJECT_githubUser: x-access-token
+          ORG_GRADLE_PROJECT_githubPassword: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build & push Docker image
+        uses: nais/docker-build-push@v0
+        id: docker-build-push
+        with:
+          team: klage # required
+          tag: ${{ github.sha }} # optional
+          push_image: true # optional, default true
+          dockerfile: Dockerfile # optional, default Dockerfile
+          docker_context: . # optional, default .
+          image_suffix: # optional, default empty
+          cache_from: type=gha # optional, default type=gha
+          cache_to: type=gha,mode=max # optional, default type=gha,mode=max
+          identity_provider: ${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }} # required, but is defined as an organization secret
+          project_id: ${{ vars.NAIS_MANAGEMENT_PROJECT_ID }} # required, but is defined as an organization variable
+          build_args: |
+            VERSION=${CI}
+
+      - name: Post failures to Slack
+        if: failure()
+        run: |
+          curl -X POST --data-urlencode "payload={\"channel\": \"$CHANNEL\", \"text\": \"$MESSAGE\", \"icon_emoji\": \":ghost:\"}" $WEBHOOK_URL
+        env:
+          MESSAGE: "Bygg feilet"
+          CHANNEL: "#klage-notifications"
+          WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
+
+  deploy_to_dev:
+    name: Deploy to ${{ inputs.environment }}
+    needs: build
+    permissions:
+      contents: read
+      id-token: write
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        name: Checkout code
+          # sanity check
+      - name: Check if nais/${{ inputs.environment }}-config.json exists
+        id: check-json
+        run: echo "file-exists=$(test -f deploy/${{ inputs.environment }}-config.json && echo 'config_exists' || echo 'config_not_exists')" >> $GITHUB_OUTPUT
+      - name: Deploy to dev
+        uses: nais/deploy/actions/deploy@v2
+        if: ${{ steps.check-json.outputs.file-exists == 'config_exists' }}
+        env:
+          TEAM: klage
+          CLUSTER: dev-gcp
+          VARS: deploy/{{ input.environment }}-config.json
+          RESOURCE: deploy/nais.yaml
+          # Trengs?
+          APIKEY: ${{ secrets.NAIS_DEPLOY_API_KEY }}
+          VAR: image=${{ needs.build.outputs.image }}
+          IMAGE: ${{ needs.build.outputs.image }}
+      - name: No config files detected - unable to deploy
+        if: ${{ steps.check-json.outputs.file-exists != 'config_exists' }}
+        run: echo "::warning title=Unable to deploy::Could not find nais/${{ inputs.environment }}-config.json"
+      - name: Post failures to Slack
+        if: failure()
+        run: |
+          curl -X POST --data-urlencode "payload={\"channel\": \"$CHANNEL\", \"text\": \"$MESSAGE\", \"icon_emoji\": \":ghost:\"}" $WEBHOOK_URL
+        env:
+          MESSAGE: "Deploy til dev feilet"
+          CHANNEL: "#klage-notifications"
+          WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}

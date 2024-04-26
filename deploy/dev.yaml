@@ -1,11 +1,8 @@
-externalHosts:
-  - b27apvl00045.preprod.local
-  - b27apvl00046.preprod.local
-  - b27apvl00047.preprod.local
-  - login.microsoftonline.com
-  - hooks.slack.com
-  - dokarkiv.dev-fss-pub.nais.io
-  - pdl-api.dev-fss-pub.nais.io
-springProfile: dev-gcp
-kafka_pool: nav-dev
+#externalHosts:
+#  - login.microsoftonline.com
+#  - hooks.slack.com
+#  - dokarkiv.dev-fss-pub.nais.io
+#  - pdl-api.dev-fss-pub.nais.io
+#springProfile: dev-gcp
+#kafka_pool: nav-dev
 

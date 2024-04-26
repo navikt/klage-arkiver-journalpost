@@ -1,0 +1,11 @@
+{
+  "APP_NAME": "klage-arkiver-journalpost",
+  "KAFKA_POOL": "nav-dev",
+  "SPRING_PROFILE": "dev-gcp",
+  "OUTBOUND_EXTERNAL_HOSTS": [
+    "login.microsoftonline.com",
+    "hooks.slack.com",
+    "dokarkiv.dev-fss-pub.nais.io",
+    "pdl-api.dev-fss-pub.nais.io"
+  ]
+}
