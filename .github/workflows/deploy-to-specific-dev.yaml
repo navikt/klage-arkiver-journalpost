@@ -1,16 +1,16 @@
 name: Manual deploy to specific dev environment
-run-name: Manual deploy of ${{ github.ref_name }} to ${{inputs.environment}}
+run-name: Manual deploy of ${{ github.ref_name }} to q1 #${{inputs.environment}}
 
 on:
   workflow_dispatch:
-    inputs:
-      environment:
-        description: "Environment"
-        required: true
-        default: 'q1'
-        type: choice
-        options:
-          - q1
+#    inputs:
+#      environment:
+#        description: "Environment"
+#        required: true
+#        default: 'q1'
+#        type: choice
+#        options:
+#          - q1
   workflow_call:
     secrets:
       NAIS_DEPLOY_API_KEY:
@@ -81,7 +81,7 @@ jobs:
           WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
 
   deploy_to_dev:
-    name: Deploy to ${{ inputs.environment }}
+    name: Deploy to q1 #${{ inputs.environment }}
     needs: build
     permissions:
       contents: read
@@ -91,16 +91,16 @@ jobs:
       - uses: actions/checkout@v4
         name: Checkout code
           # sanity check
-      - name: Check if nais/${{ inputs.environment }}-config.json exists
+      - name: Check if nais/q1-config.json exists
         id: check-json
-        run: echo "file-exists=$(test -f deploy/${{ inputs.environment }}-config.json && echo 'config_exists' || echo 'config_not_exists')" >> $GITHUB_OUTPUT
+        run: echo "file-exists=$(test -f deploy/q1-config.json && echo 'config_exists' || echo 'config_not_exists')" >> $GITHUB_OUTPUT
       - name: Deploy to dev
         uses: nais/deploy/actions/deploy@v2
         if: ${{ steps.check-json.outputs.file-exists == 'config_exists' }}
         env:
           TEAM: klage
           CLUSTER: dev-gcp
-          VARS: deploy/{{ input.environment }}-config.json
+          VARS: deploy/q1-config.json
           RESOURCE: deploy/nais.yaml
           # Trengs?
           APIKEY: ${{ secrets.NAIS_DEPLOY_API_KEY }}
@@ -108,7 +108,7 @@ jobs:
           IMAGE: ${{ needs.build.outputs.image }}
       - name: No config files detected - unable to deploy
         if: ${{ steps.check-json.outputs.file-exists != 'config_exists' }}
-        run: echo "::warning title=Unable to deploy::Could not find nais/${{ inputs.environment }}-config.json"
+        run: echo "::warning title=Unable to deploy::Could not find nais/q1-config.json"
       - name: Post failures to Slack
         if: failure()
         run: |
