@@ -7,10 +7,11 @@ on:
       environment:
         description: "Environment"
         required: true
-        default: q1
+        default: 'q1'
         type: choice
         options:
           - q1
+  workflow_call:
     secrets:
       NAIS_DEPLOY_API_KEY:
         description: "API key for nais/deploy"
@@ -18,6 +19,7 @@ on:
       NAIS_WORKLOAD_IDENTITY_PROVIDER:
         description: "Identity provider for nais/docker-build-push"
         required: true
+  push:
 
 jobs:
   build:
