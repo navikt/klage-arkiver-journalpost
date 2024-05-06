@@ -5,10 +5,10 @@ on:
 
 jobs:
   build-feature:
-    uses: navikt/klage-arkiver-journalpost/.github/workflows/build.yaml@GITHUB_REF
+    uses: navikt/klage-arkiver-journalpost/.github/workflows/build.yaml@${{ github.head_ref || github.ref_name }}
     secrets: inherit
   deploy-feature:
-    uses: navikt/klage-arkiver-journalpost/.github/workflows/deploy-to-all-dev-environments.yaml@GITHUB_REF
+    uses: navikt/klage-arkiver-journalpost/.github/workflows/deploy-to-all-dev-environments.yaml@${{ github.head_ref || github.ref_name }}
     needs: build-feature
     secrets: inherit
     with:

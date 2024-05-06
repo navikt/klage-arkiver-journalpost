@@ -21,7 +21,7 @@ jobs:
         run: echo "List of dev environments to deploy to is ${{ steps.create-strategy-matrix.outputs.environments }}"
 
   deploy-to-dev:
-    uses: navikt/klage-arkiver-journalpost/.github/workflows/deploy-to-specific-dev.yaml@GITHUB_REF
+    uses: navikt/klage-arkiver-journalpost/.github/workflows/deploy-to-specific-dev.yaml@${{ github.head_ref || github.ref_name }}
     needs: detect-dev-environments
     strategy:
       matrix:
