@@ -5,6 +5,10 @@ on:
 
 jobs:
   build-feature:
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
     uses: navikt/klage-arkiver-journalpost/.github/workflows/build.yaml@multiple_environments
     secrets: inherit
   deploy-feature:
