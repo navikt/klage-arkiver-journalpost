@@ -1,0 +1,15 @@
+name: Build and deploy to all dev environments
+
+on:
+  push:
+
+jobs:
+  build-feature:
+    uses: navikt/klage-arkiver-journalpost/.github/build.yaml@main
+    secrets: inherit
+  deploy-feature:
+    uses: navikt/klage-arkiver-journalpost/.github/deploy-to-all-dev-environments.yaml
+    needs: build-feature
+    secrets: inherit
+    with:
+      image: ${{ needs.build-feature.outputs.image }}

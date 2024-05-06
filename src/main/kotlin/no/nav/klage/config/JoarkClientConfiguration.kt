@@ -17,13 +17,9 @@ class JoarkClientConfiguration(private val webClientBuilder: WebClient.Builder) 
     @Value("\${JOARK_SERVICE_URL}")
     private lateinit var joarkServiceURL: String
 
-//    @Value("\${JOURNALPOST_APIKEY}")
-//    private lateinit var apiKey: String
-
     @Bean
     fun joarkWebClient(): WebClient {
         return webClientBuilder
-//            .defaultHeader("x-nav-apiKey", apiKey)
             .baseUrl(joarkServiceURL)
             .build()
     }

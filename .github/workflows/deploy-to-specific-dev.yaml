@@ -1,27 +1,51 @@
 name: Manual deploy to specific dev environment
-run-name: Manual deploy of ${{ github.ref_name }} to q1 #${{inputs.environment}}
+run-name: Manual deploy of ${{ github.ref_name }} to ${{inputs.environment}}
 
 on:
-#  workflow_dispatch:
-#    inputs:
-#      environment:
-#        description: "Environment"
-#        required: true
-#        default: 'q1'
-#        type: choice
-#        options:
-#          - q1
   workflow_call:
-    secrets:
-      NAIS_DEPLOY_API_KEY:
-        description: "API key for nais/deploy"
+    inputs:
+      image:
         required: true
-      NAIS_WORKLOAD_IDENTITY_PROVIDER:
-        description: "Identity provider for nais/docker-build-push"
+        type: string
+      nav-cluster:
         required: true
-  push:
+        type: string
+      nav-environment:
+        required: true
+        type: string
+
+#  push:
 
 jobs:
+  deploy:
+    name: Deploy to ${{ inputs.nav-environment }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      # sanity check
+      - name: Check if nais/${{ inputs.nav-environment }}-config.json exists
+        id: check-json
+        run: echo "file-exists=$(test -f deploy/${{ inputs.nav-environment }}-config.json && echo 'config_exists' || echo 'config_not_exists')" >> $GITHUB_OUTPUT
+      - uses: nais/deploy/actions/deploy@v2
+        if: ${{ steps.check-json.outputs.file-exists == 'config_exists' }}
+        env:
+          CLUSTER: ${{ inputs.nav-cluster }}
+          RESOURCE: deploy/nais.yaml
+          VARS: deploy/${{ inputs.nav-environment }}-config.json
+          VAR: image=${{ inputs.image }}
+      - name: No config files detected - unable to deploy
+        if: ${{ steps.check-json.outputs.file-exists != 'config_exists' }}
+        run: echo "::warning title=Unable to deploy::Could not find deploy/${{ inputs.nav-environment }}-config.json"
+      - name: Post failures to Slack
+        if: failure()
+        run: |
+          curl -X POST --data-urlencode "payload={\"channel\": \"$CHANNEL\", \"text\": \"$MESSAGE\", \"icon_emoji\": \":ghost:\"}" $WEBHOOK_URL
+        env:
+          MESSAGE: "Deploy til dev feilet"
+          CHANNEL: "#klage-notifications"
+          WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
+
+
   build:
     name: Build
     permissions:
@@ -79,41 +103,53 @@ jobs:
           MESSAGE: "Bygg feilet"
           CHANNEL: "#klage-notifications"
           WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
-
-  deploy_to_dev:
-    name: Deploy to q1 #${{ inputs.environment }}
-    needs: build
-    permissions:
-      contents: read
-      id-token: write
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        name: Checkout code
-          # sanity check
-      - name: Check if nais/q1-config.json exists
-        id: check-json
-        run: echo "file-exists=$(test -f deploy/q1-config.json && echo 'config_exists' || echo 'config_not_exists')" >> $GITHUB_OUTPUT
-      - name: Deploy to dev
-        uses: nais/deploy/actions/deploy@v2
-        if: ${{ steps.check-json.outputs.file-exists == 'config_exists' }}
-        env:
-          TEAM: klage
-          CLUSTER: dev-gcp
-          VARS: deploy/q1-config.json
-          RESOURCE: deploy/nais.yaml
-          # Trengs?
-#          APIKEY: ${{ secrets.NAIS_DEPLOY_API_KEY }}
-          VAR: image=${{ needs.build.outputs.image }}
-#          IMAGE: ${{ needs.build.outputs.image }}
-      - name: No config files detected - unable to deploy
-        if: ${{ steps.check-json.outputs.file-exists != 'config_exists' }}
-        run: echo "::warning title=Unable to deploy::Could not find nais/q1-config.json"
-      - name: Post failures to Slack
-        if: failure()
-        run: |
-          curl -X POST --data-urlencode "payload={\"channel\": \"$CHANNEL\", \"text\": \"$MESSAGE\", \"icon_emoji\": \":ghost:\"}" $WEBHOOK_URL
-        env:
-          MESSAGE: "Deploy til dev feilet"
-          CHANNEL: "#klage-notifications"
-          WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
+#
+#  detect-dev-environments:
+#    name: Detect dev environments to deploy to
+#    runs-on: ubuntu-latest
+#    outputs:
+#      environments: ${{ steps.create-strategy-matrix.outputs.environments }}
+#    steps:
+#      - uses: actions/checkout@v4
+#      - id: create-strategy-matrix
+#        run: echo "environments=$(array=($(ls deploy/q*config.json | sed -nr 's/deploy\/(.*)\-config.json/\1/p')); printf '%s\n' "${array[@]}" | jq -R . | jq -s -c .)" >> $GITHUB_OUTPUT
+#      - id: print-dev-environments
+#        run: echo "List of dev environments to deploy to is ${{ steps.create-strategy-matrix.outputs.environments }}"
+#
+#  deploy_to_dev:
+#    name: Deploy to q1 #${{ inputs.environment }}
+#    needs: build
+#    permissions:
+#      contents: read
+#      id-token: write
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: actions/checkout@v4
+#        name: Checkout code
+#          # sanity check
+#      - name: Check if nais/q1-config.json exists
+#        id: check-json
+#        run: echo "file-exists=$(test -f deploy/q1-config.json && echo 'config_exists' || echo 'config_not_exists')" >> $GITHUB_OUTPUT
+#      - name: Deploy to dev
+#        uses: nais/deploy/actions/deploy@v2
+#        if: ${{ steps.check-json.outputs.file-exists == 'config_exists' }}
+#        env:
+#          TEAM: klage
+#          CLUSTER: dev-gcp
+#          VARS: deploy/q1-config.json
+#          RESOURCE: deploy/nais.yaml
+#          # Trengs?
+##          APIKEY: ${{ secrets.NAIS_DEPLOY_API_KEY }}
+#          VAR: image=${{ needs.build.outputs.image }}
+##          IMAGE: ${{ needs.build.outputs.image }}
+#      - name: No config files detected - unable to deploy
+#        if: ${{ steps.check-json.outputs.file-exists != 'config_exists' }}
+#        run: echo "::warning title=Unable to deploy::Could not find nais/q1-config.json"
+#      - name: Post failures to Slack
+#        if: failure()
+#        run: |
+#          curl -X POST --data-urlencode "payload={\"channel\": \"$CHANNEL\", \"text\": \"$MESSAGE\", \"icon_emoji\": \":ghost:\"}" $WEBHOOK_URL
+#        env:
+#          MESSAGE: "Deploy til dev feilet"
+#          CHANNEL: "#klage-notifications"
+#          WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
