@@ -20,6 +20,8 @@ jobs:
   deploy:
     name: Deploy to ${{ inputs.nav-environment }}
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
     steps:
       - uses: actions/checkout@v4
       # sanity check
@@ -46,4 +48,3 @@ jobs:
           WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
 
 
-  
