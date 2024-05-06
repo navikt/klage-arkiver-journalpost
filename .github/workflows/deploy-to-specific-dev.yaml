@@ -2,7 +2,7 @@ name: Manual deploy to specific dev environment
 run-name: Manual deploy of ${{ github.ref_name }} to q1 #${{inputs.environment}}
 
 on:
-  workflow_dispatch:
+#  workflow_dispatch:
 #    inputs:
 #      environment:
 #        description: "Environment"
@@ -103,9 +103,9 @@ jobs:
           VARS: deploy/q1-config.json
           RESOURCE: deploy/nais.yaml
           # Trengs?
-          APIKEY: ${{ secrets.NAIS_DEPLOY_API_KEY }}
+#          APIKEY: ${{ secrets.NAIS_DEPLOY_API_KEY }}
           VAR: image=${{ needs.build.outputs.image }}
-          IMAGE: ${{ needs.build.outputs.image }}
+#          IMAGE: ${{ needs.build.outputs.image }}
       - name: No config files detected - unable to deploy
         if: ${{ steps.check-json.outputs.file-exists != 'config_exists' }}
         run: echo "::warning title=Unable to deploy::Could not find nais/q1-config.json"
