@@ -62,3 +62,13 @@ spec:
   env:
     - name: SPRING_PROFILES_ACTIVE
       value: {{SPRING_PROFILE}}
+    - name: TENANT_ID
+      value: {{TENANT_ID}}
+    - name: DOKARKIV_SCOPE
+      value: {{DOKARKIV_SCOPE}}
+    - name: JOARK_SERVICE_URL
+      value: {{JOARK_SERVICE_URL}}
+    - name: PDL_BASE_URL
+      value: {{PDL_BASE_URL}}
+    - name: PDL_SCOPE
+      value: {{PDL_SCOPE}}

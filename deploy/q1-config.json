@@ -7,5 +7,10 @@
     "hooks.slack.com",
     "dokarkiv.dev-fss-pub.nais.io",
     "pdl-api.dev-fss-pub.nais.io"
-  ]
+  ],
+  "TENANT_ID": "966ac572-f5b7-4bbe-aa88-c76419c0f851",
+  "DOKARKIV_SCOPE": "dev-fss.teamdokumenthandtering.dokarkiv-q1/",
+  "JOARK_SERVICE_URL": "https://dokarkiv.dev-fss-pub.nais.io/rest/journalpostapi/v1/journalpost",
+  "PDL_BASE_URL": "https://pdl-api.dev-fss-pub.nais.io/graphql",
+  "PDL_SCOPE": "dev-fss.pdl.pdl-api"
 }
