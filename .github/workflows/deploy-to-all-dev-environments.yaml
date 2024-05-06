@@ -23,6 +23,8 @@ jobs:
   deploy-to-dev:
     uses: navikt/klage-arkiver-journalpost/.github/workflows/deploy-to-specific-dev.yaml@multiple_environments
     needs: detect-dev-environments
+    permissions:
+      id-token: write
     strategy:
       matrix:
         environment: ${{ fromJson(needs.detect-dev-environments.outputs.environments) }}
