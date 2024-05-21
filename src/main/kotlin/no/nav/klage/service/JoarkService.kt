@@ -90,7 +90,7 @@ class JoarkService(
                 klageAnkeType = klageAnkeInput.klageAnkeType,
                 identifikasjonsnummer = klageAnkeInput.identifikasjonsnummer,
                 innsendingsytelse = innsendingsytelse,
-                enhetsnummerExists = klageAnkeInput.enhetsnummer != null
+                ettersendelseToKA = klageAnkeInput.ettersendelseTilKa ?: false,
             )
         )
     }
@@ -99,7 +99,7 @@ class JoarkService(
         klageAnkeType: KlageAnkeType,
         identifikasjonsnummer: String,
         innsendingsytelse: Innsendingsytelse?,
-        enhetsnummerExists: Boolean,
+        ettersendelseToKA: Boolean,
     ): String? {
         val adressebeskyttelse =
             pdlClient.getPersonAdresseBeskyttelse(fnr = identifikasjonsnummer).data?.hentPerson?.adressebeskyttelse
@@ -111,15 +111,15 @@ class JoarkService(
             return null
         }
 
-        return if (shouldBeSentToKA(klageAnkeType = klageAnkeType, enhetsnummerExists = enhetsnummerExists)) {
+        return if (shouldBeSentToKA(klageAnkeType = klageAnkeType, ettersendelseToKA = ettersendelseToKA)) {
             if (innsendingsytelse != null) {
                 innsendingsytelseToAnkeEnhet[innsendingsytelse]!!.navn
             } else null
         } else null
     }
 
-    private fun shouldBeSentToKA(klageAnkeType: KlageAnkeType, enhetsnummerExists: Boolean): Boolean {
-        return (klageAnkeType == KlageAnkeType.KLAGE_ETTERSENDELSE && enhetsnummerExists) ||
+    private fun shouldBeSentToKA(klageAnkeType: KlageAnkeType, ettersendelseToKA: Boolean): Boolean {
+        return (klageAnkeType == KlageAnkeType.KLAGE_ETTERSENDELSE && ettersendelseToKA) ||
                 (klageAnkeType in listOf(KlageAnkeType.ANKE, KlageAnkeType.ANKE_ETTERSENDELSE))
     }
 
