@@ -58,7 +58,7 @@ class KlageKafkaConsumerTest {
         userSaksnummer = null,
         internalSaksnummer = null,
         klageAnkeType = KlageAnkeType.KLAGE,
-        enhetsnummer = "1234",
+        ettersendelseTilKa = false,
         innsendingsYtelseId = Innsendingsytelse.SYKDOM_I_FAMILIEN.id
     )
 

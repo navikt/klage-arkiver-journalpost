@@ -32,8 +32,8 @@ data class KlageAnkeInput(
     val klageAnkeType: KlageAnkeType,
     //klage specific
     val userChoices: List<String>? = emptyList(),
-    //Not for klage
-    val enhetsnummer: String?,
+    //Only relevant for ettersendelse klage
+    val ettersendelseTilKa: Boolean?,
     val innsendingsYtelseId: String?,
 ) {
     @JsonIgnore

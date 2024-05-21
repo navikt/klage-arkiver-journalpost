@@ -82,7 +82,7 @@ class PDFGeneratorClient(
             dato = dato.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")),
             ytelse = ytelseName.replaceFirstChar { it.lowercase(Locale.getDefault()) },
             userChoices = userChoices,
-            enhetsnavn = Enhet.entries.find { it.navn == enhetsnummer }?.beskrivelse
+            ettersendelseTilKa = ettersendelseTilKa ?: false,
         )
     }
 
