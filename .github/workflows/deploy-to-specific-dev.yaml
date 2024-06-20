@@ -1,0 +1,50 @@
+name: Manual deploy to specific dev environment
+run-name: Manual deploy of ${{ github.ref_name }} to ${{inputs.environment}}
+
+on:
+  workflow_call:
+    inputs:
+      image:
+        required: true
+        type: string
+      nav-cluster:
+        required: true
+        type: string
+      nav-environment:
+        required: true
+        type: string
+
+#  push:
+
+jobs:
+  deploy:
+    name: Deploy to ${{ inputs.nav-environment }}
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      # sanity check
+      - name: Check if nais/${{ inputs.nav-environment }}-config.json exists
+        id: check-json
+        run: echo "file-exists=$(test -f deploy/${{ inputs.nav-environment }}-config.json && echo 'config_exists' || echo 'config_not_exists')" >> $GITHUB_OUTPUT
+      - uses: nais/deploy/actions/deploy@v2
+        if: ${{ steps.check-json.outputs.file-exists == 'config_exists' }}
+        env:
+          CLUSTER: ${{ inputs.nav-cluster }}
+          RESOURCE: deploy/nais.yaml
+          VARS: deploy/${{ inputs.nav-environment }}-config.json
+          VAR: image=${{ inputs.image }}
+      - name: No config files detected - unable to deploy
+        if: ${{ steps.check-json.outputs.file-exists != 'config_exists' }}
+        run: echo "::warning title=Unable to deploy::Could not find deploy/${{ inputs.nav-environment }}-config.json"
+      - name: Post failures to Slack
+        if: failure()
+        run: |
+          curl -X POST --data-urlencode "payload={\"channel\": \"$CHANNEL\", \"text\": \"$MESSAGE\", \"icon_emoji\": \":ghost:\"}" $WEBHOOK_URL
+        env:
+          MESSAGE: "Deploy til dev feilet"
+          CHANNEL: "#klage-notifications"
+          WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
+
+

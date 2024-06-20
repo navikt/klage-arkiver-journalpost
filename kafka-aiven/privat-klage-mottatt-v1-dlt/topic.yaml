@@ -16,6 +16,9 @@ spec:
       application: klage-arkiver-journalpost
       access: write
     - team: klage
+      application: klage-arkiver-journalpost-q2
+      access: write
+    - team: klage
       application: klage-dlt-consumer
       access: read
     - team: klage

@@ -1,0 +1,21 @@
+name: Build and deploy to all dev environments
+
+on:
+  push:
+
+jobs:
+  build-feature:
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+    uses: navikt/klage-arkiver-journalpost/.github/workflows/build.yaml@multiple_environments
+    secrets: inherit
+  deploy-feature:
+    uses: navikt/klage-arkiver-journalpost/.github/workflows/deploy-to-all-dev-environments.yaml@multiple_environments
+    needs: build-feature
+    permissions:
+      id-token: write
+    secrets: inherit
+    with:
+      image: ${{ needs.build-feature.outputs.image }}
