@@ -107,7 +107,7 @@ enum class KlageAnkeType {
 data class MellomlagretDokument(
     val tittel: String,
     val ref: String?,
-    var file: File,
+    var file: File? = null,
 )
 
 fun String.toKlageAnkeInput(): KlageAnkeInput = jacksonObjectMapper()
