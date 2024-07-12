@@ -197,7 +197,7 @@ class JoarkService(
     ) {
         mellomlagretDokumenter.forEachIndexed { index, dokument ->
             val base64File = Files.createTempFile(null, null).toFile()
-            encodeFileToBase64(dokument.file, base64File)
+            encodeFileToBase64(dokument.file!!, base64File)
 
             val base64FileInputStream = FileInputStream(base64File)
 
@@ -216,7 +216,7 @@ class JoarkService(
             }
 
             base64File.delete()
-            dokument.file.delete()
+            dokument.file!!.delete()
         }
     }
 
