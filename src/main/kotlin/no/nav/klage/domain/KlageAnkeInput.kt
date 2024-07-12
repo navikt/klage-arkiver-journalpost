@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import no.nav.klage.kodeverk.innsendingsytelse.Innsendingsytelse
+import java.io.File
 import java.time.LocalDate
 
 private const val BEHANDLINGSTEMA_LONNSKOMPENSASJON = "ab0438"
@@ -25,8 +26,8 @@ data class KlageAnkeInput(
     val begrunnelse: String,
     val tema: String,
     val ytelse: String,
-    val vedlegg: List<Vedlegg> = emptyList(),
-    var fileContentAsBytes: ByteArray? = null,
+    val vedlegg: List<MellomlagretDokument> = emptyList(),
+    var hoveddokument: MellomlagretDokument?,
     val userSaksnummer: String?,
     val internalSaksnummer: String?,
     val klageAnkeType: KlageAnkeType,
@@ -103,10 +104,10 @@ enum class KlageAnkeType {
 }
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-data class Vedlegg(
+data class MellomlagretDokument(
     val tittel: String,
-    val ref: String,
-    var fileContentAsBytes: ByteArray? = null,
+    val ref: String?,
+    var file: File,
 )
 
 fun String.toKlageAnkeInput(): KlageAnkeInput = jacksonObjectMapper()
