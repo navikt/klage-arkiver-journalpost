@@ -27,7 +27,7 @@ data class KlageAnkeInput(
     val tema: String,
     val ytelse: String,
     val vedlegg: List<MellomlagretDokument> = emptyList(),
-    var hoveddokument: MellomlagretDokument?,
+    var hoveddokument: MellomlagretDokument? = null,
     val userSaksnummer: String?,
     val internalSaksnummer: String?,
     val klageAnkeType: KlageAnkeType,
