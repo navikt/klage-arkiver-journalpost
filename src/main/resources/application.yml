@@ -12,8 +12,6 @@ server:
     whitelabel:
       enabled: false
 
-navCallIdName: Nav-Callid
-
 SERVICE_USER_USERNAME: srvklage-dittnav
 
 management:
@@ -32,12 +30,7 @@ management:
       export:
         enabled: true
   tracing:
-    baggage:
-      remote-fields:
-        - ${navCallIdName}
-      correlation:
-        fields:
-          - ${navCallIdName}
+    enabled: false
 
 no.nav.security.jwt:
   issuer:
