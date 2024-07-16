@@ -4,8 +4,6 @@ import no.nav.klage.getLogger
 import no.nav.klage.getSecureLogger
 import no.nav.klage.logErrorResponse
 import no.nav.klage.util.TokenUtil
-import org.springframework.core.io.FileSystemResource
-import org.springframework.core.io.Resource
 import org.springframework.core.io.buffer.DataBuffer
 import org.springframework.core.io.buffer.DataBufferUtils
 import org.springframework.http.HttpHeaders
@@ -32,7 +30,7 @@ class FileClient(
         logger.debug("Fetching attachment with id {}", id)
 
         val dataBufferFlux = fileWebClient.get()
-            .uri { it.path("/attachment/{id}/outputstream").build(id) }
+            .uri { it.path("/attachment/{id}").build(id) }
             .header(HttpHeaders.AUTHORIZATION, "Bearer ${tokenUtil.getAppAccessTokenWithKlageFileApiScope()}")
             .retrieve()
             .onStatus(HttpStatusCode::isError) { response ->
