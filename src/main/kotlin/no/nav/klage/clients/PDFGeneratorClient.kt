@@ -5,17 +5,19 @@ import io.github.resilience4j.retry.Retry
 import no.nav.klage.domain.KlageAnkeInput
 import no.nav.klage.domain.KlageAnkeType
 import no.nav.klage.domain.KlagePDFModel
-import no.nav.klage.domain.Vedlegg
+import no.nav.klage.domain.MellomlagretDokument
 import no.nav.klage.getLogger
-import no.nav.klage.kodeverk.Enhet
 import no.nav.klage.kodeverk.innsendingsytelse.Innsendingsytelse
 import no.nav.klage.util.sanitizeText
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.bodyToMono
+import java.io.File
+import java.nio.file.Files
 import java.time.format.DateTimeFormatter
 import java.util.*
+import kotlin.io.path.writeBytes
 
 
 @Component
@@ -29,10 +31,17 @@ class PDFGeneratorClient(
         private val logger = getLogger(javaClass.enclosingClass)
     }
 
-    fun generatePDF(klageAnkeInput: KlageAnkeInput): ByteArray {
+    fun generatePDF(klageAnkeInput: KlageAnkeInput): File {
+        val tempFile = Files.createTempFile(null, null)
         return when (klageAnkeInput.klageAnkeType) {
-            KlageAnkeType.KLAGE, KlageAnkeType.ANKE -> getKlageAnkePDF(klageAnkeInput)
-            KlageAnkeType.KLAGE_ETTERSENDELSE, KlageAnkeType.ANKE_ETTERSENDELSE -> getEttersendelsePDF(klageAnkeInput)
+            KlageAnkeType.KLAGE, KlageAnkeType.ANKE -> {
+                tempFile.writeBytes(getKlageAnkePDF(klageAnkeInput))
+                tempFile.toFile()
+            }
+            KlageAnkeType.KLAGE_ETTERSENDELSE, KlageAnkeType.ANKE_ETTERSENDELSE -> {
+                tempFile.writeBytes(getEttersendelsePDF(klageAnkeInput))
+                tempFile.toFile()
+            }
         }
     }
 
@@ -86,7 +95,7 @@ class PDFGeneratorClient(
         )
     }
 
-    private fun getOversiktVedlegg(vedlegg: List<Vedlegg>): String {
+    private fun getOversiktVedlegg(vedlegg: List<MellomlagretDokument>): String {
         return if (vedlegg.isEmpty()) {
             "Ingen vedlegg."
         } else {

@@ -15,6 +15,23 @@ data class Journalpost(
     val journalfoerendeEnhet: String?,
 )
 
+/**
+ * Without documents
+ */
+data class JournalpostPartial(
+    val journalposttype: String = "INNGAAENDE",
+    val tema: String,
+    val behandlingstema: String? = null,
+    val kanal: String = "NAV_NO",
+    val tittel: String,
+    val avsenderMottaker: AvsenderMottaker,
+    val bruker: Bruker,
+    val sak: Sak? = null,
+    val tilleggsopplysninger: List<Tilleggsopplysning> = mutableListOf(),
+    val eksternReferanseId: String,
+    val journalfoerendeEnhet: String?,
+)
+
 data class Tilleggsopplysning(val nokkel: String, val verdi: String)
 
 data class Dokument(
