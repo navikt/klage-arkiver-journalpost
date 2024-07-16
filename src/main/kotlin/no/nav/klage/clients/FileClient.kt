@@ -32,7 +32,7 @@ class FileClient(
         logger.debug("Fetching attachment with id {}", id)
 
         val dataBufferFlux = fileWebClient.get()
-            .uri { it.path("/attachment/{id}").build(id) }
+            .uri { it.path("/attachment/{id}/outputstream").build(id) }
             .header(HttpHeaders.AUTHORIZATION, "Bearer ${tokenUtil.getAppAccessTokenWithKlageFileApiScope()}")
             .retrieve()
             .onStatus(HttpStatusCode::isError) { response ->
