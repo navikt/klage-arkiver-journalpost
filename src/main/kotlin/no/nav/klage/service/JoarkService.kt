@@ -58,7 +58,10 @@ class JoarkService(
 
         val partialJournalpostAsJson = ourJacksonObjectMapper.writeValueAsString(partialJournalpostWithoutDocuments)
 
-        secureLogger.debug("Journalpost without documents (what we post to dokarkiv/Joark): {}", partialJournalpostWithoutDocuments)
+        secureLogger.debug(
+            "Journalpost without documents (what we post to dokarkiv/Joark): {}",
+            partialJournalpostWithoutDocuments
+        )
 
         val partialJournalpostAppendable = partialJournalpostAsJson.substring(0, partialJournalpostAsJson.length - 1)
         val journalpostRequestAsFile = Files.createTempFile(null, null)
@@ -201,7 +204,13 @@ class JoarkService(
 
             val base64FileInputStream = FileInputStream(base64File)
 
-            journalpostRequestAsFileOutputStream.write("{\"tittel\":\"${dokument.tittel}\",\"brevkode\":\"$brevkode\",\"dokumentvarianter\":[{\"filnavn\":\"${dokument.tittel}\",\"filtype\":\"PDF\",\"variantformat\":\"ARKIV\",\"fysiskDokument\":\"".toByteArray())
+            journalpostRequestAsFileOutputStream.write(
+                "{\"tittel\":${ourJacksonObjectMapper.writeValueAsString(dokument.tittel)},\"brevkode\":\"$brevkode\",\"dokumentvarianter\":[{\"filnavn\":${
+                    ourJacksonObjectMapper.writeValueAsString(
+                        dokument.tittel
+                    )
+                },\"filtype\":\"PDF\",\"variantformat\":\"ARKIV\",\"fysiskDokument\":\"".toByteArray()
+            )
 
             base64FileInputStream.use { input ->
                 val buffer = ByteArray(1024) // Use a buffer size of 1K for example
