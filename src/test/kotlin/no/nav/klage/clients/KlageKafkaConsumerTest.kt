@@ -59,7 +59,8 @@ class KlageKafkaConsumerTest {
         internalSaksnummer = null,
         klageAnkeType = KlageAnkeType.KLAGE,
         ettersendelseTilKa = false,
-        innsendingsYtelseId = Innsendingsytelse.SYKDOM_I_FAMILIEN.id
+        innsendingsYtelseId = Innsendingsytelse.SYKDOM_I_FAMILIEN.id,
+        hoveddokument = null,
     )
 
     private val mapper = ObjectMapper()
