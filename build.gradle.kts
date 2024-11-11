@@ -5,9 +5,9 @@ val resilience4jVersion = "2.2.0"
 val verapdfVersion = "1.26.1"
 val mockkVersion = "1.13.13"
 val springMockkVersion = "4.0.2"
-val tokenValidationVersion = "5.0.5"
-val simpleSlackPosterVersion = "0.2.2"
-val kodeverkVersion = "1.8.56"
+val tokenValidationVersion = "5.0.10"
+val simpleSlackPosterVersion = "1.0.0"
+val kodeverkVersion = "1.8.57"
 
 repositories {
     mavenCentral()
