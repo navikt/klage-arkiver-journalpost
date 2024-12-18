@@ -80,10 +80,16 @@ class PDFGeneratorClient(
             saksnummer = sanitizeText(getSaksnummerString(userSaksnummer, internalSaksnummer)),
             oversiktVedlegg = getOversiktVedlegg(vedlegg),
             dato = dato.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")),
-            ytelse = ytelseName.replaceFirstChar { it.lowercase(Locale.getDefault()) },
+            ytelse = formatYtelseName(ytelseName),
             userChoices = userChoices,
             ettersendelseTilKa = ettersendelseTilKa ?: false,
         )
+    }
+
+    private fun formatYtelseName(ytelseName: String): String {
+        return if (ytelseName[1].isUpperCase()) {
+            ytelseName
+        } else ytelseName.replaceFirstChar { it.lowercase(Locale.getDefault()) }
     }
 
     private fun getOversiktVedlegg(vedlegg: List<Vedlegg>): String {
