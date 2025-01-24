@@ -5,7 +5,6 @@ import no.nav.klage.clients.KlageDittnavAPIClient
 import no.nav.klage.clients.PDFGeneratorClient
 import no.nav.klage.common.KlageMetrics
 import no.nav.klage.domain.KlageAnkeInput
-import no.nav.klage.domain.KlageAnkeType
 import no.nav.klage.getLogger
 import org.springframework.stereotype.Service
 
