@@ -3,9 +3,7 @@ package no.nav.klage.clients
 import no.nav.klage.getLogger
 import no.nav.klage.util.TokenUtil
 import org.springframework.http.HttpHeaders
-import org.springframework.http.client.MultipartBodyBuilder
 import org.springframework.stereotype.Component
-import org.springframework.web.reactive.function.BodyInserters
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.bodyToMono
 

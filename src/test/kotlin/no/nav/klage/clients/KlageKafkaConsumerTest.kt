@@ -53,7 +53,6 @@ class KlageKafkaConsumerTest {
         vedtak = "",
         dato = LocalDate.now(),
         begrunnelse = "BEGRUNNELSE",
-        tema = "OMS",
         ytelse = "OMS",
         userSaksnummer = null,
         internalSaksnummer = null,

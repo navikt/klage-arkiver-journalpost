@@ -7,7 +7,6 @@ import no.nav.klage.domain.KlageAnkeType
 import no.nav.klage.domain.KlagePDFModel
 import no.nav.klage.domain.Vedlegg
 import no.nav.klage.getLogger
-import no.nav.klage.kodeverk.Enhet
 import no.nav.klage.kodeverk.innsendingsytelse.Innsendingsytelse
 import no.nav.klage.util.sanitizeText
 import org.springframework.http.MediaType
@@ -63,11 +62,7 @@ class PDFGeneratorClient(
     }
 
     private fun KlageAnkeInput.toPDFModel(): KlagePDFModel {
-        val ytelseName = if (innsendingsYtelseId.isNullOrBlank()) {
-            ytelse
-        } else {
-            Innsendingsytelse.of(innsendingsYtelseId).nbName
-        }
+        val ytelseName = Innsendingsytelse.of(innsendingsYtelseId).nbName
 
         return KlagePDFModel(
             type = klageAnkeType.name,

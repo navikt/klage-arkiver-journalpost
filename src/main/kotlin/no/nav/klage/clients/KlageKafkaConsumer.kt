@@ -1,6 +1,5 @@
 package no.nav.klage.clients
 
-import no.nav.klage.domain.KlageAnkeType
 import no.nav.klage.domain.toKlageAnkeInput
 import no.nav.klage.getLogger
 import no.nav.klage.getSecureLogger

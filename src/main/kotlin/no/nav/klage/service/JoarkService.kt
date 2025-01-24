@@ -52,13 +52,8 @@ class JoarkService(
     }
 
     private fun createJournalpostRequest(klageAnkeInput: KlageAnkeInput): Journalpost {
-        val tema = if (klageAnkeInput.innsendingsYtelseId.isNullOrBlank()) {
-            klageAnkeInput.tema
-        } else {
-            innsendingsytelseToTema[Innsendingsytelse.of(klageAnkeInput.innsendingsYtelseId)]!!.name
-        }
-
-        val innsendingsytelse = klageAnkeInput.innsendingsYtelseId?.let { Innsendingsytelse.of(it) }
+        val innsendingsytelse = Innsendingsytelse.of(klageAnkeInput.innsendingsYtelseId)
+        val tema = innsendingsytelseToTema[innsendingsytelse]!!.name
 
         return Journalpost(
             tema = tema,
@@ -82,7 +77,7 @@ class JoarkService(
                 Tilleggsopplysning(nokkel = KLAGE_ANKE_ID_KEY, verdi = klageAnkeInput.id),
                 Tilleggsopplysning(
                     nokkel = KLAGE_ANKE_YTELSE_KEY,
-                    verdi = innsendingsytelse?.name ?: klageAnkeInput.ytelse
+                    verdi = innsendingsytelse.name
                 )
             ),
             eksternReferanseId = "${klageAnkeInput.klageAnkeType.name}_${klageAnkeInput.id}",
@@ -133,11 +128,7 @@ class JoarkService(
     }
 
     private fun getSak(klageAnkeInput: KlageAnkeInput): Sak? {
-        val isInternalFORSak = if (klageAnkeInput.innsendingsYtelseId.isNullOrBlank()) {
-            if (klageAnkeInput.tema == "FOR") {
-                klageAnkeInput.internalSaksnummer?.toIntOrNull() != null
-            } else false
-        } else if (innsendingsytelseToTema[Innsendingsytelse.of(klageAnkeInput.innsendingsYtelseId)] == Tema.FOR) {
+        val isInternalFORSak = if (innsendingsytelseToTema[Innsendingsytelse.of(klageAnkeInput.innsendingsYtelseId)] == Tema.FOR) {
             klageAnkeInput.internalSaksnummer?.toIntOrNull() != null
         } else {
             false

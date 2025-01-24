@@ -23,7 +23,6 @@ data class KlageAnkeInput(
     val vedtak: String,
     val dato: LocalDate,
     val begrunnelse: String,
-    val tema: String,
     val ytelse: String,
     val vedlegg: List<Vedlegg> = emptyList(),
     var fileContentAsBytes: ByteArray? = null,
@@ -34,51 +33,31 @@ data class KlageAnkeInput(
     val userChoices: List<String>? = emptyList(),
     //Only relevant for ettersendelse klage
     val ettersendelseTilKa: Boolean?,
-    val innsendingsYtelseId: String?,
+    val innsendingsYtelseId: String,
 ) {
     @JsonIgnore
     fun isLoennskompensasjon(): Boolean {
-        return if (innsendingsYtelseId.isNullOrBlank()) {
-            tema == "DAG" && ytelse == "Lønnskompensasjon for permitterte"
-        } else {
-            Innsendingsytelse.of(innsendingsYtelseId) == Innsendingsytelse.LONNSKOMPENSASJON
-        }
+        return Innsendingsytelse.of(innsendingsYtelseId) == Innsendingsytelse.LONNSKOMPENSASJON
     }
 
     @JsonIgnore
     fun isTilbakebetalingAvForskuddPaaDagpenger(): Boolean {
-        return if (innsendingsYtelseId.isNullOrBlank()) {
-            return tema == "DAG" && ytelse == "Tilbakebetaling av forskudd på dagpenger"
-        } else {
-            Innsendingsytelse.of(innsendingsYtelseId) == Innsendingsytelse.DAGPENGER_TILBAKEBETALING_FORSKUDD
-        }
+        return Innsendingsytelse.of(innsendingsYtelseId) == Innsendingsytelse.DAGPENGER_TILBAKEBETALING_FORSKUDD
     }
 
     @JsonIgnore
     fun isForeldrepenger(): Boolean {
-        return if (innsendingsYtelseId.isNullOrBlank()) {
-            return tema == "FOR" && ytelse == "Foreldrepenger"
-        } else {
-            Innsendingsytelse.of(innsendingsYtelseId) == Innsendingsytelse.FORELDREPENGER
-        }
+        return Innsendingsytelse.of(innsendingsYtelseId) == Innsendingsytelse.FORELDREPENGER
     }
 
     @JsonIgnore
     fun isEngangsstonad(): Boolean {
-        return if (innsendingsYtelseId.isNullOrBlank()) {
-            return tema == "FOR" && ytelse == "Engangsstønad"
-        } else {
-            Innsendingsytelse.of(innsendingsYtelseId) == Innsendingsytelse.ENGANGSSTONAD
-        }
+        return Innsendingsytelse.of(innsendingsYtelseId) == Innsendingsytelse.ENGANGSSTONAD
     }
 
     @JsonIgnore
     fun isSvangerskapspenger(): Boolean {
-        return if (innsendingsYtelseId.isNullOrBlank()) {
-            return tema == "FOR" && ytelse == "Svangerskapspenger"
-        } else {
-            Innsendingsytelse.of(innsendingsYtelseId) == Innsendingsytelse.SVANGERSKAPSPENGER
-        }
+        return Innsendingsytelse.of(innsendingsYtelseId) == Innsendingsytelse.SVANGERSKAPSPENGER
     }
 
     @JsonIgnore
