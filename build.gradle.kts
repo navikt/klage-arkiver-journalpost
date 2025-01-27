@@ -7,7 +7,7 @@ val mockkVersion = "1.13.16"
 val springMockkVersion = "4.0.2"
 val tokenValidationVersion = "5.0.14"
 val simpleSlackPosterVersion = "1.0.0"
-val kodeverkVersion = "1.9.9"
+val kodeverkVersion = "1.9.11"
 
 repositories {
     mavenCentral()
@@ -15,8 +15,8 @@ repositories {
 }
 
 plugins {
-    val kotlinVersion = "2.1.0"
-    id("org.springframework.boot") version "3.4.1"
+    val kotlinVersion = "2.1.10"
+    id("org.springframework.boot") version "3.4.2"
     kotlin("jvm") version kotlinVersion
     kotlin("plugin.spring") version kotlinVersion
     idea
