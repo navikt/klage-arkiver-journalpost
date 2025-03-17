@@ -138,8 +138,19 @@ class JoarkService(
             Sak(
                 sakstype = Sakstype.FAGSAK,
                 fagsaksystem = FagsaksSystem.FS36,
-                fagsakid = klageAnkeInput.internalSaksnummer
+                fagsakid = klageAnkeInput.internalSaksnummer,
             )
+        } else if (klageAnkeInput.sak != null) { //this logic will take over for all cases when FOR sends us complete sak data.
+            try {
+                Sak(
+                    sakstype = Sakstype.valueOf(klageAnkeInput.sak.sakstype),
+                    fagsaksystem = FagsaksSystem.valueOf(klageAnkeInput.sak.fagsaksystem),
+                    fagsakid = klageAnkeInput.sak.fagsakid,
+                )
+            } catch (e: Exception) {
+                logger.error("Error when trying to parse sak from KlageAnkeInput: ${klageAnkeInput.sak}. Not using sak info for journalføring.", e)
+                null
+            }
         } else {
             null
         }

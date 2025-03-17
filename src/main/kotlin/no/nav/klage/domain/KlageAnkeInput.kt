@@ -28,6 +28,7 @@ data class KlageAnkeInput(
     var fileContentAsBytes: ByteArray? = null,
     val userSaksnummer: String?,
     val internalSaksnummer: String?,
+    val sak: Sak?,
     val klageAnkeType: KlageAnkeType,
     //klage specific
     val userChoices: List<String>? = emptyList(),
@@ -75,6 +76,12 @@ data class KlageAnkeInput(
             KlageAnkeType.ANKE, KlageAnkeType.ANKE_ETTERSENDELSE -> null
         }
     }
+
+    data class Sak(
+        val sakstype: String,
+        var fagsaksystem: String,
+        var fagsakid: String,
+    )
 }
 
 enum class KlageAnkeType {
