@@ -38,6 +38,16 @@ class JoarkService(
         private const val PDF_CODE = "PDF"
         private const val PDFA_CODE = "PDFA"
 
+        private const val BEHANDLINGSTEMA_LONNSKOMPENSASJON = "ab0438"
+        private const val BEHANDLINGSTEMA_TILBAKEBETALING_FORSKUDD_PAA_DAGPENGER = "ab0451"
+        private const val BEHANDLINGSTEMA_ENGANGSSTONAD = "ab0327"
+        private const val BEHANDLINGSTEMA_FORELDREPENGER = "ab0326"
+        private const val BEHANDLINGSTEMA_SVANGERSKAPSPENGER = "ab0126"
+        private const val BEHANDLINGSTEMA_FORERHUND = "ab0046"
+        private const val BEHANDLINGSTEMA_SERVICEHUND = "ab0332"
+        private const val BEHANDLINGSTEMA_ORTOPEDISKE_HJELPEMIDLER = "ab0013"
+        private const val BEHANDLINGSTEMA_FOLKEHOYSKOLE = "ab0368"
+        private const val BEHANDLINGSTEMA_HOREAPPARAT = "ab0243"
     }
 
     fun createJournalpostInJoark(klageAnkeInput: KlageAnkeInput): String {
@@ -57,7 +67,7 @@ class JoarkService(
 
         return Journalpost(
             tema = tema,
-            behandlingstema = klageAnkeInput.getBehandlingstema(),
+            behandlingstema = getBehandlingstema(innsendingsytelse = Innsendingsytelse.of(klageAnkeInput.innsendingsYtelseId)),
             avsenderMottaker = AvsenderMottaker(
                 id = klageAnkeInput.identifikasjonsnummer,
                 navn = getFullName(klageAnkeInput),
@@ -206,5 +216,21 @@ class JoarkService(
         }
         val journalpostCopyWithoutFileData = journalpost.copy(dokumenter = dokumenterWithoutFileData)
         return jacksonObjectMapper().writeValueAsString(journalpostCopyWithoutFileData)
+    }
+
+    fun getBehandlingstema(innsendingsytelse: Innsendingsytelse): String? {
+        return when (innsendingsytelse) {
+            Innsendingsytelse.LONNSKOMPENSASJON -> BEHANDLINGSTEMA_LONNSKOMPENSASJON
+            Innsendingsytelse.DAGPENGER_TILBAKEBETALING_FORSKUDD -> BEHANDLINGSTEMA_TILBAKEBETALING_FORSKUDD_PAA_DAGPENGER
+            Innsendingsytelse.FORELDREPENGER -> BEHANDLINGSTEMA_FORELDREPENGER
+            Innsendingsytelse.ENGANGSSTONAD -> BEHANDLINGSTEMA_ENGANGSSTONAD
+            Innsendingsytelse.SVANGERSKAPSPENGER -> BEHANDLINGSTEMA_SVANGERSKAPSPENGER
+            Innsendingsytelse.FORERHUND -> BEHANDLINGSTEMA_FORERHUND
+            Innsendingsytelse.SERVICEHUND -> BEHANDLINGSTEMA_SERVICEHUND
+            Innsendingsytelse.ORTOPEDISKE_HJELPEMIDLER -> BEHANDLINGSTEMA_ORTOPEDISKE_HJELPEMIDLER
+            Innsendingsytelse.FOLKEHOYSKOLE_ELLER_TILPASNINGSKURS -> BEHANDLINGSTEMA_FOLKEHOYSKOLE
+            Innsendingsytelse.HOREAPPARAT_ELLER_TINNITUSMASKERER -> BEHANDLINGSTEMA_HOREAPPARAT
+            else -> null
+        }
     }
 }
