@@ -1,11 +1,11 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-val logstashVersion = "8.0"
+val logstashVersion = "8.1"
 val resilience4jVersion = "2.3.0"
 val verapdfVersion = "1.26.5"
 val mockkVersion = "1.13.17"
 val springMockkVersion = "4.0.2"
-val tokenValidationVersion = "5.0.20"
+val tokenValidationVersion = "5.0.24"
 val simpleSlackPosterVersion = "1.0.0"
 val kodeverkVersion = "1.10.1"
 
