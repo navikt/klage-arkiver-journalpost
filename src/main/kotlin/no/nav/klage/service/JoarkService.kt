@@ -39,7 +39,7 @@ class JoarkService(
         private const val PDFA_CODE = "PDFA"
 
         private const val BEHANDLINGSTEMA_LONNSKOMPENSASJON = "ab0438"
-        private const val BEHANDLINGSTEMA_TILBAKEBETALING_FORSKUDD_PAA_DAGPENGER = "ab0451"
+        private const val BEHANDLINGSTEMA_TILBAKEBETALING_FORSKUDD = "ab0451"
         private const val BEHANDLINGSTEMA_ENGANGSSTONAD = "ab0327"
         private const val BEHANDLINGSTEMA_FORELDREPENGER = "ab0326"
         private const val BEHANDLINGSTEMA_SVANGERSKAPSPENGER = "ab0126"
@@ -221,7 +221,7 @@ class JoarkService(
     fun getBehandlingstema(innsendingsytelse: Innsendingsytelse): String? {
         return when (innsendingsytelse) {
             Innsendingsytelse.LONNSKOMPENSASJON -> BEHANDLINGSTEMA_LONNSKOMPENSASJON
-            Innsendingsytelse.DAGPENGER_TILBAKEBETALING_FORSKUDD -> BEHANDLINGSTEMA_TILBAKEBETALING_FORSKUDD_PAA_DAGPENGER
+            Innsendingsytelse.DAGPENGER_TILBAKEBETALING_FORSKUDD -> BEHANDLINGSTEMA_TILBAKEBETALING_FORSKUDD
             Innsendingsytelse.FORELDREPENGER -> BEHANDLINGSTEMA_FORELDREPENGER
             Innsendingsytelse.ENGANGSSTONAD -> BEHANDLINGSTEMA_ENGANGSSTONAD
             Innsendingsytelse.SVANGERSKAPSPENGER -> BEHANDLINGSTEMA_SVANGERSKAPSPENGER
