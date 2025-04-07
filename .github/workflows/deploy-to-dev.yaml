@@ -84,7 +84,7 @@ jobs:
         name: Checkout code
 
       - name: Deploy to dev
-        uses: nais/deploy/actions/deploy@v1
+        uses: nais/deploy/actions/deploy@v2
         env:
           TEAM: klage
           CLUSTER: dev-gcp

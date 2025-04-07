@@ -39,7 +39,7 @@ jobs:
         run: echo "image=${{ steps.image-registry.outputs.registry }}/klage-arkiver-journalpost:${{ github.sha }}" >> $GITHUB_OUTPUT
 
       - name: Deploy to prod
-        uses: nais/deploy/actions/deploy@v1
+        uses: nais/deploy/actions/deploy@v2
         env:
           TEAM: klage
           CLUSTER: prod-gcp

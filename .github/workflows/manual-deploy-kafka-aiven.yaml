@@ -20,7 +20,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@main
       - name: deploy kafka-topic ${{ matrix.topic }} to ${{ matrix.cluster }}
-        uses: nais/deploy/actions/deploy@v1
+        uses: nais/deploy/actions/deploy@v2
         env:
           APIKEY: ${{ secrets.NAIS_DEPLOY_API_KEY }}
           CLUSTER: ${{ matrix.cluster }}-gcp
