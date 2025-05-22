@@ -6,7 +6,6 @@ import no.nav.klage.clients.pdl.PdlClient
 import no.nav.klage.clients.pdl.PdlPerson
 import no.nav.klage.domain.*
 import no.nav.klage.getLogger
-import no.nav.klage.getSecureLogger
 import no.nav.klage.kodeverk.Tema
 import no.nav.klage.kodeverk.innsendingsytelse.Innsendingsytelse
 import no.nav.klage.kodeverk.innsendingsytelse.innsendingsytelseToAnkeEnhet
@@ -23,7 +22,6 @@ class JoarkService(
     companion object {
         @Suppress("JAVA_CLASS_ON_COMPANION")
         private val logger = getLogger(javaClass.enclosingClass)
-        private val secureLogger = getSecureLogger()
 
         private const val KLAGE_ANKE_ID_KEY = "klage_anke_id"
         private const val KLAGE_ANKE_YTELSE_KEY = "klage_anke_ytelse"
@@ -54,9 +52,6 @@ class JoarkService(
         logger.debug("Creating journalpost.")
 
         val journalpostRequest = createJournalpostRequest(klageAnkeInput)
-
-        val journalpostAsJSONForLogging = getJournalpostAsJSONForLogging(journalpostRequest)
-        secureLogger.debug("Journalpost as JSON (what we post to dokarkiv/Joark): {}", journalpostAsJSONForLogging)
 
         return joarkClient.postJournalpost(journalpostRequest, klageAnkeInput.id)
     }
@@ -187,7 +182,7 @@ class JoarkService(
 
         klageAnkeInput.vedlegg.forEach {
             //Attachments will always be PDF as of now.
-            secureLogger.debug("Adding attachment with title ${it.tittel} and GCS reference ${it.ref} to journalpost")
+            logger.debug("Adding attachment with GCS reference ${it.ref} to journalpost")
             val doc = Dokument(
                 tittel = it.tittel,
                 dokumentVarianter = getDokumentVariant(bytes = it.fileContentAsBytes, performPdfaCheck = false)
