@@ -1,7 +1,6 @@
 package no.nav.klage.config
 
 import no.nav.klage.getLogger
-import no.nav.klage.getSecureLogger
 import no.nav.slackposter.Severity
 import no.nav.slackposter.SlackClient
 import org.apache.kafka.clients.CommonClientConfigs
@@ -42,7 +41,6 @@ class AivenKafkaConfiguration(
     companion object {
         @Suppress("JAVA_CLASS_ON_COMPANION")
         private val logger = getLogger(javaClass.enclosingClass)
-        private val secureLogger = getSecureLogger()
     }
 
     @Bean

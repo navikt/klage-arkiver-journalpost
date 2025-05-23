@@ -1,8 +1,7 @@
 package no.nav.klage.clients.pdl
 
 import no.nav.klage.getLogger
-import no.nav.klage.getSecureLogger
-import no.nav.klage.logErrorResponse
+import no.nav.klage.getTeamLogger
 import no.nav.klage.util.TokenUtil
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatusCode
@@ -21,7 +20,7 @@ class PdlClient(
     companion object {
         @Suppress("JAVA_CLASS_ON_COMPANION")
         private val logger = getLogger(javaClass.enclosingClass)
-        private val secureLogger = getSecureLogger()
+        private val teamLogger = getTeamLogger()
     }
 
     fun <T> runWithTiming(block: () -> T): T {
@@ -43,7 +42,11 @@ class PdlClient(
                 .bodyValue(hentPersonQuery(fnr))
                 .retrieve()
                 .onStatus(HttpStatusCode::isError) { response ->
-                    logErrorResponse(response, ::getPersonAdresseBeskyttelse.name, secureLogger)
+                    response.bodyToMono(String::class.java).map {
+                        val errorString = "Got ${response.statusCode()} when requesting getPersonAdresseBeskyttelse"
+                        teamLogger.error("$errorString - response body: {}", it)
+                        RuntimeException(errorString)
+                    }
                 }
                 .bodyToMono<HentPersonResponse>()
                 .block() ?: throw RuntimeException("Person not found")

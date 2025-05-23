@@ -1,7 +1,7 @@
 package no.nav.klage.service
 
 import no.nav.klage.getLogger
-import no.nav.klage.getSecureLogger
+import no.nav.klage.getTeamLogger
 import org.springframework.stereotype.Service
 import org.verapdf.core.ModelParsingException
 import org.verapdf.core.ValidationException
@@ -14,7 +14,7 @@ class PdfService {
     companion object {
         @Suppress("JAVA_CLASS_ON_COMPANION")
         private val logger = getLogger(javaClass.enclosingClass)
-        private val secureLogger = getSecureLogger()
+        private val teamLogger = getTeamLogger()
     }
 
     init {
@@ -28,9 +28,11 @@ class PdfService {
             val result = validator.validate(parser)
             return result.isCompliant
         } catch (e: ModelParsingException) {
-            secureLogger.warn("Error parsing document", e)
+            logger.warn("Error parsing document. See more in team-logs.")
+            teamLogger.warn("Error parsing document", e)
         } catch (e: ValidationException) {
-            secureLogger.warn("Error validating document", e)
+            logger.warn("Error validating document. See more in team-logs.")
+            teamLogger.warn("Error validating document", e)
         }
         return false
     }

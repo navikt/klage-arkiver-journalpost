@@ -2,7 +2,7 @@ package no.nav.klage.clients
 
 import no.nav.klage.domain.toKlageAnkeInput
 import no.nav.klage.getLogger
-import no.nav.klage.getSecureLogger
+import no.nav.klage.getTeamLogger
 import no.nav.klage.service.ApplicationService
 import no.nav.slackposter.Severity
 import no.nav.slackposter.SlackClient
@@ -22,7 +22,7 @@ class KlageKafkaConsumer(
     companion object {
         @Suppress("JAVA_CLASS_ON_COMPANION")
         private val logger = getLogger(javaClass.enclosingClass)
-        private val secureLogger = getSecureLogger()
+        private val teamLogger = getTeamLogger()
     }
 
     @Value("\${NAIS_CLUSTER_NAME}")
@@ -30,11 +30,11 @@ class KlageKafkaConsumer(
 
     @KafkaListener(topics = ["\${KAFKA_TOPIC}"])
     fun listen(klageRecord: ConsumerRecord<String, String>) {
-        logger.debug("Klage received from Kafka topic")
-        secureLogger.debug("Klage received from Kafka topic: {}", klageRecord.value())
+        logger.debug("Klanke received from Kafka topic")
 
         runCatching {
             val klageAnke = klageRecord.value().toKlageAnkeInput()
+            logger.debug("Received klanke has id {}", klageAnke.id)
 
             val journalpostIdResponse =
                 try {
@@ -44,8 +44,7 @@ class KlageKafkaConsumer(
                         "Innsending med id ${klageAnke.id} fins ikke i klage-dittnav-api. Undersøk dette nærmere!",
                         Severity.ERROR
                     )
-                    logger.error("Input has id not found in klage-dittnav-api. See more details in secure log.")
-                    secureLogger.error("Input has id not found in klage-dittnav-api, {}", klageAnke)
+                    logger.error("Klanke not found in klage-dittnav-api.")
                     if (naisCluster == "dev-gcp") {
                         return
                     } else {
@@ -55,7 +54,7 @@ class KlageKafkaConsumer(
 
             if (journalpostIdResponse.journalpostId != null) {
                 logger.info(
-                    "Klage with ID {} is already registered in Joark with journalpost ID {}. Ignoring.",
+                    "Klanke with ID {} is already registered in Joark with journalpost ID {}. Ignoring.",
                     klageAnke.id,
                     journalpostIdResponse.journalpostId
                 )
@@ -65,8 +64,8 @@ class KlageKafkaConsumer(
             applicationService.createJournalpost(klageAnke)
         }.onFailure {
             slackClient.postMessage("Nylig mottatt innsending feilet! (${causeClass(rootCause(it))})", Severity.ERROR)
-            secureLogger.error("Failed to process innsending", it)
-            throw RuntimeException("Could not process innsending. See more details in secure log.")
+            teamLogger.error("Failed to process innsending", it)
+            throw RuntimeException("Could not process innsending. See more details in team-logs.")
         }
     }
 
