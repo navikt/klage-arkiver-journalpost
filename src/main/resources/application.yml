@@ -3,9 +3,6 @@ spring:
     name: klage-arkiver-journalpost
   main:
     banner-mode: OFF
-  codec:
-    max-in-memory-size: 10MB
-
 server:
   port: 7075
   error:

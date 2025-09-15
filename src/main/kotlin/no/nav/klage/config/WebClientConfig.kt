@@ -14,23 +14,27 @@ import java.util.concurrent.TimeUnit
 @Configuration
 class WebClientConfig {
 
-//    @Bean
-//    fun reactorNettyHttpClient(): HttpClient {
-//        val timeoutInSeconds = 100L
-//        return HttpClient.create()
-//            .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 5_000)
-//            .responseTimeout(Duration.ofSeconds(timeoutInSeconds))
-//            .doOnConnected { conn ->
-//                conn.addHandlerLast(ReadTimeoutHandler(timeoutInSeconds, TimeUnit.SECONDS))
-//                conn.addHandlerLast(WriteTimeoutHandler(timeoutInSeconds, TimeUnit.SECONDS))
-//            }
-//    }
-//
-//    @Bean
-//    fun webClientBuilder(httpClient: HttpClient): WebClient.Builder {
-//        val connector = ReactorClientHttpConnector(httpClient)
-//        return WebClient.builder()
-//            .clientConnector(connector)
-//    }
+    @Bean
+    fun reactorNettyHttpClient(): HttpClient {
+        val timeoutInSeconds = 100L
+        return HttpClient.create()
+            .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 5_000)
+            .responseTimeout(Duration.ofSeconds(timeoutInSeconds))
+            .doOnConnected { conn ->
+                conn.addHandlerLast(ReadTimeoutHandler(timeoutInSeconds, TimeUnit.SECONDS))
+                conn.addHandlerLast(WriteTimeoutHandler(timeoutInSeconds, TimeUnit.SECONDS))
+            }
+    }
 
+    @Bean
+    fun webClientBuilder(httpClient: HttpClient): WebClient.Builder {
+        val connector = ReactorClientHttpConnector(httpClient)
+        return WebClient.builder()
+            .codecs { configurer ->
+                configurer
+                    .defaultCodecs()
+                    .maxInMemorySize(256 * 1024 * 1024)
+            }
+            .clientConnector(connector)
+    }
 }
