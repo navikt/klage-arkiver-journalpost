@@ -22,8 +22,6 @@ data class KlageAnkeInput(
     val internalSaksnummer: String?,
     val sak: Sak?,
     val klageAnkeType: KlageAnkeType,
-    //klage specific
-    val userChoices: List<String>? = emptyList(),
     //Only relevant for ettersendelse klage
     val ettersendelseTilKa: Boolean?,
     val innsendingsYtelseId: String,

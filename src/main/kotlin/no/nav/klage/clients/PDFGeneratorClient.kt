@@ -76,7 +76,6 @@ class PDFGeneratorClient(
             oversiktVedlegg = getOversiktVedlegg(vedlegg),
             dato = dato.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")),
             ytelse = formatYtelseName(ytelseName),
-            userChoices = userChoices,
             ettersendelseTilKa = ettersendelseTilKa ?: false,
         )
     }
