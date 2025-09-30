@@ -12,6 +12,5 @@ data class KlagePDFModel(
     val oversiktVedlegg: String,
     val dato: String,
     val ytelse: String,
-    val userChoices: List<String>? = emptyList(),
     val ettersendelseTilKa: Boolean,
 )
