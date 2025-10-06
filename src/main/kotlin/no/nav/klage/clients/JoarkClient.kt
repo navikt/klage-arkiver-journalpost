@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
+import org.springframework.retry.annotation.Retryable
+import org.springframework.retry.support.RetrySynchronizationManager
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
 import reactor.core.publisher.Mono
@@ -27,11 +29,16 @@ class JoarkClient(
     @Value("\${DRY_RUN}")
     private lateinit var dryRun: String
 
+    @Retryable
     fun postJournalpost(journalpost: Journalpost, klageAnkeId: String): String {
         return if (dryRun.toBoolean()) {
             logger.debug("Dry run activated. Not sending journalpost to Joark.")
             "dryRun, no journalpostId"
         } else {
+            if ((RetrySynchronizationManager.getContext()?.retryCount ?: 0) > 0) {
+                logger.warn("${::postJournalpost.name}: retry attempt ${RetrySynchronizationManager.getContext()?.retryCount}")
+            }
+
             logger.debug("Posting journalpost to Joark.")
             val journalpostResponse = joarkWebClient.post()
                 .header(HttpHeaders.AUTHORIZATION, "Bearer ${tokenUtil.getAppAccessTokenWithDokarkivScope()}")
