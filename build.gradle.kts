@@ -31,6 +31,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-webflux")
     implementation("org.springframework.boot:spring-boot-starter-validation")
+    implementation("org.springframework:spring-aspects")
     implementation("org.projectreactor:reactor-spring:1.0.1.RELEASE")
 
     implementation("io.micrometer:micrometer-registry-prometheus")
