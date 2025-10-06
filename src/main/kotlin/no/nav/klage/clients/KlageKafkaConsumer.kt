@@ -63,13 +63,10 @@ class KlageKafkaConsumer(
 
             applicationService.createJournalpost(klageAnke)
         }.onFailure {
-            slackClient.postMessage("Nylig mottatt innsending feilet! (${causeClass(rootCause(it))})", Severity.ERROR)
-            teamLogger.error("Failed to process innsending", it)
-            throw RuntimeException("Could not process innsending. See more details in team-logs.")
+            slackClient.postMessage("Nylig mottatt innsending feilet. Sjekk team-logs for detaljer.", Severity.ERROR)
+            logger.error("Could not process innsending. See more details in team-logs.")
+            teamLogger.error("Could not process innsending", it)
+            throw RuntimeException("Could not process innsending")
         }
     }
-
-    private fun rootCause(t: Throwable): Throwable = t.cause?.run { rootCause(this) } ?: t
-
-    private fun causeClass(t: Throwable) = t.stackTrace?.firstOrNull()?.className ?: ""
 }

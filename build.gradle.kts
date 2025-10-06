@@ -2,7 +2,6 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 val logstashVersion = "8.1"
-val resilience4jVersion = "2.3.0"
 val verapdfVersion = "1.28.2"
 val mockkVersion = "1.14.5"
 val springMockkVersion = "4.0.2"
@@ -43,9 +42,6 @@ dependencies {
     implementation("org.springframework.kafka:spring-kafka")
     implementation("no.nav.security:token-client-spring:$tokenValidationVersion")
     implementation("no.nav.security:token-validation-spring:$tokenValidationVersion")
-
-    implementation("io.github.resilience4j:resilience4j-retry:$resilience4jVersion")
-    implementation("io.github.resilience4j:resilience4j-kotlin:$resilience4jVersion")
 
     implementation("no.nav.slackposter:simple-slack-poster:$simpleSlackPosterVersion")
     implementation("no.nav.klage:klage-kodeverk:$kodeverkVersion")
