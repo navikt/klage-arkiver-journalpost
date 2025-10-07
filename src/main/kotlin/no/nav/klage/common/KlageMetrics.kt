@@ -1,7 +1,7 @@
 package no.nav.klage.common
 
 import io.micrometer.core.instrument.MeterRegistry
-import no.nav.klage.getLogger
+import no.nav.klage.util.getLogger
 import org.springframework.stereotype.Component
 
 @Component

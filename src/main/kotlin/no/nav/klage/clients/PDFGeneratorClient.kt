@@ -4,8 +4,8 @@ import no.nav.klage.domain.KlageAnkeInput
 import no.nav.klage.domain.KlageAnkeType
 import no.nav.klage.domain.KlagePDFModel
 import no.nav.klage.domain.Vedlegg
-import no.nav.klage.getLogger
 import no.nav.klage.kodeverk.innsendingsytelse.Innsendingsytelse
+import no.nav.klage.util.getLogger
 import no.nav.klage.util.sanitizeText
 import org.springframework.http.MediaType
 import org.springframework.retry.annotation.Retryable

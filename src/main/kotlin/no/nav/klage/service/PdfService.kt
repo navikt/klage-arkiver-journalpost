@@ -1,7 +1,7 @@
 package no.nav.klage.service
 
-import no.nav.klage.getLogger
-import no.nav.klage.getTeamLogger
+import no.nav.klage.util.getLogger
+import no.nav.klage.util.getTeamLogger
 import org.springframework.stereotype.Service
 import org.verapdf.core.ModelParsingException
 import org.verapdf.core.ValidationException

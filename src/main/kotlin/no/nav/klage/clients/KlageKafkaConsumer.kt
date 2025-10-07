@@ -1,9 +1,9 @@
 package no.nav.klage.clients
 
 import no.nav.klage.domain.toKlageAnkeInput
-import no.nav.klage.getLogger
-import no.nav.klage.getTeamLogger
 import no.nav.klage.service.ApplicationService
+import no.nav.klage.util.getLogger
+import no.nav.klage.util.getTeamLogger
 import no.nav.slackposter.Severity
 import no.nav.slackposter.SlackClient
 import org.apache.kafka.clients.consumer.ConsumerRecord

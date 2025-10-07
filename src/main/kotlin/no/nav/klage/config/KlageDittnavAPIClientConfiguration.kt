@@ -1,6 +1,6 @@
 package no.nav.klage.config
 
-import no.nav.klage.getLogger
+import no.nav.klage.util.getLogger
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration

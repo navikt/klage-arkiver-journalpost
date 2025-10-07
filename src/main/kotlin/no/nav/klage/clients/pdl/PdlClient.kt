@@ -1,8 +1,8 @@
 package no.nav.klage.clients.pdl
 
-import no.nav.klage.getLogger
-import no.nav.klage.getTeamLogger
 import no.nav.klage.util.TokenUtil
+import no.nav.klage.util.getLogger
+import no.nav.klage.util.getTeamLogger
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatusCode
 import org.springframework.retry.annotation.Retryable

@@ -2,14 +2,13 @@ package no.nav.klage.clients
 
 import no.nav.klage.domain.Journalpost
 import no.nav.klage.domain.JournalpostResponse
-import no.nav.klage.getLogger
 import no.nav.klage.util.TokenUtil
+import no.nav.klage.util.getLogger
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.retry.annotation.Retryable
-import org.springframework.retry.support.RetrySynchronizationManager
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
 import reactor.core.publisher.Mono
@@ -35,10 +34,6 @@ class JoarkClient(
             logger.debug("Dry run activated. Not sending journalpost to Joark.")
             "dryRun, no journalpostId"
         } else {
-            if ((RetrySynchronizationManager.getContext()?.retryCount ?: 0) > 0) {
-                logger.warn("${::postJournalpost.name}: retry attempt ${RetrySynchronizationManager.getContext()?.retryCount}")
-            }
-
             logger.debug("Posting journalpost to Joark.")
             val journalpostResponse = joarkWebClient.post()
                 .header(HttpHeaders.AUTHORIZATION, "Bearer ${tokenUtil.getAppAccessTokenWithDokarkivScope()}")

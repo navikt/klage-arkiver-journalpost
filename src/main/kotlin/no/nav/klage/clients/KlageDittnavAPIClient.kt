@@ -1,9 +1,10 @@
 package no.nav.klage.clients
 
 import no.nav.klage.domain.KlageApiJournalpost
-import no.nav.klage.getLogger
 import no.nav.klage.util.TokenUtil
+import no.nav.klage.util.getLogger
 import org.springframework.http.HttpHeaders
+import org.springframework.retry.annotation.Retryable
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.bodyToMono
@@ -19,6 +20,7 @@ class KlageDittnavAPIClient(
         private val logger = getLogger(javaClass.enclosingClass)
     }
 
+    @Retryable
     fun setJournalpostIdInKlanke(klankeId: String, journalpostId: String) {
         logger.debug("Registering journalpost ID for klanke in klage-dittnav-api. KlankeId ref: {}, journalpostId: {}", klankeId, journalpostId)
         klageDittnavAPIWebClient.post()
@@ -30,6 +32,7 @@ class KlageDittnavAPIClient(
             .block() ?: throw RuntimeException("Unable to register journalpost ID for klanke in klage-dittnav-api.")
     }
 
+    @Retryable
     fun getJournalpostForKlankeId(klankeId: String): JournalpostIdResponse {
         logger.debug("Getting journalpostId for klanke from klage-dittnav-api. KlankeId: {}", klankeId)
         return klageDittnavAPIWebClient.get()

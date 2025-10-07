@@ -1,6 +1,7 @@
 package no.nav.klage
 
 import jakarta.annotation.PostConstruct
+import no.nav.klage.util.getLogger
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication

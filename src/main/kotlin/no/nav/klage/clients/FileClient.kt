@@ -1,7 +1,7 @@
 package no.nav.klage.clients
 
-import no.nav.klage.getLogger
 import no.nav.klage.util.TokenUtil
+import no.nav.klage.util.getLogger
 import org.springframework.http.HttpHeaders
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient

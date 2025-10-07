@@ -5,11 +5,11 @@ import no.nav.klage.clients.JoarkClient
 import no.nav.klage.clients.pdl.PdlClient
 import no.nav.klage.clients.pdl.PdlPerson
 import no.nav.klage.domain.*
-import no.nav.klage.getLogger
 import no.nav.klage.kodeverk.Tema
 import no.nav.klage.kodeverk.innsendingsytelse.Innsendingsytelse
 import no.nav.klage.kodeverk.innsendingsytelse.innsendingsytelseToAnkeEnhet
 import no.nav.klage.kodeverk.innsendingsytelse.innsendingsytelseToTema
+import no.nav.klage.util.getLogger
 import org.springframework.stereotype.Service
 import java.util.*
 
