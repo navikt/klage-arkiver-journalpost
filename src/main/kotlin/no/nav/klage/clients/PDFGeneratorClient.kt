@@ -26,6 +26,7 @@ class PDFGeneratorClient(
         private val logger = getLogger(javaClass.enclosingClass)
     }
 
+    @Retryable
     fun generatePDF(klageAnkeInput: KlageAnkeInput): ByteArray {
         return when (klageAnkeInput.klageAnkeType) {
             KlageAnkeType.KLAGE, KlageAnkeType.ANKE -> getKlageAnkePDF(klageAnkeInput)
@@ -33,8 +34,7 @@ class PDFGeneratorClient(
         }
     }
 
-    @Retryable
-    fun getKlageAnkePDF(klageAnkeInput: KlageAnkeInput): ByteArray {
+    private fun getKlageAnkePDF(klageAnkeInput: KlageAnkeInput): ByteArray {
         logger.debug("Creating PDF for klage/anke.")
         return pdfWebClient.post()
             .uri { it.path("/klageanke").build() }
@@ -43,11 +43,9 @@ class PDFGeneratorClient(
             .retrieve()
             .bodyToMono<ByteArray>()
             .block() ?: throw RuntimeException("PDF could not be generated")
-
     }
 
-    @Retryable
-    fun getEttersendelsePDF(klageAnkeInput: KlageAnkeInput): ByteArray {
+    private fun getEttersendelsePDF(klageAnkeInput: KlageAnkeInput): ByteArray {
         logger.debug("Creating PDF for ettersendelse.")
         return pdfWebClient.post()
             .uri { it.path("/ettersendelse").build() }
@@ -56,7 +54,6 @@ class PDFGeneratorClient(
             .retrieve()
             .bodyToMono<ByteArray>()
             .block() ?: throw RuntimeException("PDF could not be generated")
-
     }
 
     private fun KlageAnkeInput.toPDFModel(): KlagePDFModel {
