@@ -14,6 +14,7 @@ import org.apache.kafka.common.serialization.StringSerializer
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.kafka.annotation.EnableKafka
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory
 import org.springframework.kafka.core.ConsumerFactory
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory
@@ -24,7 +25,7 @@ import org.springframework.kafka.listener.DefaultErrorHandler
 import org.springframework.util.backoff.FixedBackOff
 import java.time.Duration
 
-
+@EnableKafka
 @Configuration
 class AivenKafkaConfiguration(
     @Value("\${KAFKA_BROKERS}")
@@ -46,7 +47,7 @@ class AivenKafkaConfiguration(
     @Bean
     fun kafkaListenerContainerFactory(): ConcurrentKafkaListenerContainerFactory<String, String> {
         val factory = ConcurrentKafkaListenerContainerFactory<String, String>()
-        factory.consumerFactory = klageMottattConsumerFactory()
+        factory.setConsumerFactory(klageMottattConsumerFactory())
 
         //Setup sending to dead-letter topic after two retries
         val recoverer = DeadLetterPublishingRecoverer(aivenKafkaTemplate()) f@

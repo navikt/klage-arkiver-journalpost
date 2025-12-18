@@ -3,6 +3,7 @@ package no.nav.klage.config
 import no.nav.klage.util.getLogger
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+
 import org.springframework.retry.RetryCallback
 import org.springframework.retry.RetryContext
 import org.springframework.retry.RetryListener
