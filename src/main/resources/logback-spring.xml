@@ -42,5 +42,6 @@
     </springProfile>
 
     <logger name="no.nav.klage" level="debug"/>
+    <logger name="org.springframework.core.retry.RetryTemplate" level="debug"/>
 
 </configuration>

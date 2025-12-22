@@ -8,7 +8,6 @@ val springMockkVersion = "5.0.1"
 val tokenValidationVersion = "6.0.0"
 val simpleSlackPosterVersion = "1.0.0"
 val kodeverkVersion = "1.12.16"
-val springRetryVersion = "2.0.12"
 
 repositories {
     mavenCentral()
@@ -16,8 +15,8 @@ repositories {
 }
 
 plugins {
-    val kotlinVersion = "2.2.21"
-    id("org.springframework.boot") version "4.0.0"
+    val kotlinVersion = "2.3.0"
+    id("org.springframework.boot") version "4.0.1"
     kotlin("jvm") version kotlinVersion
     kotlin("plugin.spring") version kotlinVersion
     idea
@@ -33,7 +32,6 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-webflux")
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework:spring-aspects")
-    implementation("org.springframework.retry:spring-retry:${springRetryVersion}")
     implementation("org.projectreactor:reactor-spring:1.0.1.RELEASE")
 
     implementation("io.micrometer:micrometer-registry-prometheus")
@@ -72,7 +70,7 @@ java.sourceCompatibility = JavaVersion.VERSION_21
 tasks.withType<KotlinCompile> {
     compilerOptions {
         jvmTarget.set(JvmTarget.JVM_21)
-        freeCompilerArgs = listOf("-Xjsr305=strict")
+        freeCompilerArgs = listOf("-Xjsr305=strict", "-Xannotation-default-target=param-property")
     }
 }
 
