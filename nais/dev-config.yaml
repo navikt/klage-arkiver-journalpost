@@ -6,6 +6,5 @@ externalHosts:
   - hooks.slack.com
   - dokarkiv-q2.dev-fss-pub.nais.io
   - pdl-api.dev-fss-pub.nais.io
-springProfile: dev-gcp
+springProfile: dev
 kafka_pool: nav-dev
-

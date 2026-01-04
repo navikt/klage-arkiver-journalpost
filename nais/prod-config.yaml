@@ -9,8 +9,5 @@ externalHosts:
   - hooks.slack.com
   - dokarkiv.prod-fss-pub.nais.io
   - pdl-api.prod-fss-pub.nais.io
-springProfile: prod-gcp
+springProfile: prod
 kafka_pool: nav-prod
-
-
-
