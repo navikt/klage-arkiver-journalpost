@@ -79,3 +79,20 @@ data class AvsenderMottaker(
 data class KlageApiJournalpost(
     val id: String
 )
+
+/**
+ * Without documents
+ */
+data class JournalpostPartial(
+    val journalposttype: String = "INNGAAENDE",
+    val tema: String,
+    val behandlingstema: String? = null,
+    val kanal: String = "NAV_NO",
+    val tittel: String,
+    val avsenderMottaker: AvsenderMottaker,
+    val bruker: Bruker,
+    val sak: Sak?,
+    val tilleggsopplysninger: List<Tilleggsopplysning> = mutableListOf(),
+    val eksternReferanseId: String,
+    val journalfoerendeEnhet: String?,
+)

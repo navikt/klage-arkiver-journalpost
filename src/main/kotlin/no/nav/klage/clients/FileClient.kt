@@ -2,11 +2,16 @@ package no.nav.klage.clients
 
 import no.nav.klage.util.TokenUtil
 import no.nav.klage.util.getLogger
+import org.springframework.core.io.buffer.DataBuffer
+import org.springframework.core.io.buffer.DataBufferUtils
 import org.springframework.http.HttpHeaders
 import org.springframework.resilience.annotation.Retryable
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
+import org.springframework.web.reactive.function.client.bodyToFlux
 import org.springframework.web.reactive.function.client.bodyToMono
+import java.io.File
+import java.nio.file.Files
 
 @Component
 class FileClient(
@@ -20,15 +25,19 @@ class FileClient(
     }
 
     @Retryable
-    fun getAttachment(id: String): ByteArray {
+    fun getAttachment(id: String): File {
         logger.debug("Fetching attachment with id {}", id)
 
-        return this.fileWebClient.get()
+        val dataBufferFlux = this.fileWebClient.get()
             .uri { it.path("/attachment/{id}").build(id) }
             .header(HttpHeaders.AUTHORIZATION, "Bearer ${tokenUtil.getAppAccessTokenWithKlageFileApiScope()}")
             .retrieve()
-            .bodyToMono<ByteArray>()
-            .block() ?: throw RuntimeException("Attachment could not be fetched")
+            .bodyToFlux<DataBuffer>()
+
+        val tempFile = Files.createTempFile(null, null)
+
+        DataBufferUtils.write(dataBufferFlux, tempFile).block()
+        return tempFile.toFile()
     }
 
     @Retryable
