@@ -7,11 +7,15 @@ import no.nav.klage.domain.Vedlegg
 import no.nav.klage.kodeverk.innsendingsytelse.Innsendingsytelse
 import no.nav.klage.util.getLogger
 import no.nav.klage.util.sanitizeText
+import org.springframework.core.io.buffer.DataBuffer
+import org.springframework.core.io.buffer.DataBufferUtils
 import org.springframework.http.MediaType
 import org.springframework.resilience.annotation.Retryable
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
-import org.springframework.web.reactive.function.client.bodyToMono
+import org.springframework.web.reactive.function.client.bodyToFlux
+import java.io.File
+import java.nio.file.Files
 import java.time.format.DateTimeFormatter
 import java.util.*
 
@@ -27,33 +31,42 @@ class PDFGeneratorClient(
     }
 
     @Retryable
-    fun generatePDF(klageAnkeInput: KlageAnkeInput): ByteArray {
+    fun generatePDF(klageAnkeInput: KlageAnkeInput): File {
         return when (klageAnkeInput.klageAnkeType) {
             KlageAnkeType.KLAGE, KlageAnkeType.ANKE -> getKlageAnkePDF(klageAnkeInput)
             KlageAnkeType.KLAGE_ETTERSENDELSE, KlageAnkeType.ANKE_ETTERSENDELSE -> getEttersendelsePDF(klageAnkeInput)
         }
     }
 
-    private fun getKlageAnkePDF(klageAnkeInput: KlageAnkeInput): ByteArray {
+    private fun getKlageAnkePDF(klageAnkeInput: KlageAnkeInput): File {
         logger.debug("Creating PDF for klage/anke.")
-        return pdfWebClient.post()
+
+        val dataBufferFlux = pdfWebClient.post()
             .uri { it.path("/klageanke").build() }
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue(klageAnkeInput.toPDFModel())
             .retrieve()
-            .bodyToMono<ByteArray>()
-            .block() ?: throw RuntimeException("PDF could not be generated")
+            .bodyToFlux<DataBuffer>()
+
+        val tempFile = Files.createTempFile(null, null)
+
+        DataBufferUtils.write(dataBufferFlux, tempFile).block()
+        return tempFile.toFile()
     }
 
-    private fun getEttersendelsePDF(klageAnkeInput: KlageAnkeInput): ByteArray {
+    private fun getEttersendelsePDF(klageAnkeInput: KlageAnkeInput): File {
         logger.debug("Creating PDF for ettersendelse.")
-        return pdfWebClient.post()
+        val dataBufferFlux = pdfWebClient.post()
             .uri { it.path("/ettersendelse").build() }
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue(klageAnkeInput.toPDFModel())
             .retrieve()
-            .bodyToMono<ByteArray>()
-            .block() ?: throw RuntimeException("PDF could not be generated")
+            .bodyToFlux<DataBuffer>()
+
+        val tempFile = Files.createTempFile(null, null)
+
+        DataBufferUtils.write(dataBufferFlux, tempFile).block()
+        return tempFile.toFile()
     }
 
     private fun KlageAnkeInput.toPDFModel(): KlagePDFModel {

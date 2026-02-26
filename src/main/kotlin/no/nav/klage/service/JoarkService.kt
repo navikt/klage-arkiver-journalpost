@@ -1,7 +1,9 @@
 package no.nav.klage.service
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import no.nav.klage.clients.FileClient
 import no.nav.klage.clients.JoarkClient
+import no.nav.klage.clients.PDFGeneratorClient
 import no.nav.klage.clients.pdl.PdlClient
 import no.nav.klage.clients.pdl.PdlPerson
 import no.nav.klage.domain.*
@@ -10,14 +12,21 @@ import no.nav.klage.kodeverk.innsendingsytelse.Innsendingsytelse
 import no.nav.klage.kodeverk.innsendingsytelse.innsendingsytelseToAnkeEnhet
 import no.nav.klage.kodeverk.innsendingsytelse.innsendingsytelseToTema
 import no.nav.klage.util.getLogger
+import org.springframework.http.MediaType
 import org.springframework.stereotype.Service
+import java.io.BufferedInputStream
+import java.io.File
+import java.io.FileInputStream
+import java.io.FileOutputStream
+import java.nio.file.Files
 import java.util.*
 
 @Service
 class JoarkService(
     private val joarkClient: JoarkClient,
-    private val pdfService: PdfService,
     private val pdlClient: PdlClient,
+    private val pdfGenerator: PDFGeneratorClient,
+    private val fileClient: FileClient,
 ) {
     companion object {
         @Suppress("JAVA_CLASS_ON_COMPANION")
@@ -46,21 +55,45 @@ class JoarkService(
         private const val BEHANDLINGSTEMA_ORTOPEDISKE_HJELPEMIDLER = "ab0013"
         private const val BEHANDLINGSTEMA_FOLKEHOYSKOLE = "ab0368"
         private const val BEHANDLINGSTEMA_HOREAPPARAT = "ab0243"
+
+        val ourJacksonObjectMapper = jacksonObjectMapper()
     }
 
-    fun createJournalpostInJoark(klageAnkeInput: KlageAnkeInput): String {
-        logger.debug("Creating journalpost.")
+    fun createJournalpostAsSystemUser(
+        klageAnkeInput: KlageAnkeInput,
+    ): JournalpostResponse {
+        val partialJournalpostWithoutDocuments = createPartialJournalpostWithoutDocuments(
+            klageAnkeInput = klageAnkeInput,
+        )
 
-        val journalpostRequest = createJournalpostRequest(klageAnkeInput)
+        val partialJournalpostAsJson = ourJacksonObjectMapper.writeValueAsString(partialJournalpostWithoutDocuments)
+        val partialJournalpostAppendable = partialJournalpostAsJson.substring(0, partialJournalpostAsJson.length - 1)
+        val journalpostRequestAsFile = Files.createTempFile(null, null)
+        val journalpostRequestAsFileOutputStream = FileOutputStream(journalpostRequestAsFile.toFile())
+        journalpostRequestAsFileOutputStream.write(partialJournalpostAppendable.toByteArray())
 
-        return joarkClient.postJournalpost(journalpostRequest, klageAnkeInput.id)
+        //add documents (base64 encoded) to the request
+        journalpostRequestAsFileOutputStream.write(",\"dokumenter\":[".toByteArray())
+
+        writeDocumentsToJournalpostRequestAsFile(
+            klageAnkeInput = klageAnkeInput,
+            journalpostRequestAsFileOutputStream = journalpostRequestAsFileOutputStream,
+        )
+
+        journalpostRequestAsFileOutputStream.write("]}".toByteArray())
+        journalpostRequestAsFileOutputStream.flush()
+
+        return joarkClient.createJournalpostInJoarkAsSystemUser(
+            journalpostRequestAsFile = journalpostRequestAsFile.toFile(),
+        )
     }
 
-    private fun createJournalpostRequest(klageAnkeInput: KlageAnkeInput): Journalpost {
+    fun createPartialJournalpostWithoutDocuments(
+        klageAnkeInput: KlageAnkeInput,
+    ): JournalpostPartial {
         val innsendingsytelse = Innsendingsytelse.of(klageAnkeInput.innsendingsYtelseId)
         val tema = innsendingsytelseToTema[innsendingsytelse]!!.name
-
-        return Journalpost(
+        val partialJournalpostWithoutDocuments = JournalpostPartial(
             tema = tema,
             behandlingstema = getBehandlingstema(innsendingsytelse = Innsendingsytelse.of(klageAnkeInput.innsendingsYtelseId)),
             avsenderMottaker = AvsenderMottaker(
@@ -77,7 +110,6 @@ class JoarkService(
             bruker = Bruker(
                 id = klageAnkeInput.identifikasjonsnummer,
             ),
-            dokumenter = getDokumenter(klageAnkeInput),
             tilleggsopplysninger = listOf(
                 Tilleggsopplysning(nokkel = KLAGE_ANKE_ID_KEY, verdi = klageAnkeInput.id),
                 Tilleggsopplysning(
@@ -93,6 +125,101 @@ class JoarkService(
                 ettersendelseToKA = klageAnkeInput.ettersendelseTilKa ?: false,
             )
         )
+
+        return partialJournalpostWithoutDocuments
+    }
+
+    private fun writeDocumentsToJournalpostRequestAsFile(
+        klageAnkeInput: KlageAnkeInput,
+        journalpostRequestAsFileOutputStream: FileOutputStream,
+    ) {
+        val tittel = when (klageAnkeInput.klageAnkeType) {
+            KlageAnkeType.KLAGE -> KLAGE_TITTEL
+            KlageAnkeType.ANKE -> ANKE_TITTEL
+            KlageAnkeType.KLAGE_ETTERSENDELSE -> KLAGE_ETTERSENDELSE_TITTEL
+            KlageAnkeType.ANKE_ETTERSENDELSE -> ANKE_ETTERSENDELSE_TITTEL
+        }
+        val brevkode = when (klageAnkeInput.klageAnkeType) {
+            KlageAnkeType.KLAGE -> BREVKODE_KLAGESKJEMA_KLAGE
+            KlageAnkeType.ANKE -> BREVKODE_KLAGESKJEMA_ANKE
+            KlageAnkeType.KLAGE_ETTERSENDELSE -> BREVKODE_KLAGESKJEMA_KLAGE_ETTERSENDELSE
+            KlageAnkeType.ANKE_ETTERSENDELSE -> BREVKODE_KLAGESKJEMA_ANKE_ETTERSENDELSE
+        }
+
+        val mellomlagretHovedDokument = MellomlagretDokument(
+            title = tittel,
+            file = pdfGenerator.generatePDF(klageAnkeInput),
+            contentType = MediaType.APPLICATION_PDF,
+        )
+
+        val mellomlagretDokumenter = mutableListOf<MellomlagretDokument>()
+
+        //Download attachments from temporary storage
+        val vedleggAsMellomlagretDokument = klageAnkeInput.vedlegg.map { vedlegg ->
+            MellomlagretDokument(
+                title = vedlegg.tittel,
+                file = fileClient.getAttachment(vedlegg.ref),
+                contentType = MediaType.APPLICATION_PDF,
+            )
+        }
+
+        mellomlagretDokumenter += mellomlagretHovedDokument
+        mellomlagretDokumenter += vedleggAsMellomlagretDokument
+
+        mellomlagretDokumenter.forEachIndexed { index, dokument ->
+            val base64File = Files.createTempFile(null, null).toFile()
+            encodeFileToBase64(dokument.file, base64File)
+
+            val base64FileInputStream = FileInputStream(base64File)
+
+            journalpostRequestAsFileOutputStream.write(
+                """
+                {
+                    "tittel": ${ourJacksonObjectMapper.writeValueAsString(dokument.title)},
+                    "brevkode": "$brevkode",
+                    "dokumentvarianter": [
+                        {
+                            "filnavn":${ourJacksonObjectMapper.writeValueAsString(dokument.title)},
+                            "filtype": $PDF_CODE,
+                            "variantformat": "ARKIV",
+                            "fysiskDokument": "
+                """.toByteArray()
+            )
+
+            base64FileInputStream.use { input ->
+                val buffer = ByteArray(1024) // Use a buffer size of 1K
+                var length: Int
+                while (input.read(buffer).also { length = it } != -1) {
+                    journalpostRequestAsFileOutputStream.write(buffer, 0, length)
+                }
+            }
+            journalpostRequestAsFileOutputStream.write("\"}]}".toByteArray())
+            if (index < mellomlagretDokumenter.size - 1) {
+                journalpostRequestAsFileOutputStream.write(",".toByteArray())
+            }
+
+            base64File.delete()
+            dokument.file.delete()
+        }
+
+    }
+
+    private fun encodeFileToBase64(sourceFile: File, destinationFile: File) {
+        val sourceFileInputStream = FileInputStream(sourceFile)
+        val destinationFileOutputStream = FileOutputStream(destinationFile)
+        val encoder = Base64.getEncoder().wrap(destinationFileOutputStream)
+
+        BufferedInputStream(sourceFileInputStream).use { input ->
+            val buffer = ByteArray(3 * 1024) // Use a buffer size of 3K for example
+            var length: Int
+            while (input.read(buffer).also { length = it } != -1) {
+                encoder.write(buffer, 0, length)
+            }
+        }
+
+        encoder.close()
+
+        destinationFileOutputStream.close()
     }
 
     private fun getJournalfoerendeEnhetOverride(
@@ -133,11 +260,12 @@ class JoarkService(
     }
 
     private fun getSak(klageAnkeInput: KlageAnkeInput): Sak? {
-        val isInternalFORSak = if (innsendingsytelseToTema[Innsendingsytelse.of(klageAnkeInput.innsendingsYtelseId)] == Tema.FOR) {
-            klageAnkeInput.internalSaksnummer?.toIntOrNull() != null
-        } else {
-            false
-        }
+        val isInternalFORSak =
+            if (innsendingsytelseToTema[Innsendingsytelse.of(klageAnkeInput.innsendingsYtelseId)] == Tema.FOR) {
+                klageAnkeInput.internalSaksnummer?.toIntOrNull() != null
+            } else {
+                false
+            }
 
         return if (isInternalFORSak) {
             Sak(
@@ -153,64 +281,15 @@ class JoarkService(
                     fagsakid = klageAnkeInput.sak.fagsakid,
                 )
             } catch (e: Exception) {
-                logger.error("Error when trying to parse sak from KlageAnkeInput: ${klageAnkeInput.sak}. Not using sak info for journalføring.", e)
+                logger.error(
+                    "Error when trying to parse sak from KlageAnkeInput: ${klageAnkeInput.sak}. Not using sak info for journalføring.",
+                    e
+                )
                 null
             }
         } else {
             null
         }
-    }
-
-    private fun getDokumenter(klageAnkeInput: KlageAnkeInput): List<Dokument> {
-        val hovedDokument = Dokument(
-            tittel = when (klageAnkeInput.klageAnkeType) {
-                KlageAnkeType.KLAGE -> KLAGE_TITTEL
-                KlageAnkeType.ANKE -> ANKE_TITTEL
-                KlageAnkeType.KLAGE_ETTERSENDELSE -> KLAGE_ETTERSENDELSE_TITTEL
-                KlageAnkeType.ANKE_ETTERSENDELSE -> ANKE_ETTERSENDELSE_TITTEL
-            },
-            brevkode = when (klageAnkeInput.klageAnkeType) {
-                KlageAnkeType.KLAGE -> BREVKODE_KLAGESKJEMA_KLAGE
-                KlageAnkeType.ANKE -> BREVKODE_KLAGESKJEMA_ANKE
-                KlageAnkeType.KLAGE_ETTERSENDELSE -> BREVKODE_KLAGESKJEMA_KLAGE_ETTERSENDELSE
-                KlageAnkeType.ANKE_ETTERSENDELSE -> BREVKODE_KLAGESKJEMA_ANKE_ETTERSENDELSE
-            },
-            //Don't perform pdfa-check for now. Issues with compatibility with Vera and Spring Boot 3.
-            dokumentVarianter = getDokumentVariant(klageAnkeInput.fileContentAsBytes, performPdfaCheck = false)
-        )
-        val documents = mutableListOf(hovedDokument)
-
-        klageAnkeInput.vedlegg.forEach {
-            //Attachments will always be PDF as of now.
-            logger.debug("Adding attachment with GCS reference ${it.ref} to journalpost")
-            val doc = Dokument(
-                tittel = it.tittel,
-                dokumentVarianter = getDokumentVariant(bytes = it.fileContentAsBytes, performPdfaCheck = false)
-            )
-            documents.add(doc)
-        }
-        return documents
-    }
-
-    private fun getDokumentVariant(bytes: ByteArray?, performPdfaCheck: Boolean = true): List<DokumentVariant> {
-        return if (bytes != null) {
-            val dokumentVariant = DokumentVariant(
-                filtype = if (performPdfaCheck && pdfService.pdfByteArrayIsPdfa(bytes)) PDFA_CODE else PDF_CODE,
-                variantformat = "ARKIV",
-                fysiskDokument = Base64.getEncoder().encodeToString(bytes)
-            )
-            listOf(dokumentVariant)
-        } else emptyList()
-    }
-
-    private fun getJournalpostAsJSONForLogging(journalpost: Journalpost): String {
-        val dokumenterWithoutFileData = journalpost.dokumenter.map { dokument ->
-            dokument.copy(dokumentVarianter = dokument.dokumentVarianter.map { variant ->
-                variant.copy(fysiskDokument = "base64 data removed for logging purposes")
-            })
-        }
-        val journalpostCopyWithoutFileData = journalpost.copy(dokumenter = dokumenterWithoutFileData)
-        return jacksonObjectMapper().writeValueAsString(journalpostCopyWithoutFileData)
     }
 
     fun getBehandlingstema(innsendingsytelse: Innsendingsytelse): String? {
@@ -228,4 +307,10 @@ class JoarkService(
             else -> null
         }
     }
+
+    private data class MellomlagretDokument(
+        val title: String,
+        val file: File,
+        val contentType: MediaType,
+    )
 }
