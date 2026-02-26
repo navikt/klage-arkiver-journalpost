@@ -180,7 +180,7 @@ class JoarkService(
                     "dokumentvarianter": [
                         {
                             "filnavn":${ourJacksonObjectMapper.writeValueAsString(dokument.title)},
-                            "filtype": $PDF_CODE,
+                            "filtype": "$PDF_CODE",
                             "variantformat": "ARKIV",
                             "fysiskDokument": "
                 """.toByteArray()
