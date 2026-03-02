@@ -9,20 +9,33 @@ val tokenValidationVersion = "6.0.2"
 val simpleSlackPosterVersion = "1.0.0"
 val kodeverkVersion = "3.0.2"
 
-repositories {
-    mavenCentral()
-    maven("https://github-package-registry-mirror.gc.nav.no/cached/maven-release")
-}
-
 plugins {
     val kotlinVersion = "2.3.10"
-    id("org.springframework.boot") version "4.0.2"
+    id("org.springframework.boot") version "4.0.3"
     kotlin("jvm") version kotlinVersion
     kotlin("plugin.spring") version kotlinVersion
     idea
 }
 
 apply(plugin = "io.spring.dependency-management")
+
+// CVE GHSA-72hv-8253-57qq: jackson-core async parser DoS. Remove when Spring has updated.
+extra["jackson-2-bom.version"] = "2.21.1"
+extra["jackson-bom.version"] = "3.1.0"
+
+repositories {
+    mavenCentral()
+    maven("https://github-package-registry-mirror.gc.nav.no/cached/maven-release")
+}
+
+// Remove when Spring has updated.
+configurations.all {
+    resolutionStrategy.dependencySubstitution {
+        substitute(module("org.lz4:lz4-java"))
+            .using(module("at.yawk.lz4:lz4-java:1.10.1"))
+            .because("CVE-2025-12183 and CVE-2025-66566: org.lz4:lz4-java is archived, new releases under at.yawk.lz4")
+    }
+}
 
 dependencies {
     implementation(kotlin("stdlib"))
