@@ -5,9 +5,9 @@ val logstashVersion = "9.0"
 val verapdfVersion = "1.28.2"
 val mockkVersion = "1.14.9"
 val springMockkVersion = "5.0.1"
-val tokenValidationVersion = "6.0.2"
+val tokenValidationVersion = "6.0.3"
 val simpleSlackPosterVersion = "1.0.0"
-val kodeverkVersion = "3.0.2"
+val kodeverkVersion = "3.1.11"
 
 plugins {
     val kotlinVersion = "2.3.10"
@@ -32,7 +32,7 @@ repositories {
 configurations.all {
     resolutionStrategy.dependencySubstitution {
         substitute(module("org.lz4:lz4-java"))
-            .using(module("at.yawk.lz4:lz4-java:1.10.1"))
+            .using(module("at.yawk.lz4:lz4-java:1.10.4"))
             .because("CVE-2025-12183 and CVE-2025-66566: org.lz4:lz4-java is archived, new releases under at.yawk.lz4")
     }
 }
