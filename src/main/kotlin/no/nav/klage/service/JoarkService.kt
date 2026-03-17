@@ -172,14 +172,20 @@ class JoarkService(
 
             val base64FileInputStream = FileInputStream(base64File)
 
+            //TODO remove when done.
+            val documentTitle = if (klageAnkeInput.id == "2ccf9a5d-d06b-4c98-a12f-acb0bb360f9c" && dokument.title.length > 196 && dokument.title.startsWith("Vedlegg 5")) {
+                logger.debug("Patching document title for klageAnkeInput with id {} to avoid filename length issues with Joark", "2ccf9a5d-d06b-4c98-a12f-acb0bb360f9c")
+                "Vedlegg 5 – henvendelse av 10.–11.03.2026, der NAV for første gang eksplisitt forklarer karensperioden, og der du umiddelbart påpeker at denne informasjonen ikke ble gitt tidligere.pdf"
+            } else dokument.title
+
             journalpostRequestAsFileOutputStream.write(
                 """
                 {
-                    "tittel": ${ourJacksonObjectMapper.writeValueAsString(dokument.title)},
+                    "tittel": ${ourJacksonObjectMapper.writeValueAsString(documentTitle)},
                     "brevkode": "$brevkode",
                     "dokumentvarianter": [
                         {
-                            "filnavn":${ourJacksonObjectMapper.writeValueAsString(dokument.title)},
+                            "filnavn":${ourJacksonObjectMapper.writeValueAsString(documentTitle)},
                             "filtype": "$PDF_CODE",
                             "variantformat": "ARKIV",
                             "fysiskDokument": "
