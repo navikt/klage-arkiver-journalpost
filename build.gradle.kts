@@ -5,13 +5,13 @@ val logstashVersion = "9.0"
 val verapdfVersion = "1.28.2"
 val mockkVersion = "1.14.9"
 val springMockkVersion = "5.0.1"
-val tokenValidationVersion = "6.0.3"
+val tokenValidationVersion = "6.0.4"
 val simpleSlackPosterVersion = "1.0.0"
-val kodeverkVersion = "3.1.11"
+val kodeverkVersion = "3.2.6"
 
 plugins {
-    val kotlinVersion = "2.3.10"
-    id("org.springframework.boot") version "4.0.3"
+    val kotlinVersion = "2.3.20"
+    id("org.springframework.boot") version "4.0.4"
     kotlin("jvm") version kotlinVersion
     kotlin("plugin.spring") version kotlinVersion
     idea
