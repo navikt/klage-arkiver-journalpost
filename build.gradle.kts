@@ -5,9 +5,9 @@ val logstashVersion = "9.0"
 val verapdfVersion = "1.30.1"
 val mockkVersion = "1.14.9"
 val springMockkVersion = "5.0.1"
-val tokenValidationVersion = "6.0.6"
+val tokenValidationVersion = "6.0.8"
 val simpleSlackPosterVersion = "1.0.0"
-val kodeverkVersion = "3.2.13"
+val kodeverkVersion = "3.2.14"
 
 plugins {
     val kotlinVersion = "2.3.21"
