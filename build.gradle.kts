@@ -44,6 +44,16 @@ dependencies {
     implementation("no.nav.security:token-client-spring:$tokenValidationVersion")
     implementation("no.nav.security:token-validation-spring:$tokenValidationVersion")
 
+    //Fix vulnerabilities, while waiting for fix in Spring Boot.
+    implementation("org.apache.tomcat.embed:tomcat-embed-core:11.0.22")
+    implementation("io.netty:netty-codec-http:4.2.14.Final")
+    implementation("io.netty:netty-codec-http2:4.2.14.Final")
+    implementation("io.netty:netty-codec-http3:4.2.14.Final")
+    implementation("io.netty:netty-codec-dns:4.2.14.Final")
+    implementation("io.netty:netty-codec-compression:4.2.14.Final")
+    implementation("io.netty:netty-transport-native-epoll:4.2.14.Final")
+    implementation("io.netty:netty-resolver-dns:4.2.14.Final")
+
     implementation("no.nav.slackposter:simple-slack-poster:$simpleSlackPosterVersion")
     implementation("no.nav.klage:klage-kodeverk:$kodeverkVersion")
 
