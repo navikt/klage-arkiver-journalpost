@@ -68,6 +68,14 @@ no.nav.security.jwt:
           client-id: ${AZURE_APP_CLIENT_ID}
           client-jwk: ${AZURE_APP_JWK}
           client-auth-method: private_key_jwt
+      klage-lookup-maskintilmaskin:
+        token-endpoint-url: https://login.microsoftonline.com/${TENANT_ID}/oauth2/v2.0/token
+        grant-type: client_credentials
+        scope: api://${NAIS_CLUSTER_NAME}.${NAIS_NAMESPACE}.${KLAGE_LOOKUP_APP_NAME}/.default
+        authentication:
+          client-id: ${AZURE_APP_CLIENT_ID}
+          client-jwk: ${AZURE_APP_JWK}
+          client-auth-method: private_key_jwt
 
 KAFKA_TOPIC: klage.privat-klage-mottatt-v1
 
@@ -76,6 +84,9 @@ KLAGE_FILE_API_SERVICE_URL: http://klage-file-api
 KLAGE_FILE_API_APP_NAME: klage-file-api
 KLAGE-DITTNAV-API_SERVICE_URL: http://klage-dittnav-api
 KLAGE_DITTNAV_API_APP_NAME: klage-dittnav-api
+
+KLAGE_LOOKUP_APP_NAME: klage-lookup
+KLAGE_LOOKUP_BASE_URL: http://klage-lookup
 
 # Set to true (if for example testing in production) to ignore/stop posting journalpost to Joark.
 DRY_RUN: false
