@@ -57,6 +57,7 @@ spec:
         - application: klage-file-api
         - application: klage-dittnav-api
         - application: kabal-api
+        - application: klage-lookup
         - application: logging
           namespace: nais-system
       external:

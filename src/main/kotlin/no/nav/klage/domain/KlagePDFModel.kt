@@ -13,4 +13,6 @@ data class KlagePDFModel(
     val dato: String,
     val ytelse: String,
     val ettersendelseTilKa: Boolean,
+    val fullmektigId: String?,
+    val fullmektigNavn: String?,
 )

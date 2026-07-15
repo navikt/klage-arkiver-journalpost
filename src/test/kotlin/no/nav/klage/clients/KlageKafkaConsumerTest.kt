@@ -47,9 +47,6 @@ class KlageKafkaConsumerTest {
     private val input = KlageAnkeInput(
         id = "123",
         identifikasjonsnummer = "12345678901",
-        fornavn = "Navn",
-        mellomnavn = "",
-        etternavn = "Navnesen",
         vedtak = "",
         dato = LocalDate.now(),
         begrunnelse = "BEGRUNNELSE",
@@ -60,6 +57,7 @@ class KlageKafkaConsumerTest {
         ettersendelseTilKa = false,
         innsendingsYtelseId = Innsendingsytelse.SYKDOM_I_FAMILIEN.id,
         sak = null,
+        fullmektig = null,
     )
 
     private val mapper = ObjectMapper()

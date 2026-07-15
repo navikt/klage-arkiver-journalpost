@@ -4,6 +4,7 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import no.nav.klage.clients.FileClient
 import no.nav.klage.clients.JoarkClient
 import no.nav.klage.clients.PDFGeneratorClient
+import no.nav.klage.clients.klagelookup.KlageLookupClient
 import no.nav.klage.clients.pdl.PdlClient
 import no.nav.klage.clients.pdl.PdlPerson
 import no.nav.klage.domain.*
@@ -27,6 +28,7 @@ class JoarkService(
     private val pdlClient: PdlClient,
     private val pdfGenerator: PDFGeneratorClient,
     private val fileClient: FileClient,
+    private val klageLookupClient: KlageLookupClient,
 ) {
     companion object {
         @Suppress("JAVA_CLASS_ON_COMPANION")
@@ -96,10 +98,7 @@ class JoarkService(
         val partialJournalpostWithoutDocuments = JournalpostPartial(
             tema = tema,
             behandlingstema = getBehandlingstema(innsendingsytelse = Innsendingsytelse.of(klageAnkeInput.innsendingsYtelseId)),
-            avsenderMottaker = AvsenderMottaker(
-                id = klageAnkeInput.identifikasjonsnummer,
-                navn = getFullName(klageAnkeInput),
-            ),
+            avsenderMottaker = getAvsenderMottaker(klageAnkeInput),
             sak = getSak(klageAnkeInput),
             tittel = when (klageAnkeInput.klageAnkeType) {
                 KlageAnkeType.KLAGE -> KLAGE_TITTEL
@@ -127,6 +126,20 @@ class JoarkService(
         )
 
         return partialJournalpostWithoutDocuments
+    }
+
+    private fun getAvsenderMottaker(klageAnkeInput: KlageAnkeInput): AvsenderMottaker {
+        return if (klageAnkeInput.fullmektig != null) {
+            AvsenderMottaker(
+                id = klageAnkeInput.fullmektig,
+                navn = getFullName(klageAnkeInput.fullmektig),
+            )
+        } else {
+            AvsenderMottaker(
+                id = klageAnkeInput.identifikasjonsnummer,
+                navn = getFullName(klageAnkeInput.identifikasjonsnummer),
+            )
+        }
     }
 
     private fun writeDocumentsToJournalpostRequestAsFile(
@@ -253,11 +266,12 @@ class JoarkService(
     }
 
 
-    private fun getFullName(klageAnkeInput: KlageAnkeInput): String {
-        return if (klageAnkeInput.mellomnavn.isBlank()) {
-            "${klageAnkeInput.fornavn} ${klageAnkeInput.etternavn}"
+    fun getFullName(ident: String): String {
+        val personInfo = klageLookupClient.getPerson(fnr = ident)
+        return if (personInfo.mellomnavn.isNullOrBlank()) {
+            "${personInfo.fornavn} ${personInfo.etternavn}"
         } else {
-            "${klageAnkeInput.fornavn} ${klageAnkeInput.mellomnavn} ${klageAnkeInput.etternavn}"
+            "${personInfo.fornavn} ${personInfo.mellomnavn} ${personInfo.etternavn}"
         }
     }
 

@@ -9,9 +9,6 @@ import java.time.LocalDate
 data class KlageAnkeInput(
     val id: String,
     val identifikasjonsnummer: String,
-    val fornavn: String,
-    val mellomnavn: String,
-    val etternavn: String,
     val vedtak: String,
     val dato: LocalDate,
     val begrunnelse: String,
@@ -22,6 +19,7 @@ data class KlageAnkeInput(
     val internalSaksnummer: String?,
     val sak: Sak?,
     val klageAnkeType: KlageAnkeType,
+    val fullmektig: String?,
     //Only relevant for ettersendelse klage
     val ettersendelseTilKa: Boolean?,
     val innsendingsYtelseId: String,

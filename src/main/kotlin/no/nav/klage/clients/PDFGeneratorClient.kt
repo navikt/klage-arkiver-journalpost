@@ -1,5 +1,6 @@
 package no.nav.klage.clients
 
+import no.nav.klage.clients.klagelookup.KlageLookupClient
 import no.nav.klage.domain.KlageAnkeInput
 import no.nav.klage.domain.KlageAnkeType
 import no.nav.klage.domain.KlagePDFModel
@@ -23,6 +24,7 @@ import java.util.*
 @Component
 class PDFGeneratorClient(
     private val pdfWebClient: WebClient,
+    private val klageLookupClient: KlageLookupClient,
 ) {
 
     companion object {
@@ -72,12 +74,15 @@ class PDFGeneratorClient(
     private fun KlageAnkeInput.toPDFModel(): KlagePDFModel {
         val ytelseName = Innsendingsytelse.of(innsendingsYtelseId).nbName
 
+        val personInfo = klageLookupClient.getPerson(fnr = identifikasjonsnummer)
+        val fullmektigPersonInfo = fullmektig?.let { klageLookupClient.getPerson(fnr = it) }
+
         return KlagePDFModel(
             type = klageAnkeType.name,
             foedselsnummer = StringBuilder(identifikasjonsnummer).insert(6, " ").toString(),
-            fornavn = fornavn,
-            mellomnavn = mellomnavn,
-            etternavn = etternavn,
+            fornavn = personInfo.fornavn,
+            mellomnavn = personInfo.mellomnavn ?: "",
+            etternavn = personInfo.etternavn,
             vedtak = vedtak,
             begrunnelse = sanitizeText(begrunnelse),
             saksnummer = sanitizeText(getSaksnummerString(userSaksnummer, internalSaksnummer)),
@@ -85,6 +90,8 @@ class PDFGeneratorClient(
             dato = dato.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")),
             ytelse = formatYtelseName(ytelseName),
             ettersendelseTilKa = ettersendelseTilKa ?: false,
+            fullmektigId = fullmektig,
+            fullmektigNavn = fullmektig?.let { getFullName(ident = it) },
         )
     }
 
@@ -113,6 +120,15 @@ class PDFGeneratorClient(
             }
 
             else -> "Ikke angitt"
+        }
+    }
+
+    fun getFullName(ident: String): String {
+        val personInfo = klageLookupClient.getPerson(fnr = ident)
+        return if (personInfo.mellomnavn.isNullOrBlank()) {
+            "${personInfo.fornavn} ${personInfo.etternavn}"
+        } else {
+            "${personInfo.fornavn} ${personInfo.mellomnavn} ${personInfo.etternavn}"
         }
     }
 }
