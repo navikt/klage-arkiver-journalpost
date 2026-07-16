@@ -3,54 +3,6 @@ package no.nav.klage.clients.klagelookup
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import java.time.LocalDate
 
-data class UsersResponse(
-    val users: List<UserResponse>,
-)
-
-data class UserResponse (
-    val navIdent: String,
-    val sammensattNavn: String,
-    val fornavn: String,
-    val etternavn: String,
-)
-
-@JsonIgnoreProperties(ignoreUnknown = true)
-data class ExtendedUsersResponse(
-    val hits: List<ExtendedUserResponse>,
-    val misses: List<String>
-)
-
-@JsonIgnoreProperties(ignoreUnknown = true)
-data class ExtendedUserResponse (
-    val navIdent: String,
-    val sammensattNavn: String,
-    val fornavn: String,
-    val etternavn: String,
-    val enhet: Enhet,
-)
-
-data class Enhet (
-    val enhetNr: String,
-    val enhetNavn: String,
-)
-
-data class GroupsResponse (
-    val groupIds: List<String>,
-)
-
-data class FnrResponse(
-    val fnr: String,
-)
-
-data class AktoerIdResponse(
-    val aktoerId: String,
-)
-
-data class PersonBulkResponse(
-    val hits: List<PersonResponse>,
-    val misses: List<String>,
-)
-
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class PersonResponse(
     val foedselsnr: String,
@@ -67,7 +19,6 @@ data class PersonResponse(
     val vergemaalEllerFremtidsfullmakt: Boolean,
     val sikkerhetstiltak: SikkerhetstiltakResponse?,
 ) {
-
     @JsonIgnoreProperties(ignoreUnknown = true)
     data class SikkerhetstiltakResponse(
         val tiltakstype: String,
@@ -76,34 +27,3 @@ data class PersonResponse(
         val gyldigTilOgMed: LocalDate,
     )
 }
-
-data class BatchedSluttdatoResponse(
-    val hits: List<SluttdatoResponse>,
-    val misses: List<String>,
-)
-
-data class SluttdatoResponse(
-    val navIdent: String,
-    val sluttdato: LocalDate?,
-)
-
-data class PersongalleriResponse(
-    val foedselsnummerList: List<String>,
-)
-
-data class PostadresseResponse(
-    val navn: String?,
-    val adresse: Postadresse?,
-)
-
-data class Postadresse(
-    val adresseKilde: String?,
-    val type: String?,
-    val adresselinje1: String?,
-    val adresselinje2: String?,
-    val adresselinje3: String?,
-    val postnummer: String?,
-    val poststed: String?,
-    val landkode: String?,
-    val land: String?,
-)
