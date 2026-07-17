@@ -19,6 +19,6 @@ fun logErrorResponse(
     return response.createException()
         .doOnNext { ex ->
             classLogger.error("$errorString. See team-logs for more details.")
-            getTeamLogger().error("$errorString - response body: '${ex.responseBodyAsString}'")
+            getTeamLogger().error("$errorString - response body: {}", ex.responseBodyAsString)
         }
 }
