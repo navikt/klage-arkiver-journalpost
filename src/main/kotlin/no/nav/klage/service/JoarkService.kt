@@ -266,7 +266,7 @@ class JoarkService(
     }
 
 
-    fun getFullName(ident: String): String {
+    private fun getFullName(ident: String): String {
         val personInfo = klageLookupClient.getPerson(fnr = ident)
         return if (personInfo.mellomnavn.isNullOrBlank()) {
             "${personInfo.fornavn} ${personInfo.etternavn}"
