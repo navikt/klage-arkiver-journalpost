@@ -75,7 +75,6 @@ class PDFGeneratorClient(
         val ytelseName = Innsendingsytelse.of(innsendingsYtelseId).nbName
 
         val personInfo = klageLookupClient.getPerson(fnr = identifikasjonsnummer)
-        val fullmektigPersonInfo = fullmektig?.let { klageLookupClient.getPerson(fnr = it) }
 
         return KlagePDFModel(
             type = klageAnkeType.name,
