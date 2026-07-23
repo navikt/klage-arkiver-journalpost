@@ -7,7 +7,7 @@ val mockkVersion = "1.14.11"
 val springMockkVersion = "5.0.1"
 val tokenValidationVersion = "6.0.11"
 val simpleSlackPosterVersion = "1.0.0"
-val kodeverkVersion = "3.3.10"
+val kodeverkVersion = "3.3.11"
 
 plugins {
     val kotlinVersion = "2.4.10"
