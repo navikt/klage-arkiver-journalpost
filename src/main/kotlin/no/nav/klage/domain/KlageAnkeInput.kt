@@ -19,7 +19,7 @@ data class KlageAnkeInput(
     val internalSaksnummer: String?,
     val sak: Sak?,
     val klageAnkeType: KlageAnkeType,
-    val fullmektig: String?,
+    val fullmektigId: String?,
     //Only relevant for ettersendelse klage
     val ettersendelseTilKa: Boolean?,
     val innsendingsYtelseId: String,

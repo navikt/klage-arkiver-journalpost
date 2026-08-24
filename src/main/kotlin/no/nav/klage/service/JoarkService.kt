@@ -129,10 +129,10 @@ class JoarkService(
     }
 
     private fun getAvsenderMottaker(klageAnkeInput: KlageAnkeInput): AvsenderMottaker {
-        return if (klageAnkeInput.fullmektig != null) {
+        return if (klageAnkeInput.fullmektigId != null) {
             AvsenderMottaker(
-                id = klageAnkeInput.fullmektig,
-                navn = getFullName(klageAnkeInput.fullmektig),
+                id = klageAnkeInput.fullmektigId,
+                navn = getFullName(klageAnkeInput.fullmektigId),
             )
         } else {
             AvsenderMottaker(

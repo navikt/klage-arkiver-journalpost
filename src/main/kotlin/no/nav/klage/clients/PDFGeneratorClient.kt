@@ -89,8 +89,8 @@ class PDFGeneratorClient(
             dato = dato.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")),
             ytelse = formatYtelseName(ytelseName),
             ettersendelseTilKa = ettersendelseTilKa ?: false,
-            fullmektigId = fullmektig,
-            fullmektigNavn = fullmektig?.let { getFullName(ident = it) },
+            fullmektigId = fullmektigId,
+            fullmektigNavn = fullmektigId?.let { getFullName(ident = it) },
         )
     }
 
