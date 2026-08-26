@@ -14,9 +14,8 @@ import java.lang.System.currentTimeMillis
 @Component
 class PdlClient(
     private val pdlWebClient: WebClient,
-    private val tokenUtil: TokenUtil
+    private val tokenUtil: TokenUtil,
 ) {
-
     companion object {
         @Suppress("JAVA_CLASS_ON_COMPANION")
         private val logger = getLogger(javaClass.enclosingClass)
@@ -34,10 +33,11 @@ class PdlClient(
     }
 
     @Retryable
-    fun getPersonAdresseBeskyttelse(fnr: String): HentPersonResponse {
-        return runWithTiming {
+    fun getPersonAdresseBeskyttelse(fnr: String): HentPersonResponse =
+        runWithTiming {
             val stsSystembrukerToken = tokenUtil.getAppAccessTokenWithPdlScope()
-            pdlWebClient.post()
+            pdlWebClient
+                .post()
                 .header(HttpHeaders.AUTHORIZATION, "Bearer $stsSystembrukerToken")
                 .bodyValue(hentPersonQuery(fnr))
                 .retrieve()
@@ -47,9 +47,7 @@ class PdlClient(
                         teamLogger.error("$errorString - response body: {}", it)
                         RuntimeException(errorString)
                     }
-                }
-                .bodyToMono<HentPersonResponse>()
+                }.bodyToMono<HentPersonResponse>()
                 .block() ?: throw RuntimeException("Person not found")
         }
-    }
 }

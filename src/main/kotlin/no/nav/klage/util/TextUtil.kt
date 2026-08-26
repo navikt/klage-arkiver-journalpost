@@ -1,6 +1,5 @@
 package no.nav.klage.util
 
-
 fun sanitizeText(input: String): String {
     var result = removeFEFF(input)
     result = remove0002(result)
@@ -12,35 +11,20 @@ fun sanitizeText(input: String): String {
     return result
 }
 
-//Pdfgen does not validate text as valid pdf/a when this symbol is present.
-//https://www.fileformat.info/info/unicode/char/feff/index.htm
+// Pdfgen does not validate text as valid pdf/a when this symbol is present.
+// https://www.fileformat.info/info/unicode/char/feff/index.htm
 
-private fun removeFEFF(input: String): String {
-    return input.replace("\uFEFF", "")
-}
+private fun removeFEFF(input: String): String = input.replace(oldValue = "\uFEFF", newValue = "")
 
-private fun remove0002(input: String): String {
-    return input.replace("\u0002", "")
-}
+private fun remove0002(input: String): String = input.replace(oldValue = "\u0002", newValue = "")
 
-private fun remove0003(input: String): String {
-    return input.replace("\u0003", "")
-}
+private fun remove0003(input: String): String = input.replace(oldValue = "\u0003", newValue = "")
 
-//Backspace, not accepted by pdfgen.
-private fun remove0008(input: String): String {
-    return input.replace("\u0008", "")
-}
+// Backspace, not accepted by pdfgen.
+private fun remove0008(input: String): String = input.replace(oldValue = "\u0008", newValue = "")
 
-private fun remove000B(input: String): String {
-    return input.replace("\u000B", "")
-}
+private fun remove000B(input: String): String = input.replace(oldValue = "\u000B", newValue = "")
 
-private fun remove000C(input: String): String {
-    return input.replace("\u000C", "")
-}
+private fun remove000C(input: String): String = input.replace(oldValue = "\u000C", newValue = "")
 
-
-private fun remove0016(input: String): String {
-    return input.replace("\u0016", "")
-}
+private fun remove0016(input: String): String = input.replace(oldValue = "\u0016", newValue = "")

@@ -8,7 +8,6 @@ import org.springframework.boot.runApplication
 
 @SpringBootApplication
 class Application {
-
     companion object {
         @Suppress("JAVA_CLASS_ON_COMPANION")
         private val logger = getLogger(javaClass.enclosingClass)
@@ -26,8 +25,6 @@ class Application {
         }
     }
 }
-
-
 
 fun main() {
     runApplication<Application>()

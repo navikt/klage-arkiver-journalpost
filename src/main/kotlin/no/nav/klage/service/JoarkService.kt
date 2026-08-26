@@ -7,7 +7,16 @@ import no.nav.klage.clients.PDFGeneratorClient
 import no.nav.klage.clients.klagelookup.KlageLookupClient
 import no.nav.klage.clients.pdl.PdlClient
 import no.nav.klage.clients.pdl.PdlPerson
-import no.nav.klage.domain.*
+import no.nav.klage.domain.AvsenderMottaker
+import no.nav.klage.domain.Bruker
+import no.nav.klage.domain.FagsaksSystem
+import no.nav.klage.domain.JournalpostPartial
+import no.nav.klage.domain.JournalpostResponse
+import no.nav.klage.domain.KlageAnkeInput
+import no.nav.klage.domain.KlageAnkeType
+import no.nav.klage.domain.Sak
+import no.nav.klage.domain.Sakstype
+import no.nav.klage.domain.Tilleggsopplysning
 import no.nav.klage.kodeverk.Tema
 import no.nav.klage.kodeverk.innsendingsytelse.Innsendingsytelse
 import no.nav.klage.kodeverk.innsendingsytelse.innsendingsytelseToAnkeEnhet
@@ -20,7 +29,7 @@ import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.nio.file.Files
-import java.util.*
+import java.util.Base64
 
 @Service
 class JoarkService(
@@ -61,20 +70,23 @@ class JoarkService(
         val ourJacksonObjectMapper = jacksonObjectMapper()
     }
 
-    fun createJournalpostAsSystemUser(
-        klageAnkeInput: KlageAnkeInput,
-    ): JournalpostResponse {
-        val partialJournalpostWithoutDocuments = createPartialJournalpostWithoutDocuments(
-            klageAnkeInput = klageAnkeInput,
-        )
+    fun createJournalpostAsSystemUser(klageAnkeInput: KlageAnkeInput): JournalpostResponse {
+        val partialJournalpostWithoutDocuments =
+            createPartialJournalpostWithoutDocuments(
+                klageAnkeInput = klageAnkeInput,
+            )
 
         val partialJournalpostAsJson = ourJacksonObjectMapper.writeValueAsString(partialJournalpostWithoutDocuments)
-        val partialJournalpostAppendable = partialJournalpostAsJson.substring(0, partialJournalpostAsJson.length - 1)
+        val partialJournalpostAppendable =
+            partialJournalpostAsJson.substring(
+                startIndex = 0,
+                endIndex = partialJournalpostAsJson.length - 1,
+            )
         val journalpostRequestAsFile = Files.createTempFile(null, null)
         val journalpostRequestAsFileOutputStream = FileOutputStream(journalpostRequestAsFile.toFile())
         journalpostRequestAsFileOutputStream.write(partialJournalpostAppendable.toByteArray())
 
-        //add documents (base64 encoded) to the request
+        // add documents (base64 encoded) to the request
         journalpostRequestAsFileOutputStream.write(",\"dokumenter\":[".toByteArray())
 
         writeDocumentsToJournalpostRequestAsFile(
@@ -90,46 +102,49 @@ class JoarkService(
         )
     }
 
-    fun createPartialJournalpostWithoutDocuments(
-        klageAnkeInput: KlageAnkeInput,
-    ): JournalpostPartial {
+    fun createPartialJournalpostWithoutDocuments(klageAnkeInput: KlageAnkeInput): JournalpostPartial {
         val innsendingsytelse = Innsendingsytelse.of(klageAnkeInput.innsendingsYtelseId)
         val tema = innsendingsytelseToTema[innsendingsytelse]!!.name
-        val partialJournalpostWithoutDocuments = JournalpostPartial(
-            tema = tema,
-            behandlingstema = getBehandlingstema(innsendingsytelse = Innsendingsytelse.of(klageAnkeInput.innsendingsYtelseId)),
-            avsenderMottaker = getAvsenderMottaker(klageAnkeInput),
-            sak = getSak(klageAnkeInput),
-            tittel = when (klageAnkeInput.klageAnkeType) {
-                KlageAnkeType.KLAGE -> KLAGE_TITTEL
-                KlageAnkeType.ANKE -> ANKE_TITTEL
-                KlageAnkeType.KLAGE_ETTERSENDELSE -> KLAGE_ETTERSENDELSE_TITTEL
-                KlageAnkeType.ANKE_ETTERSENDELSE -> ANKE_ETTERSENDELSE_TITTEL
-            },
-            bruker = Bruker(
-                id = klageAnkeInput.identifikasjonsnummer,
-            ),
-            tilleggsopplysninger = listOf(
-                Tilleggsopplysning(nokkel = KLAGE_ANKE_ID_KEY, verdi = klageAnkeInput.id),
-                Tilleggsopplysning(
-                    nokkel = KLAGE_ANKE_YTELSE_KEY,
-                    verdi = innsendingsytelse.name
-                )
-            ),
-            eksternReferanseId = "${klageAnkeInput.klageAnkeType.name}_${klageAnkeInput.id}",
-            journalfoerendeEnhet = getJournalfoerendeEnhetOverride(
-                klageAnkeType = klageAnkeInput.klageAnkeType,
-                identifikasjonsnummer = klageAnkeInput.identifikasjonsnummer,
-                innsendingsytelse = innsendingsytelse,
-                ettersendelseToKA = klageAnkeInput.ettersendelseTilKa ?: false,
+        val partialJournalpostWithoutDocuments =
+            JournalpostPartial(
+                tema = tema,
+                behandlingstema = getBehandlingstema(innsendingsytelse = Innsendingsytelse.of(klageAnkeInput.innsendingsYtelseId)),
+                avsenderMottaker = getAvsenderMottaker(klageAnkeInput),
+                sak = getSak(klageAnkeInput),
+                tittel =
+                    when (klageAnkeInput.klageAnkeType) {
+                        KlageAnkeType.KLAGE -> KLAGE_TITTEL
+                        KlageAnkeType.ANKE -> ANKE_TITTEL
+                        KlageAnkeType.KLAGE_ETTERSENDELSE -> KLAGE_ETTERSENDELSE_TITTEL
+                        KlageAnkeType.ANKE_ETTERSENDELSE -> ANKE_ETTERSENDELSE_TITTEL
+                    },
+                bruker =
+                    Bruker(
+                        id = klageAnkeInput.identifikasjonsnummer,
+                    ),
+                tilleggsopplysninger =
+                    listOf(
+                        Tilleggsopplysning(nokkel = KLAGE_ANKE_ID_KEY, verdi = klageAnkeInput.id),
+                        Tilleggsopplysning(
+                            nokkel = KLAGE_ANKE_YTELSE_KEY,
+                            verdi = innsendingsytelse.name,
+                        ),
+                    ),
+                eksternReferanseId = "${klageAnkeInput.klageAnkeType.name}_${klageAnkeInput.id}",
+                journalfoerendeEnhet =
+                    getJournalfoerendeEnhetOverride(
+                        klageAnkeType = klageAnkeInput.klageAnkeType,
+                        identifikasjonsnummer = klageAnkeInput.identifikasjonsnummer,
+                        innsendingsytelse = innsendingsytelse,
+                        ettersendelseToKA = klageAnkeInput.ettersendelseTilKa ?: false,
+                    ),
             )
-        )
 
         return partialJournalpostWithoutDocuments
     }
 
-    private fun getAvsenderMottaker(klageAnkeInput: KlageAnkeInput): AvsenderMottaker {
-        return if (klageAnkeInput.fullmektigId != null) {
+    private fun getAvsenderMottaker(klageAnkeInput: KlageAnkeInput): AvsenderMottaker =
+        if (klageAnkeInput.fullmektigId != null) {
             AvsenderMottaker(
                 id = klageAnkeInput.fullmektigId,
                 navn = getFullName(klageAnkeInput.fullmektigId),
@@ -140,48 +155,51 @@ class JoarkService(
                 navn = getFullName(klageAnkeInput.identifikasjonsnummer),
             )
         }
-    }
 
     private fun writeDocumentsToJournalpostRequestAsFile(
         klageAnkeInput: KlageAnkeInput,
         journalpostRequestAsFileOutputStream: FileOutputStream,
     ) {
-        val tittel = when (klageAnkeInput.klageAnkeType) {
-            KlageAnkeType.KLAGE -> KLAGE_TITTEL
-            KlageAnkeType.ANKE -> ANKE_TITTEL
-            KlageAnkeType.KLAGE_ETTERSENDELSE -> KLAGE_ETTERSENDELSE_TITTEL
-            KlageAnkeType.ANKE_ETTERSENDELSE -> ANKE_ETTERSENDELSE_TITTEL
-        }
-        val brevkode = when (klageAnkeInput.klageAnkeType) {
-            KlageAnkeType.KLAGE -> BREVKODE_KLAGESKJEMA_KLAGE
-            KlageAnkeType.ANKE -> BREVKODE_KLAGESKJEMA_ANKE
-            KlageAnkeType.KLAGE_ETTERSENDELSE -> BREVKODE_KLAGESKJEMA_KLAGE_ETTERSENDELSE
-            KlageAnkeType.ANKE_ETTERSENDELSE -> BREVKODE_KLAGESKJEMA_ANKE_ETTERSENDELSE
-        }
+        val tittel =
+            when (klageAnkeInput.klageAnkeType) {
+                KlageAnkeType.KLAGE -> KLAGE_TITTEL
+                KlageAnkeType.ANKE -> ANKE_TITTEL
+                KlageAnkeType.KLAGE_ETTERSENDELSE -> KLAGE_ETTERSENDELSE_TITTEL
+                KlageAnkeType.ANKE_ETTERSENDELSE -> ANKE_ETTERSENDELSE_TITTEL
+            }
+        val brevkode =
+            when (klageAnkeInput.klageAnkeType) {
+                KlageAnkeType.KLAGE -> BREVKODE_KLAGESKJEMA_KLAGE
+                KlageAnkeType.ANKE -> BREVKODE_KLAGESKJEMA_ANKE
+                KlageAnkeType.KLAGE_ETTERSENDELSE -> BREVKODE_KLAGESKJEMA_KLAGE_ETTERSENDELSE
+                KlageAnkeType.ANKE_ETTERSENDELSE -> BREVKODE_KLAGESKJEMA_ANKE_ETTERSENDELSE
+            }
 
-        val mellomlagretHovedDokument = MellomlagretDokument(
-            title = tittel,
-            file = pdfGenerator.generatePDF(klageAnkeInput),
-            contentType = MediaType.APPLICATION_PDF,
-        )
+        val mellomlagretHovedDokument =
+            MellomlagretDokument(
+                title = tittel,
+                file = pdfGenerator.generatePDF(klageAnkeInput),
+                contentType = MediaType.APPLICATION_PDF,
+            )
 
         val mellomlagretDokumenter = mutableListOf<MellomlagretDokument>()
 
-        //Download attachments from temporary storage
-        val vedleggAsMellomlagretDokument = klageAnkeInput.vedlegg.map { vedlegg ->
-            MellomlagretDokument(
-                title = vedlegg.tittel,
-                file = fileClient.getAttachment(vedlegg.ref),
-                contentType = MediaType.APPLICATION_PDF,
-            )
-        }
+        // Download attachments from temporary storage
+        val vedleggAsMellomlagretDokument =
+            klageAnkeInput.vedlegg.map { vedlegg ->
+                MellomlagretDokument(
+                    title = vedlegg.tittel,
+                    file = fileClient.getAttachment(vedlegg.ref),
+                    contentType = MediaType.APPLICATION_PDF,
+                )
+            }
 
         mellomlagretDokumenter += mellomlagretHovedDokument
         mellomlagretDokumenter += vedleggAsMellomlagretDokument
 
         mellomlagretDokumenter.forEachIndexed { index, dokument ->
             val base64File = Files.createTempFile(null, null).toFile()
-            encodeFileToBase64(dokument.file, base64File)
+            encodeFileToBase64(sourceFile = dokument.file, destinationFile = base64File)
 
             val base64FileInputStream = FileInputStream(base64File)
 
@@ -198,7 +216,7 @@ class JoarkService(
                             "filtype": "$PDF_CODE",
                             "variantformat": "ARKIV",
                             "fysiskDokument": "
-                """.toByteArray()
+                """.toByteArray(),
             )
 
             base64FileInputStream.use { input ->
@@ -216,10 +234,12 @@ class JoarkService(
             base64File.delete()
             dokument.file.delete()
         }
-
     }
 
-    private fun encodeFileToBase64(sourceFile: File, destinationFile: File) {
+    private fun encodeFileToBase64(
+        sourceFile: File,
+        destinationFile: File,
+    ) {
         val sourceFileInputStream = FileInputStream(sourceFile)
         val destinationFileOutputStream = FileOutputStream(destinationFile)
         val encoder = Base64.getEncoder().wrap(destinationFileOutputStream)
@@ -244,27 +264,37 @@ class JoarkService(
         ettersendelseToKA: Boolean,
     ): String? {
         val adressebeskyttelse =
-            pdlClient.getPersonAdresseBeskyttelse(fnr = identifikasjonsnummer).data?.hentPerson?.adressebeskyttelse
+            pdlClient
+                .getPersonAdresseBeskyttelse(fnr = identifikasjonsnummer)
+                .data
+                ?.hentPerson
+                ?.adressebeskyttelse
 
         if (adressebeskyttelse?.any {
-                it.gradering == PdlPerson.Adressebeskyttelse.GraderingType.STRENGT_FORTROLIG
-                        || it.gradering == PdlPerson.Adressebeskyttelse.GraderingType.STRENGT_FORTROLIG_UTLAND
-            } == true) {
+                it.gradering == PdlPerson.Adressebeskyttelse.GraderingType.STRENGT_FORTROLIG ||
+                    it.gradering == PdlPerson.Adressebeskyttelse.GraderingType.STRENGT_FORTROLIG_UTLAND
+            } == true
+        ) {
             return null
         }
 
         return if (shouldBeSentToKA(klageAnkeType = klageAnkeType, ettersendelseToKA = ettersendelseToKA)) {
             if (innsendingsytelse != null) {
                 innsendingsytelseToAnkeEnhet[innsendingsytelse]!!.navn
-            } else null
-        } else null
+            } else {
+                null
+            }
+        } else {
+            null
+        }
     }
 
-    private fun shouldBeSentToKA(klageAnkeType: KlageAnkeType, ettersendelseToKA: Boolean): Boolean {
-        return (klageAnkeType == KlageAnkeType.KLAGE_ETTERSENDELSE && ettersendelseToKA) ||
-                (klageAnkeType in listOf(KlageAnkeType.ANKE, KlageAnkeType.ANKE_ETTERSENDELSE))
-    }
-
+    private fun shouldBeSentToKA(
+        klageAnkeType: KlageAnkeType,
+        ettersendelseToKA: Boolean,
+    ): Boolean =
+        (klageAnkeType == KlageAnkeType.KLAGE_ETTERSENDELSE && ettersendelseToKA) ||
+            (klageAnkeType in listOf(KlageAnkeType.ANKE, KlageAnkeType.ANKE_ETTERSENDELSE))
 
     private fun getFullName(ident: String): String {
         val personInfo = klageLookupClient.getPerson(fnr = ident)
@@ -289,7 +319,7 @@ class JoarkService(
                 fagsaksystem = FagsaksSystem.FS36,
                 fagsakid = klageAnkeInput.internalSaksnummer,
             )
-        } else if (klageAnkeInput.sak != null) { //this logic will take over for all cases when FOR sends us complete sak data.
+        } else if (klageAnkeInput.sak != null) { // this logic will take over for all cases when FOR sends us complete sak data.
             try {
                 Sak(
                     sakstype = Sakstype.valueOf(klageAnkeInput.sak.sakstype),
@@ -299,7 +329,7 @@ class JoarkService(
             } catch (e: Exception) {
                 logger.error(
                     "Error when trying to parse sak from KlageAnkeInput: ${klageAnkeInput.sak}. Not using sak info for journalføring.",
-                    e
+                    e,
                 )
                 null
             }
@@ -308,8 +338,8 @@ class JoarkService(
         }
     }
 
-    fun getBehandlingstema(innsendingsytelse: Innsendingsytelse): String? {
-        return when (innsendingsytelse) {
+    fun getBehandlingstema(innsendingsytelse: Innsendingsytelse): String? =
+        when (innsendingsytelse) {
             Innsendingsytelse.LONNSKOMPENSASJON -> BEHANDLINGSTEMA_LONNSKOMPENSASJON
             Innsendingsytelse.DAGPENGER_TILBAKEBETALING_FORSKUDD -> BEHANDLINGSTEMA_TILBAKEBETALING_FORSKUDD
             Innsendingsytelse.FORELDREPENGER -> BEHANDLINGSTEMA_FORELDREPENGER
@@ -322,7 +352,6 @@ class JoarkService(
             Innsendingsytelse.HOREAPPARAT_ELLER_TINNITUSMASKERER -> BEHANDLINGSTEMA_HOREAPPARAT
             else -> null
         }
-    }
 
     private data class MellomlagretDokument(
         val title: String,

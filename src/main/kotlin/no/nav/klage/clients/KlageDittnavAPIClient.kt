@@ -14,16 +14,23 @@ class KlageDittnavAPIClient(
     private val klageDittnavAPIWebClient: WebClient,
     private val tokenUtil: TokenUtil,
 ) {
-
     companion object {
         @Suppress("JAVA_CLASS_ON_COMPANION")
         private val logger = getLogger(javaClass.enclosingClass)
     }
 
     @Retryable
-    fun setJournalpostIdInKlanke(klankeId: String, journalpostId: String) {
-        logger.debug("Registering journalpost ID for klanke in klage-dittnav-api. KlankeId ref: {}, journalpostId: {}", klankeId, journalpostId)
-        klageDittnavAPIWebClient.post()
+    fun setJournalpostIdInKlanke(
+        klankeId: String,
+        journalpostId: String,
+    ) {
+        logger.debug(
+            "Registering journalpost ID for klanke in klage-dittnav-api. KlankeId ref: {}, journalpostId: {}",
+            klankeId,
+            journalpostId,
+        )
+        klageDittnavAPIWebClient
+            .post()
             .uri("klanker/$klankeId/journalpostid")
             .header(HttpHeaders.AUTHORIZATION, "Bearer ${tokenUtil.getAppAccessTokenWithKlageDittnavApiScope()}")
             .bodyValue(KlageApiJournalpost(journalpostId))
@@ -35,7 +42,8 @@ class KlageDittnavAPIClient(
     @Retryable
     fun getJournalpostForKlankeId(klankeId: String): JournalpostIdResponse {
         logger.debug("Getting journalpostId for klanke from klage-dittnav-api. KlankeId: {}", klankeId)
-        return klageDittnavAPIWebClient.get()
+        return klageDittnavAPIWebClient
+            .get()
             .uri("klanker/$klankeId/journalpostid")
             .header(HttpHeaders.AUTHORIZATION, "Bearer ${tokenUtil.getAppAccessTokenWithKlageDittnavApiScope()}")
             .retrieve()
@@ -44,4 +52,6 @@ class KlageDittnavAPIClient(
     }
 }
 
-data class JournalpostIdResponse(val journalpostId: String?)
+data class JournalpostIdResponse(
+    val journalpostId: String?,
+)

@@ -10,44 +10,39 @@ import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.bodyToMono
 
-
 @Component
 class KlageLookupClient(
     private val klageLookupWebClient: WebClient,
     private val tokenUtil: TokenUtil,
 ) {
-
     companion object {
         @Suppress("JAVA_CLASS_ON_COMPANION")
         private val logger = getLogger(javaClass.enclosingClass)
     }
 
     @Retryable
-    fun getPerson(fnr: String): PersonResponse {
-        return runWithTimingAndLogging {
-            klageLookupWebClient.post()
+    fun getPerson(fnr: String): PersonResponse =
+        runWithTimingAndLogging {
+            klageLookupWebClient
+                .post()
                 .uri("/person")
                 .bodyValue(
                     GetPersonRequest(
                         fnr = fnr,
-                    )
-                )
-                .header(
+                    ),
+                ).header(
                     HttpHeaders.AUTHORIZATION,
                     "Bearer ${tokenUtil.getAppAccessTokenWithKlageLookupScope()}",
-                )
-                .retrieve()
+                ).retrieve()
                 .onStatus(HttpStatusCode::isError) { response ->
                     logErrorResponse(
                         response = response,
                         functionName = ::getPerson.name,
                         classLogger = logger,
                     )
-                }
-                .bodyToMono<PersonResponse>()
+                }.bodyToMono<PersonResponse>()
                 .block() ?: throw RuntimeException("Could not get person. Response was null.")
         }
-    }
 
     private fun <T> runWithTimingAndLogging(block: () -> T): T {
         val start = System.currentTimeMillis()

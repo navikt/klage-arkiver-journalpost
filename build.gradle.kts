@@ -1,6 +1,8 @@
+
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
+val ktlintVersion = "1.8.0"
 val logstashVersion = "9.0"
 val verapdfVersion = "1.30.2"
 val mockkVersion = "1.14.11"
@@ -14,6 +16,7 @@ plugins {
     id("org.springframework.boot") version "4.1.0"
     kotlin("jvm") version kotlinVersion
     kotlin("plugin.spring") version kotlinVersion
+    id("dev.detekt") version "2.0.0-alpha.6"
     idea
 }
 
@@ -59,10 +62,80 @@ dependencies {
     testImplementation("com.ninja-squad:springmockk:$springMockkVersion")
 }
 
+val ktlintCli = configurations.create("ktlintCli")
+
+dependencies {
+    ktlintCli("com.pinterest.ktlint:ktlint-cli:$ktlintVersion")
+}
+
 idea {
     module {
         isDownloadJavadoc = true
     }
+}
+
+val ktlintInputs =
+    files(
+        "src/main/kotlin",
+        "src/test/kotlin",
+        "build.gradle.kts",
+        "settings.gradle.kts",
+    )
+
+fun registerKtlintTask(
+    name: String,
+    format: Boolean,
+) {
+    tasks.register<JavaExec>(name) {
+        group = "verification"
+        description =
+            if (format) {
+                "Formats Kotlin sources with ktlint"
+            } else {
+                "Checks Kotlin sources with ktlint"
+            }
+        classpath = ktlintCli
+        mainClass.set("com.pinterest.ktlint.Main")
+        args =
+            buildList {
+                if (format) {
+                    add("--format")
+                }
+                addAll(ktlintInputs.files.map { it.relativeTo(rootDir).path })
+            }
+        inputs
+            .files(ktlintInputs)
+            .withPathSensitivity(org.gradle.api.tasks.PathSensitivity.RELATIVE)
+    }
+}
+
+registerKtlintTask("ktlintCheck", format = false)
+registerKtlintTask("ktlintFormat", format = true)
+
+detekt {
+    config.setFrom(files("$rootDir/config/detekt/detekt.yml"))
+    buildUponDefaultConfig.set(true)
+    ignoreFailures.set(false)
+}
+
+// NamedArguments reports only with analysis tasks that have compile classpath.
+tasks.named("detekt") {
+    enabled = false
+}
+
+tasks.withType<dev.detekt.gradle.Detekt>().configureEach {
+    jvmTarget.set(JvmTarget.JVM_21.target)
+    reports {
+        html.required.set(true)
+        checkstyle.required.set(true)
+        sarif.required.set(false)
+        markdown.required.set(false)
+    }
+}
+
+tasks.named("check") {
+    dependsOn("ktlintCheck")
+    dependsOn("detektMain", "detektTest")
 }
 
 java.sourceCompatibility = JavaVersion.VERSION_21

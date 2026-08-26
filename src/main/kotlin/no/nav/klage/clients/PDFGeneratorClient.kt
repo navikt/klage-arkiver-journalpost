@@ -18,37 +18,36 @@ import org.springframework.web.reactive.function.client.bodyToFlux
 import java.io.File
 import java.nio.file.Files
 import java.time.format.DateTimeFormatter
-import java.util.*
-
+import java.util.Locale
 
 @Component
 class PDFGeneratorClient(
     private val pdfWebClient: WebClient,
     private val klageLookupClient: KlageLookupClient,
 ) {
-
     companion object {
         @Suppress("JAVA_CLASS_ON_COMPANION")
         private val logger = getLogger(javaClass.enclosingClass)
     }
 
     @Retryable
-    fun generatePDF(klageAnkeInput: KlageAnkeInput): File {
-        return when (klageAnkeInput.klageAnkeType) {
+    fun generatePDF(klageAnkeInput: KlageAnkeInput): File =
+        when (klageAnkeInput.klageAnkeType) {
             KlageAnkeType.KLAGE, KlageAnkeType.ANKE -> getKlageAnkePDF(klageAnkeInput)
             KlageAnkeType.KLAGE_ETTERSENDELSE, KlageAnkeType.ANKE_ETTERSENDELSE -> getEttersendelsePDF(klageAnkeInput)
         }
-    }
 
     private fun getKlageAnkePDF(klageAnkeInput: KlageAnkeInput): File {
         logger.debug("Creating PDF for klage/anke.")
 
-        val dataBufferFlux = pdfWebClient.post()
-            .uri { it.path("/klageanke").build() }
-            .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(klageAnkeInput.toPDFModel())
-            .retrieve()
-            .bodyToFlux<DataBuffer>()
+        val dataBufferFlux =
+            pdfWebClient
+                .post()
+                .uri { it.path("/klageanke").build() }
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(klageAnkeInput.toPDFModel())
+                .retrieve()
+                .bodyToFlux<DataBuffer>()
 
         val tempFile = Files.createTempFile(null, null)
 
@@ -58,12 +57,14 @@ class PDFGeneratorClient(
 
     private fun getEttersendelsePDF(klageAnkeInput: KlageAnkeInput): File {
         logger.debug("Creating PDF for ettersendelse.")
-        val dataBufferFlux = pdfWebClient.post()
-            .uri { it.path("/ettersendelse").build() }
-            .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(klageAnkeInput.toPDFModel())
-            .retrieve()
-            .bodyToFlux<DataBuffer>()
+        val dataBufferFlux =
+            pdfWebClient
+                .post()
+                .uri { it.path("/ettersendelse").build() }
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(klageAnkeInput.toPDFModel())
+                .retrieve()
+                .bodyToFlux<DataBuffer>()
 
         val tempFile = Files.createTempFile(null, null)
 
@@ -84,7 +85,7 @@ class PDFGeneratorClient(
             etternavn = personInfo.etternavn,
             vedtak = vedtak,
             begrunnelse = sanitizeText(begrunnelse),
-            saksnummer = sanitizeText(getSaksnummerString(userSaksnummer, internalSaksnummer)),
+            saksnummer = sanitizeText(getSaksnummerString(userSaksnummer = userSaksnummer, internalSaksnummer = internalSaksnummer)),
             oversiktVedlegg = getOversiktVedlegg(vedlegg),
             dato = dato.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")),
             ytelse = formatYtelseName(ytelseName),
@@ -94,22 +95,25 @@ class PDFGeneratorClient(
         )
     }
 
-    private fun formatYtelseName(ytelseName: String): String {
-        return if (ytelseName[1].isUpperCase()) {
+    private fun formatYtelseName(ytelseName: String): String =
+        if (ytelseName[1].isUpperCase()) {
             ytelseName
-        } else ytelseName.replaceFirstChar { it.lowercase(Locale.getDefault()) }
-    }
+        } else {
+            ytelseName.replaceFirstChar { it.lowercase(Locale.getDefault()) }
+        }
 
-    private fun getOversiktVedlegg(vedlegg: List<Vedlegg>): String {
-        return if (vedlegg.isEmpty()) {
+    private fun getOversiktVedlegg(vedlegg: List<Vedlegg>): String =
+        if (vedlegg.isEmpty()) {
             "Ingen vedlegg."
         } else {
             vedlegg.joinToString { it.tittel }
         }
-    }
 
-    private fun getSaksnummerString(userSaksnummer: String? = null, internalSaksnummer: String? = null): String {
-        return when {
+    private fun getSaksnummerString(
+        userSaksnummer: String? = null,
+        internalSaksnummer: String? = null,
+    ): String =
+        when {
             userSaksnummer != null -> {
                 "$userSaksnummer - Oppgitt av bruker"
             }
@@ -118,9 +122,10 @@ class PDFGeneratorClient(
                 "$internalSaksnummer - Hentet fra internt system"
             }
 
-            else -> "Ikke angitt"
+            else -> {
+                "Ikke angitt"
+            }
         }
-    }
 
     fun getFullName(ident: String): String {
         val personInfo = klageLookupClient.getPerson(fnr = ident)
@@ -131,4 +136,3 @@ class PDFGeneratorClient(
         }
     }
 }
-

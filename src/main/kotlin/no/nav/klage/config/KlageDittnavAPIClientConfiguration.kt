@@ -9,9 +9,8 @@ import org.springframework.web.reactive.function.client.WebClient
 
 @Configuration
 class KlageDittnavAPIClientConfiguration(
-    @Qualifier("fastLookupWebClientBuilder") private val fastLookupWebClientBuilder: WebClient.Builder
+    @Qualifier("fastLookupWebClientBuilder") private val fastLookupWebClientBuilder: WebClient.Builder,
 ) {
-
     companion object {
         @Suppress("JAVA_CLASS_ON_COMPANION")
         private val logger = getLogger(javaClass.enclosingClass)
@@ -21,9 +20,8 @@ class KlageDittnavAPIClientConfiguration(
     private lateinit var klageDittnavAPIServiceURL: String
 
     @Bean
-    fun klageDittnavAPIWebClient(): WebClient {
-        return fastLookupWebClientBuilder
+    fun klageDittnavAPIWebClient(): WebClient =
+        fastLookupWebClientBuilder
             .baseUrl(klageDittnavAPIServiceURL + "/internal/")
             .build()
-    }
 }
