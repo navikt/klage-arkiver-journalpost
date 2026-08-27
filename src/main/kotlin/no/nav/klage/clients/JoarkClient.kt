@@ -93,21 +93,21 @@ class JoarkClient(
         // Log warning if request takes longer than expected based on file size
         val expectedMaxMs =
             when {
+                // 1 byte - 500KB: max 400ms
                 fileSize < 500_000 -> 400L
 
-                // 1 byte - 500KB: max 400ms
+                // 500KB - 1MB: max 1s
                 fileSize < 1_000_000 -> 1_000L
 
-                // 500KB - 1MB: max 1s
+                // 1MB - 2MB: max 2s
                 fileSize < 2_000_000 -> 2_000L
 
-                // 1MB - 2MB: max 2s
+                // 2MB - 5MB: max 4s
                 fileSize < 5_000_000 -> 4_000L
 
-                // 2MB - 5MB: max 4s
+                // 5MB - 15MB: max 10s
                 fileSize < 15_000_000 -> 10_000L
 
-                // 5MB - 15MB: max 10s
                 else -> 25_000L // 15MB+: max 25s
             }
         if (durationMs > expectedMaxMs) {
