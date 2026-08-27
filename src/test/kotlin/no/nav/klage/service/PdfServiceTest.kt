@@ -17,18 +17,20 @@ class PdfServiceTest {
     @Test
     fun `pdf-a file is valid`() {
         val multipartFileMock = mockk<MultipartFile>()
-        every { multipartFileMock.bytes } returns Files.readAllBytes(
-            Path.of("src/test/resources/pdf/pdf-a.pdf")
-        )
+        every { multipartFileMock.bytes } returns
+            Files.readAllBytes(
+                Path.of("src/test/resources/pdf/pdf-a.pdf"),
+            )
         assertTrue(pdfService.pdfByteArrayIsPdfa(multipartFileMock.bytes))
     }
 
     @Test
     fun `non-compliant pdf file is not valid`() {
         val multipartFileMock = mockk<MultipartFile>()
-        every { multipartFileMock.bytes } returns Files.readAllBytes(
-            Path.of("src/test/resources/pdf/not-pdf-a.pdf")
-        )
+        every { multipartFileMock.bytes } returns
+            Files.readAllBytes(
+                Path.of("src/test/resources/pdf/not-pdf-a.pdf"),
+            )
         assertFalse(pdfService.pdfByteArrayIsPdfa(multipartFileMock.bytes))
     }
 }

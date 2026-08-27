@@ -12,9 +12,8 @@ import reactor.netty.http.client.HttpClient
 
 @Configuration
 class PdlClientConfiguration(
-    @Qualifier("fastLookupWebClientBuilder") private val fastLookupWebClientBuilder: WebClient.Builder
+    @Qualifier("fastLookupWebClientBuilder") private val fastLookupWebClientBuilder: WebClient.Builder,
 ) {
-
     @Value($$"${PDL_BASE_URL}")
     private lateinit var pdlUrl: String
 
@@ -22,16 +21,15 @@ class PdlClientConfiguration(
     private lateinit var username: String
 
     @Bean
-    fun pdlWebClient(): WebClient {
-        return fastLookupWebClientBuilder
+    fun pdlWebClient(): WebClient =
+        fastLookupWebClientBuilder
             .baseUrl(pdlUrl)
             .clientConnector(ReactorClientHttpConnector(HttpClient.newConnection()))
             .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
             .defaultHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
             .defaultHeader("Nav-Consumer-Id", username)
             .defaultHeader("TEMA", "KLA")
-            //Fra behandlingskatalogen
+            // Fra behandlingskatalogen
             .defaultHeader("behandlingsnummer", "B392")
             .build()
-    }
 }

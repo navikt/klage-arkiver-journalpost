@@ -9,9 +9,8 @@ import org.springframework.web.reactive.function.client.WebClient
 
 @Configuration
 class FileClientConfiguration(
-    @Qualifier("fileApiWebClientBuilder") private val fileApiWebClientBuilder: WebClient.Builder
+    @Qualifier("fileApiWebClientBuilder") private val fileApiWebClientBuilder: WebClient.Builder,
 ) {
-
     companion object {
         @Suppress("JAVA_CLASS_ON_COMPANION")
         private val logger = getLogger(javaClass.enclosingClass)
@@ -21,9 +20,8 @@ class FileClientConfiguration(
     private lateinit var fileServiceURL: String
 
     @Bean
-    fun fileWebClient(): WebClient {
-        return fileApiWebClientBuilder
+    fun fileWebClient(): WebClient =
+        fileApiWebClientBuilder
             .baseUrl(fileServiceURL)
             .build()
-    }
 }

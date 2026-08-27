@@ -16,9 +16,8 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 class KlageKafkaConsumer(
     private val applicationService: ApplicationService,
     private val slackClient: SlackClient,
-    private val klageDittnavAPIClient: KlageDittnavAPIClient
+    private val klageDittnavAPIClient: KlageDittnavAPIClient,
 ) {
-
     companion object {
         @Suppress("JAVA_CLASS_ON_COMPANION")
         private val logger = getLogger(javaClass.enclosingClass)
@@ -41,8 +40,8 @@ class KlageKafkaConsumer(
                     klageDittnavAPIClient.getJournalpostForKlankeId(klageAnke.id)
                 } catch (e: WebClientResponseException.NotFound) {
                     slackClient.postMessage(
-                        "Innsending med id ${klageAnke.id} fins ikke i klage-dittnav-api. Undersøk dette nærmere!",
-                        Severity.ERROR
+                        text = "Innsending med id ${klageAnke.id} fins ikke i klage-dittnav-api. Undersøk dette nærmere!",
+                        severity = Severity.ERROR,
                     )
                     logger.error("Klanke not found in klage-dittnav-api.")
                     if (naisCluster == "dev-gcp") {
@@ -56,14 +55,17 @@ class KlageKafkaConsumer(
                 logger.info(
                     "Klanke with ID {} is already registered in Joark with journalpost ID {}. Ignoring.",
                     klageAnke.id,
-                    journalpostIdResponse.journalpostId
+                    journalpostIdResponse.journalpostId,
                 )
                 return
             }
 
             applicationService.createJournalpost(klageAnke)
         }.onFailure {
-            slackClient.postMessage("Nylig mottatt innsending feilet. Sjekk team-logs for detaljer.", Severity.ERROR)
+            slackClient.postMessage(
+                text = "Nylig mottatt innsending feilet. Sjekk team-logs for detaljer.",
+                severity = Severity.ERROR,
+            )
             logger.error("Could not process innsending. See more details in team-logs.")
             teamLogger.error("Could not process innsending", it)
             throw RuntimeException("Could not process innsending")

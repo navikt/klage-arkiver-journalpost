@@ -12,29 +12,28 @@ class ApplicationService(
     private val fileClient: FileClient,
     private val klageDittnavAPIClient: KlageDittnavAPIClient,
     private val klageMetrics: KlageMetrics,
-    private val joarkService: JoarkService
+    private val joarkService: JoarkService,
 ) {
-
     companion object {
         @Suppress("JAVA_CLASS_ON_COMPANION")
         private val logger = getLogger(javaClass.enclosingClass)
     }
 
     fun createJournalpost(klageAnkeInput: KlageAnkeInput) {
-        //Create journalpost and archive it
-        //If duplicate, we still get journalpostId and continue
+        // Create journalpost and archive it
+        // If duplicate, we still get journalpostId and continue
         val journalpostResponse = joarkService.createJournalpostAsSystemUser(klageAnkeInput)
 
-        //Callback with journalpostId
+        // Callback with journalpostId
         klageDittnavAPIClient.setJournalpostIdInKlanke(
             klankeId = klageAnkeInput.id,
             journalpostId = journalpostResponse.journalpostId,
         )
 
-        //Record metrics
+        // Record metrics
         klageMetrics.incrementKlagerArkivert()
 
-        //Remove all attachments from the temporary storage
+        // Remove all attachments from the temporary storage
         klageAnkeInput.vedlegg.forEach {
             try {
                 fileClient.deleteAttachment(it.ref)

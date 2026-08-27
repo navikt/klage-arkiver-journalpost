@@ -15,18 +15,21 @@ data class Journalpost(
     val journalfoerendeEnhet: String?,
 )
 
-data class Tilleggsopplysning(val nokkel: String, val verdi: String)
+data class Tilleggsopplysning(
+    val nokkel: String,
+    val verdi: String,
+)
 
 data class Dokument(
     val tittel: String,
     val brevkode: String? = null,
-    val dokumentVarianter: List<DokumentVariant> = mutableListOf()
+    val dokumentVarianter: List<DokumentVariant> = mutableListOf(),
 )
 
 data class DokumentVariant(
     val filtype: String,
     val fysiskDokument: String,
-    val variantformat: String
+    val variantformat: String,
 )
 
 data class Sak(
@@ -34,13 +37,13 @@ data class Sak(
     val fagsaksystem: FagsaksSystem? = null,
     val fagsakid: String? = null,
     val arkivsaksystem: String? = null,
-    val arkivsaksnummer: String? = null
+    val arkivsaksnummer: String? = null,
 )
 
 enum class Sakstype {
     FAGSAK,
     GENERELL_SAK,
-    ARKIVSAK
+    ARKIVSAK,
 }
 
 enum class FagsaksSystem {
@@ -59,25 +62,25 @@ enum class FagsaksSystem {
     EF,
     KONT,
     SUPSTONAD,
-    OMSORGSPENGER
+    OMSORGSPENGER,
 }
 
-//Always use FNR according to #team_dokumentløsninger
+// Always use FNR according to #team_dokumentløsninger
 private const val ID_TYPE = "FNR"
 
 data class Bruker(
     val id: String,
-    val idType: String = ID_TYPE
+    val idType: String = ID_TYPE,
 )
 
 data class AvsenderMottaker(
     val id: String,
     val idType: String = ID_TYPE,
-    val navn: String
+    val navn: String,
 )
 
 data class KlageApiJournalpost(
-    val id: String
+    val id: String,
 )
 
 /**
