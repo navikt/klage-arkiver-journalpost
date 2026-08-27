@@ -8,16 +8,14 @@ import org.springframework.web.reactive.function.client.WebClient
 
 @Configuration
 class KlageLookupClientConfiguration(
-    @Qualifier("fastLookupWebClientBuilder")  private val fastLookupWebClientBuilder: WebClient.Builder
+    @Qualifier("fastLookupWebClientBuilder") private val fastLookupWebClientBuilder: WebClient.Builder,
 ) {
-
     @Value($$"${KLAGE_LOOKUP_BASE_URL}")
     private lateinit var klageLookupUrl: String
 
     @Bean
-    fun klageLookupWebClient(): WebClient {
-        return fastLookupWebClientBuilder
+    fun klageLookupWebClient(): WebClient =
+        fastLookupWebClientBuilder
             .baseUrl(klageLookupUrl)
             .build()
-    }
 }

@@ -9,9 +9,8 @@ import org.springframework.web.reactive.function.client.WebClient
 
 @Configuration
 class PDFClientConfiguration(
-    @Qualifier("standardWebClientBuilder") private val standardWebClientBuilder: WebClient.Builder
+    @Qualifier("standardWebClientBuilder") private val standardWebClientBuilder: WebClient.Builder,
 ) {
-
     companion object {
         @Suppress("JAVA_CLASS_ON_COMPANION")
         private val logger = getLogger(javaClass.enclosingClass)
@@ -21,10 +20,8 @@ class PDFClientConfiguration(
     private lateinit var pdfServiceURL: String
 
     @Bean
-    fun pdfWebClient(): WebClient {
-        return standardWebClientBuilder
+    fun pdfWebClient(): WebClient =
+        standardWebClientBuilder
             .baseUrl(pdfServiceURL)
             .build()
-    }
-
 }

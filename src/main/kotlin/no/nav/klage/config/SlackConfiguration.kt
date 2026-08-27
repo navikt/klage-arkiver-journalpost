@@ -17,5 +17,11 @@ class SlackConfiguration {
     lateinit var cluster: String
 
     @Bean
-    fun slackClient(): SlackClient = SlackClient(url, channelId, "klage-arkiver-journalpost", cluster)
+    fun slackClient(): SlackClient =
+        SlackClient(
+            webhookUrl = url,
+            channel = channelId,
+            application = "klage-arkiver-journalpost",
+            clusterName = cluster,
+        )
 }

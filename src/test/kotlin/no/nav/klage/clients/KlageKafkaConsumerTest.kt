@@ -22,7 +22,6 @@ import java.time.LocalDate
 
 @ExtendWith(SpringExtension::class)
 class KlageKafkaConsumerTest {
-
     @MockkBean
     lateinit var applicationService: ApplicationService
 
@@ -37,48 +36,52 @@ class KlageKafkaConsumerTest {
     @BeforeEach
     fun setup() {
         MockitoAnnotations.openMocks(this)
-        klageKafkaConsumer = KlageKafkaConsumer(
-            applicationService,
-            slackClient,
-            klageDittnavAPIClient
-        )
+        klageKafkaConsumer =
+            KlageKafkaConsumer(
+                applicationService,
+                slackClient,
+                klageDittnavAPIClient,
+            )
     }
 
-    private val input = KlageAnkeInput(
-        id = "123",
-        identifikasjonsnummer = "12345678901",
-        vedtak = "",
-        dato = LocalDate.now(),
-        begrunnelse = "BEGRUNNELSE",
-        ytelse = "OMS",
-        userSaksnummer = null,
-        internalSaksnummer = null,
-        klageAnkeType = KlageAnkeType.KLAGE,
-        ettersendelseTilKa = false,
-        innsendingsYtelseId = Innsendingsytelse.SYKDOM_I_FAMILIEN.id,
-        sak = null,
-        fullmektigId = null,
-    )
-
-    private val mapper = ObjectMapper()
-        .registerModule(JavaTimeModule())
-        .registerModule(
-            KotlinModule.Builder()
-                .withReflectionCacheSize(512)
-                .configure(KotlinFeature.NullToEmptyCollection, false)
-                .configure(KotlinFeature.NullToEmptyMap, false)
-                .configure(KotlinFeature.NullIsSameAsDefault, false)
-                .configure(KotlinFeature.StrictNullChecks, false)
-                .build()
+    private val input =
+        KlageAnkeInput(
+            id = "123",
+            identifikasjonsnummer = "12345678901",
+            vedtak = "",
+            dato = LocalDate.now(),
+            begrunnelse = "BEGRUNNELSE",
+            ytelse = "OMS",
+            userSaksnummer = null,
+            internalSaksnummer = null,
+            klageAnkeType = KlageAnkeType.KLAGE,
+            ettersendelseTilKa = false,
+            innsendingsYtelseId = Innsendingsytelse.SYKDOM_I_FAMILIEN.id,
+            sak = null,
+            fullmektigId = null,
         )
 
+    private val mapper =
+        ObjectMapper()
+            .registerModule(JavaTimeModule())
+            .registerModule(
+                KotlinModule
+                    .Builder()
+                    .withReflectionCacheSize(512)
+                    .configure(feature = KotlinFeature.NullToEmptyCollection, enabled = false)
+                    .configure(feature = KotlinFeature.NullToEmptyMap, enabled = false)
+                    .configure(feature = KotlinFeature.NullIsSameAsDefault, enabled = false)
+                    .configure(feature = KotlinFeature.StrictNullChecks, enabled = false)
+                    .build(),
+            )
 
     @Test
     fun `Dersom klageDittnavAPI gir journalpostID så går ikke klageKafkaConsumer videre til createJournalpost`() {
-        val inputString = mapper
-            .writeValueAsString(input)
+        val inputString =
+            mapper
+                .writeValueAsString(input)
 
-        every { slackClient.postMessage(any(), any()) } returns Unit
+        every { slackClient.postMessage(text = any(), severity = any()) } returns Unit
         every { klageDittnavAPIClient.getJournalpostForKlankeId(any()) } returns JournalpostIdResponse(journalpostId = "321")
 
         klageKafkaConsumer.listen(ConsumerRecord("klage.privat-klage-mottatt-v1", 0, 0, "test", inputString))
@@ -88,10 +91,11 @@ class KlageKafkaConsumerTest {
 
     @Test
     fun `Dersom klageDittnavAPI ikke gir journalpostID så går klageKafkaConsumer videre til createJournalpost`() {
-        val inputString = mapper
-            .writeValueAsString(input)
+        val inputString =
+            mapper
+                .writeValueAsString(input)
 
-        every { slackClient.postMessage(any(), any()) } returns Unit
+        every { slackClient.postMessage(text = any(), severity = any()) } returns Unit
         every { klageDittnavAPIClient.getJournalpostForKlankeId(any()) } returns JournalpostIdResponse(journalpostId = null)
         every { applicationService.createJournalpost(any()) } returns Unit
 

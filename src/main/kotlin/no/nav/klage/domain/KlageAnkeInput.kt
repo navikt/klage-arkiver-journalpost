@@ -20,7 +20,7 @@ data class KlageAnkeInput(
     val sak: Sak?,
     val klageAnkeType: KlageAnkeType,
     val fullmektigId: String?,
-    //Only relevant for ettersendelse klage
+    // Only relevant for ettersendelse klage
     val ettersendelseTilKa: Boolean?,
     val innsendingsYtelseId: String,
 ) {
@@ -32,7 +32,10 @@ data class KlageAnkeInput(
 }
 
 enum class KlageAnkeType {
-    KLAGE, ANKE, KLAGE_ETTERSENDELSE, ANKE_ETTERSENDELSE
+    KLAGE,
+    ANKE,
+    KLAGE_ETTERSENDELSE,
+    ANKE_ETTERSENDELSE,
 }
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -42,6 +45,7 @@ data class Vedlegg(
     var fileContentAsBytes: ByteArray? = null,
 )
 
-fun String.toKlageAnkeInput(): KlageAnkeInput = jacksonObjectMapper()
-    .registerModule(JavaTimeModule())
-    .readValue(this, KlageAnkeInput::class.java)
+fun String.toKlageAnkeInput(): KlageAnkeInput =
+    jacksonObjectMapper()
+        .registerModule(JavaTimeModule())
+        .readValue(this, KlageAnkeInput::class.java)

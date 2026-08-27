@@ -18,7 +18,6 @@ class FileClient(
     private val fileWebClient: WebClient,
     private val tokenUtil: TokenUtil,
 ) {
-
     companion object {
         @Suppress("JAVA_CLASS_ON_COMPANION")
         private val logger = getLogger(javaClass.enclosingClass)
@@ -28,11 +27,13 @@ class FileClient(
     fun getAttachment(id: String): File {
         logger.debug("Fetching attachment with id {}", id)
 
-        val dataBufferFlux = this.fileWebClient.get()
-            .uri { it.path("/attachment/{id}").build(id) }
-            .header(HttpHeaders.AUTHORIZATION, "Bearer ${tokenUtil.getAppAccessTokenWithKlageFileApiScope()}")
-            .retrieve()
-            .bodyToFlux<DataBuffer>()
+        val dataBufferFlux =
+            this.fileWebClient
+                .get()
+                .uri { it.path("/attachment/{id}").build(id) }
+                .header(HttpHeaders.AUTHORIZATION, "Bearer ${tokenUtil.getAppAccessTokenWithKlageFileApiScope()}")
+                .retrieve()
+                .bodyToFlux<DataBuffer>()
 
         val tempFile = Files.createTempFile(null, null)
 
@@ -44,13 +45,14 @@ class FileClient(
     fun deleteAttachment(id: String) {
         logger.debug("Deleting attachment with id {}", id)
 
-        val deletedInGCS = fileWebClient
-            .delete()
-            .uri("/attachment/$id")
-            .header(HttpHeaders.AUTHORIZATION, "Bearer ${tokenUtil.getAppAccessTokenWithKlageFileApiScope()}")
-            .retrieve()
-            .bodyToMono<Boolean>()
-            .block()
+        val deletedInGCS =
+            fileWebClient
+                .delete()
+                .uri("/attachment/$id")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer ${tokenUtil.getAppAccessTokenWithKlageFileApiScope()}")
+                .retrieve()
+                .bodyToMono<Boolean>()
+                .block()
 
         if (deletedInGCS == true) {
             logger.debug("Attachment successfully deleted in file store.")
