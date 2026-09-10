@@ -8,11 +8,11 @@ val verapdfVersion = "1.30.2"
 val mockkVersion = "1.14.11"
 val springMockkVersion = "5.0.1"
 val tokenValidationVersion = "6.0.12"
-val simpleSlackPosterVersion = "1.0.0"
+val simpleSlackPosterVersion = "1.1.1"
 val kodeverkVersion = "3.3.10"
 
 plugins {
-    val kotlinVersion = "2.4.10"
+    val kotlinVersion = "2.4.20"
     id("org.springframework.boot") version "4.1.1"
     kotlin("jvm") version kotlinVersion
     kotlin("plugin.spring") version kotlinVersion
