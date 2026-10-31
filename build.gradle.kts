@@ -8,7 +8,7 @@ val logstashVersion = "9.0"
 val verapdfVersion = "1.30.2"
 val mockkVersion = "1.14.11"
 val springMockkVersion = "5.0.1"
-val tokenValidationVersion = "6.0.12"
+val klageAuthVersion = "0.3.0"
 val simpleSlackPosterVersion = "1.0.0"
 val kodeverkVersion = "3.4.2"
 
@@ -45,8 +45,7 @@ dependencies {
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.springframework.kafka:spring-kafka")
-    implementation("no.nav.security:token-client-spring:$tokenValidationVersion")
-    implementation("no.nav.security:token-validation-spring:$tokenValidationVersion")
+    implementation("no.nav.klage:klage-auth:$klageAuthVersion")
 
     implementation("no.nav.slackposter:simple-slack-poster:$simpleSlackPosterVersion")
     implementation("no.nav.klage:klage-kodeverk:$kodeverkVersion")

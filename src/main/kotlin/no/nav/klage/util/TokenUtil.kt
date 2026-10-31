@@ -1,41 +1,30 @@
 package no.nav.klage.util
 
-import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService
-import no.nav.security.token.support.client.spring.ClientConfigurationProperties
+import no.nav.klage.auth.TexasClient
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 
 @Service
 class TokenUtil(
-    private val clientConfigurationProperties: ClientConfigurationProperties,
-    private val oAuth2AccessTokenService: OAuth2AccessTokenService,
+    private val texasClient: TexasClient,
+    @Value($$"api://${DOKARKIV_SCOPE}/.default")
+    private val dokarkivTarget: String,
+    @Value($$"api://${NAIS_CLUSTER_NAME}.${NAIS_NAMESPACE}.${KLAGE_FILE_API_APP_NAME}/.default")
+    private val klageFileApiTarget: String,
+    @Value($$"api://${NAIS_CLUSTER_NAME}.${NAIS_NAMESPACE}.${KLAGE_DITTNAV_API_APP_NAME}/.default")
+    private val klageDittnavApiTarget: String,
+    @Value($$"api://${PDL_SCOPE}/.default")
+    private val pdlTarget: String,
+    @Value($$"api://${NAIS_CLUSTER_NAME}.${NAIS_NAMESPACE}.${KLAGE_LOOKUP_APP_NAME}/.default")
+    private val klageLookupTarget: String,
 ) {
-    fun getAppAccessTokenWithDokarkivScope(): String {
-        val clientProperties = clientConfigurationProperties.registration["dokarkiv-maskintilmaskin"]!!
-        val response = oAuth2AccessTokenService.getAccessToken(clientProperties)
-        return response.access_token!!
-    }
+    fun getAppAccessTokenWithDokarkivScope(): String = texasClient.machineToMachineToken(target = dokarkivTarget)
 
-    fun getAppAccessTokenWithKlageFileApiScope(): String {
-        val clientProperties = clientConfigurationProperties.registration["klage-file-api-maskintilmaskin"]!!
-        val response = oAuth2AccessTokenService.getAccessToken(clientProperties)
-        return response.access_token!!
-    }
+    fun getAppAccessTokenWithKlageFileApiScope(): String = texasClient.machineToMachineToken(target = klageFileApiTarget)
 
-    fun getAppAccessTokenWithKlageDittnavApiScope(): String {
-        val clientProperties = clientConfigurationProperties.registration["klage-dittnav-api-maskintilmaskin"]!!
-        val response = oAuth2AccessTokenService.getAccessToken(clientProperties)
-        return response.access_token!!
-    }
+    fun getAppAccessTokenWithKlageDittnavApiScope(): String = texasClient.machineToMachineToken(target = klageDittnavApiTarget)
 
-    fun getAppAccessTokenWithPdlScope(): String {
-        val clientProperties = clientConfigurationProperties.registration["pdl-maskintilmaskin"]!!
-        val response = oAuth2AccessTokenService.getAccessToken(clientProperties)
-        return response.access_token!!
-    }
+    fun getAppAccessTokenWithPdlScope(): String = texasClient.machineToMachineToken(target = pdlTarget)
 
-    fun getAppAccessTokenWithKlageLookupScope(): String {
-        val clientProperties = clientConfigurationProperties.registration["klage-lookup-maskintilmaskin"]!!
-        val response = oAuth2AccessTokenService.getAccessToken(clientProperties)
-        return response.access_token!!
-    }
+    fun getAppAccessTokenWithKlageLookupScope(): String = texasClient.machineToMachineToken(target = klageLookupTarget)
 }
