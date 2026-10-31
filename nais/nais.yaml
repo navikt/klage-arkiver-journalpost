@@ -49,7 +49,6 @@ spec:
   prometheus:
     enabled: true
     path: /internal/prometheus
-  webproxy: true
   accessPolicy:
     outbound:
       rules:
