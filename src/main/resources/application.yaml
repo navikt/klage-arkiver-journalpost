@@ -14,7 +14,7 @@ SERVICE_USER_USERNAME: srvklage-dittnav
 management:
   endpoint:
     health:
-      show-details: always
+      show-details: never
   endpoints.web:
     exposure:
       include: info, health, metrics, prometheus
@@ -28,54 +28,6 @@ management:
         enabled: true
   tracing:
     enabled: false
-
-no.nav.security.jwt:
-  issuer:
-    aad:
-      discoveryurl: ${AZURE_APP_WELL_KNOWN_URL}
-      accepted_audience: ${AZURE_APP_CLIENT_ID}
-  client:
-    registration:
-      dokarkiv-maskintilmaskin:
-        token-endpoint-url: https://login.microsoftonline.com/${TENANT_ID}/oauth2/v2.0/token
-        grant-type: client_credentials
-        scope: api://${DOKARKIV_SCOPE}/.default
-        authentication:
-          client-id: ${AZURE_APP_CLIENT_ID}
-          client-jwk: ${AZURE_APP_JWK}
-          client-auth-method: private_key_jwt
-      klage-file-api-maskintilmaskin:
-        token-endpoint-url: https://login.microsoftonline.com/${TENANT_ID}/oauth2/v2.0/token
-        grant-type: client_credentials
-        scope: api://${NAIS_CLUSTER_NAME}.${NAIS_NAMESPACE}.${KLAGE_FILE_API_APP_NAME}/.default
-        authentication:
-          client-id: ${AZURE_APP_CLIENT_ID}
-          client-jwk: ${AZURE_APP_JWK}
-          client-auth-method: private_key_jwt
-      klage-dittnav-api-maskintilmaskin:
-        token-endpoint-url: https://login.microsoftonline.com/${TENANT_ID}/oauth2/v2.0/token
-        grant-type: client_credentials
-        scope: api://${NAIS_CLUSTER_NAME}.${NAIS_NAMESPACE}.${KLAGE_DITTNAV_API_APP_NAME}/.default
-        authentication:
-          client-id: ${AZURE_APP_CLIENT_ID}
-          client-jwk: ${AZURE_APP_JWK}
-          client-auth-method: private_key_jwt
-      pdl-maskintilmaskin:
-        token-endpoint-url: https://login.microsoftonline.com/${TENANT_ID}/oauth2/v2.0/token
-        grant-type: client_credentials
-        scope: api://${PDL_SCOPE}/.default
-        authentication:
-          client-id: ${AZURE_APP_CLIENT_ID}
-          client-jwk: ${AZURE_APP_JWK}
-          client-auth-method: private_key_jwt
-      klage-lookup-maskintilmaskin:
-        token-endpoint-url: https://login.microsoftonline.com/${TENANT_ID}/oauth2/v2.0/token
-        grant-type: client_credentials
-        scope: api://${NAIS_CLUSTER_NAME}.${NAIS_NAMESPACE}.${KLAGE_LOOKUP_APP_NAME}/.default
-        authentication:
-          client-id: ${AZURE_APP_CLIENT_ID}
-          client-jwk: ${AZURE_APP_JWK}
-          client-auth-method: private_key_jwt
 
 KAFKA_TOPIC: klage.privat-klage-mottatt-v1
 
