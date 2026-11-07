@@ -72,3 +72,5 @@ spec:
   env:
     - name: SPRING_PROFILES_ACTIVE
       value: {{springProfile}}
+    - name: JAVA_TOOL_OPTIONS
+      value: --enable-native-access=ALL-UNNAMED
