@@ -5,15 +5,15 @@ import org.jlleitschuh.gradle.ktlint.reporter.ReporterType
 
 val ktlintVersion = "1.8.0"
 val logstashVersion = "9.0"
-val verapdfVersion = "1.30.2"
-val mockkVersion = "1.14.11"
+val verapdfVersion = "1.30.4"
+val mockkVersion = "1.14.12"
 val springMockkVersion = "5.0.1"
 val klageAuthVersion = "0.4.0"
 val simpleSlackPosterVersion = "1.0.0"
 val kodeverkVersion = "3.4.2"
 
 plugins {
-    val kotlinVersion = "2.4.20"
+    val kotlinVersion = "2.4.21"
     id("org.springframework.boot") version "4.1.2"
     kotlin("jvm") version kotlinVersion
     kotlin("plugin.spring") version kotlinVersion
