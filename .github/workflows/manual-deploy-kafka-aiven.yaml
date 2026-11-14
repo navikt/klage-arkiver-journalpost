@@ -18,9 +18,9 @@ jobs:
         topic: [privat-klage-mottatt-v1-dlt]
     steps:
       - name: Checkout code
-        uses: actions/checkout@main
+        uses: actions/checkout@v7.0.1
       - name: deploy kafka-topic ${{ matrix.topic }} to ${{ matrix.cluster }}
-        uses: nais/deploy/actions/deploy@v2
+        uses: nais/deploy/actions/deploy@v3
         env:
           CLUSTER: ${{ matrix.cluster }}-gcp
           RESOURCE: kafka-aiven/${{ matrix.topic }}/topic.yaml
